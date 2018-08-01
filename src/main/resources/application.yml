@@ -1,0 +1,18 @@
+server:
+  port: 8090
+  servlet:
+    path: /
+mybatis:
+  type-aliases-package: com.eleven.five.entity
+  configuration:
+    map-underscore-to-camel-case: true
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql:///cp
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+#logging.level.com.eleven.five.mapper: debug
+
