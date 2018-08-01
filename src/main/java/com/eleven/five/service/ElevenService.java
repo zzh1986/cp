@@ -184,4 +184,9 @@ public class ElevenService {
     public Integer searchElevenThreeTimesFromEleven(int i, int i1, int i2) {
         return elevenMapper.searchElevenThreeTimesFromEleven(i,i1,i2);
     }
+
+    public Integer SearchFirstId() {
+        return elevenMapper.SearchFirstId();
+    }
+
 }

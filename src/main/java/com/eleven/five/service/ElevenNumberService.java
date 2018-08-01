@@ -7,7 +7,6 @@ import com.eleven.five.mapper.ThreePeriodMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 
 /**
  * @author zhaozhihong<zhao.zhihong@chinaott.net>
@@ -88,23 +87,25 @@ public class ElevenNumberService {
 
     public void insertIntoThreeTimes() {
         //需要进行双层的循环插入
+        Integer firstId = elevenService.SearchFirstId();
+        firstId = firstId == 0 ? 1 : firstId;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 75; j++) {
                 //查询相关的信息 limit(j+i*84,10)
                 // 查询一次插入一条
                 int offset = j + i * 84;
                 int limit = 10;
-                Integer oneNum = elevenService.searchOneThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer twoNum = elevenService.searchTwoThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer threeNum = elevenService.searchThreeThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer fourNum = elevenService.searchFourThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer fiveNum = elevenService.searchFiveThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer sixNum = elevenService.searchSixThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer sevenNum = elevenService.searchSevenThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer eightNum = elevenService.searchEightThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer nineNum = elevenService.searchNineThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer tenNum = elevenService.searchTenThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
-                Integer elevenNum = elevenService.searchElevenThreeTimesFromEleven(offset + 1, offset + 2, offset + 10);
+                Integer oneNum = elevenService.searchOneThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer twoNum = elevenService.searchTwoThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer threeNum = elevenService.searchThreeThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer fourNum = elevenService.searchFourThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer fiveNum = elevenService.searchFiveThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer sixNum = elevenService.searchSixThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer sevenNum = elevenService.searchSevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer eightNum = elevenService.searchEightThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer nineNum = elevenService.searchNineThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer tenNum = elevenService.searchTenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                Integer elevenNum = elevenService.searchElevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
 
                 ThreePeriod threePeriod = new ThreePeriod();
                 threePeriod.setId(null);
@@ -124,7 +125,9 @@ public class ElevenNumberService {
                 sort[1] = twoNum;
                 sort[2] = threeNum;
                 sort[3] = fourNum;
+                sort[4] = fiveNum;
                 sort[5] = sixNum;
+                sort[6] = sevenNum;
                 sort[7] = eightNum;
                 sort[8] = nineNum;
                 sort[9] = tenNum;
