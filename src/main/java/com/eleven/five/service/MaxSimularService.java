@@ -142,37 +142,38 @@ public class MaxSimularService {
         }
         TenTongJi tenTongJi = tenTongJiList.get(0);
         String str = "";
+        int begin = -1;
         for (int i = 0; i < 8; i++) {
             switch (i) {
                 case 0:
-                    str =             tenTongJi.getSort().substring(0+i, 3+i) + "_______";
+                    str =             tenTongJi.getSort().substring(0+i, 4+i) + "_______";begin=i;
                     break;
                 case 1:
-                    str = "_"       + tenTongJi.getSort().substring(0+i, 3+i) + "______";
+                    str = "_"       + tenTongJi.getSort().substring(0+i, 4+i) + "______";begin=i;
                     break;
                 case 2:
-                    str = "__"      + tenTongJi.getSort().substring(0+i, 3+i) + "_____";
+                    str = "__"      + tenTongJi.getSort().substring(0+i, 4+i) + "_____";begin=i;
                     break;
                 case 3:
-                    str = "___"     + tenTongJi.getSort().substring(0+i, 3+i) + "____";
+                    str = "___"     + tenTongJi.getSort().substring(0+i, 4+i) + "____";begin=i;
                     break;
                 case 4:
-                    str = "____"    + tenTongJi.getSort().substring(0+i, 3+i) + "___";
+                    str = "____"    + tenTongJi.getSort().substring(0+i, 4+i) + "___";begin=i;
                     break;
                 case 5:
-                    str = "_____"   + tenTongJi.getSort().substring(0+i, 3+i) + "__";
+                    str = "_____"   + tenTongJi.getSort().substring(0+i, 4+i) + "__";begin=i;
                     break;
                 case 6:
-                    str = "______"  + tenTongJi.getSort().substring(0+i, 3+i) + "_";
+                    str = "______"  + tenTongJi.getSort().substring(0+i, 4+i) + "_";begin=i;
                     break;
                 default:
-                    str = "_______" + tenTongJi.getSort().substring(0+i, 3+i);
+                    str = "_______" + tenTongJi.getSort().substring(0+i, 4+i);begin=i;
             }
-            String period = elevenNumberMapper.findPeriodLikeFourSort(str);
-            if(!StringUtils.isEmpty(period)){
-                String result = String.valueOf(Integer.valueOf(period) + 1);
+            List<String> period = elevenNumberMapper.findPeriodLikeFourSort(str);
+            if(period.size()>0){
+                String result = String.valueOf(Integer.valueOf(period.get(0)) + 1);
                 System.out.println(result);
-                return result;
+                return result+"开始于:"+(begin+1)+";结束于:"+(begin+4);
             }
         }
         return "不好意思 没匹配到哦";
