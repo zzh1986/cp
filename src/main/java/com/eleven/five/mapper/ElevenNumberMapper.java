@@ -2,6 +2,7 @@ package com.eleven.five.mapper;
 
 import com.eleven.five.entity.ElevenNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,5 +12,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ElevenNumberMapper extends JpaRepository<ElevenNumber,Integer> {
-
+    @Query(value = "select period from eleven_number where sort like ?1",nativeQuery = true)
+    String findPeriodLikeFourSort(String target);
 }

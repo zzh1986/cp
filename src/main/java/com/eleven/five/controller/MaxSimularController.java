@@ -24,4 +24,11 @@ public class MaxSimularController {
         String maxSimularNextPeriod = maxSimularService.findMaxSimularNextPeriod();
         return maxSimularNextPeriod == null ? "存在异常或者无匹配结果" : maxSimularNextPeriod;
     }
+
+
+    @GetMapping("/getFourNumberSimular")
+    public String getFourNumberSimular() {
+        String getFourNumberSimular = maxSimularService.getFourNumberSimular();
+        return getFourNumberSimular ;
+    }
 }

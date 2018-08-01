@@ -4,8 +4,10 @@ import com.eleven.five.entity.ElevenNumber;
 import com.eleven.five.entity.TenTongJi;
 import com.eleven.five.mapper.ElevenNumberMapper;
 import com.eleven.five.mapper.TenTongJiMapper;
+import org.hibernate.criterion.Example;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -122,7 +124,7 @@ public class MaxSimularService {
         eleven[8] = elevenNumber.getNineNum() == -1 ? 1 : 0;
         eleven[9] = elevenNumber.getTenNum() == -1 ? 1 : 0;
         eleven[10] = elevenNumber.getElevenNum() == -1 ? 1 : 0;
-        if(max<elevenNumberList.size()){
+        if (max < elevenNumberList.size()) {
             ElevenNumber elevenNumberNext = elevenNumberList.get(max + 1);
             System.out.println(elevenNumberNext.getPeriod());
         }
@@ -131,13 +133,50 @@ public class MaxSimularService {
     }
 
     //TODO 方案二:需要模糊查询 可以现在service 做起来
-
-    public void getFourNumberSimular(){
-
-
-
+    //两层for循环 可以实现,但是我不想用!!!
+    public String getFourNumberSimular() {
+        //1.查询出目标sort
+        List<TenTongJi> tenTongJiList = tenTongJiMapper.findAll();
+        if (tenTongJiList.size() != 1) {
+            return "统计出现异常,需要先进行统计才可以";
+        }
+        TenTongJi tenTongJi = tenTongJiList.get(0);
+        String str = "";
+        for (int i = 0; i < 8; i++) {
+            switch (i) {
+                case 0:
+                    str =             tenTongJi.getSort().substring(0+i, 3+i) + "_______";
+                    break;
+                case 1:
+                    str = "_"       + tenTongJi.getSort().substring(0+i, 3+i) + "______";
+                    break;
+                case 2:
+                    str = "__"      + tenTongJi.getSort().substring(0+i, 3+i) + "_____";
+                    break;
+                case 3:
+                    str = "___"     + tenTongJi.getSort().substring(0+i, 3+i) + "____";
+                    break;
+                case 4:
+                    str = "____"    + tenTongJi.getSort().substring(0+i, 3+i) + "___";
+                    break;
+                case 5:
+                    str = "_____"   + tenTongJi.getSort().substring(0+i, 3+i) + "__";
+                    break;
+                case 6:
+                    str = "______"  + tenTongJi.getSort().substring(0+i, 3+i) + "_";
+                    break;
+                default:
+                    str = "_______" + tenTongJi.getSort().substring(0+i, 3+i);
+            }
+            String period = elevenNumberMapper.findPeriodLikeFourSort(str);
+            if(!StringUtils.isEmpty(period)){
+                String result = String.valueOf(Integer.valueOf(period) + 1);
+                System.out.println(result);
+                return result;
+            }
+        }
+        return "不好意思 没匹配到哦";
     }
-
 
 
 }
