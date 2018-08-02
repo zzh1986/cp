@@ -2,15 +2,21 @@ package com.eleven.five.service;
 
 import com.eleven.five.entity.ElevenNumber;
 import com.eleven.five.entity.TenTongJi;
+import com.eleven.five.entity.ThreePeriod;
+import com.eleven.five.entity.TongJi;
 import com.eleven.five.mapper.ElevenNumberMapper;
 import com.eleven.five.mapper.TenTongJiMapper;
-import org.hibernate.criterion.Example;
+import com.eleven.five.mapper.ThreePeriodMapper;
+import com.eleven.five.mapper.TongJiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zhaozhihong
@@ -23,6 +29,12 @@ public class MaxSimularService {
 
     @Autowired
     private ElevenNumberMapper elevenNumberMapper;
+
+    @Autowired
+    private ThreePeriodMapper threePeriodMapper;
+
+    @Autowired
+    private TongJiMapper tongJiMapper;
 
     public String findMaxSimularNextPeriod() {
 
@@ -146,34 +158,93 @@ public class MaxSimularService {
         for (int i = 0; i < 8; i++) {
             switch (i) {
                 case 0:
-                    str =             tenTongJi.getSort().substring(0+i, 4+i) + "_______";begin=i;
+                    str = tenTongJi.getSort().substring(0 + i, 4 + i) + "_______";
+                    begin = i;
                     break;
                 case 1:
-                    str = "_"       + tenTongJi.getSort().substring(0+i, 4+i) + "______";begin=i;
+                    str = "_" + tenTongJi.getSort().substring(0 + i, 4 + i) + "______";
+                    begin = i;
                     break;
                 case 2:
-                    str = "__"      + tenTongJi.getSort().substring(0+i, 4+i) + "_____";begin=i;
+                    str = "__" + tenTongJi.getSort().substring(0 + i, 4 + i) + "_____";
+                    begin = i;
                     break;
                 case 3:
-                    str = "___"     + tenTongJi.getSort().substring(0+i, 4+i) + "____";begin=i;
+                    str = "___" + tenTongJi.getSort().substring(0 + i, 4 + i) + "____";
+                    begin = i;
                     break;
                 case 4:
-                    str = "____"    + tenTongJi.getSort().substring(0+i, 4+i) + "___";begin=i;
+                    str = "____" + tenTongJi.getSort().substring(0 + i, 4 + i) + "___";
+                    begin = i;
                     break;
                 case 5:
-                    str = "_____"   + tenTongJi.getSort().substring(0+i, 4+i) + "__";begin=i;
+                    str = "_____" + tenTongJi.getSort().substring(0 + i, 4 + i) + "__";
+                    begin = i;
                     break;
                 case 6:
-                    str = "______"  + tenTongJi.getSort().substring(0+i, 4+i) + "_";begin=i;
+                    str = "______" + tenTongJi.getSort().substring(0 + i, 4 + i) + "_";
+                    begin = i;
                     break;
                 default:
-                    str = "_______" + tenTongJi.getSort().substring(0+i, 4+i);begin=i;
+                    str = "_______" + tenTongJi.getSort().substring(0 + i, 4 + i);
+                    begin = i;
             }
-            List<String> period = elevenNumberMapper.findPeriodLikeFourSort(str);
-            if(period.size()>0){
-                String result = String.valueOf(Integer.valueOf(period.get(0)) + 1);
+            List<ElevenNumber> elevenNumberList = elevenNumberMapper.findPeriodLikeFourSort(str);
+
+            if (elevenNumberList.size() > 0) {
+                String result = String.valueOf(Long.valueOf(elevenNumberList.get(0).getSort()) + 1);
+                //TODO 里面需要做逻辑与运算的判断,看看应该怎样操作
+                //首先两个对象每一位分别进行异或然后取反(用三目运算)得到的数据需要用三位得出的结果继续逻辑运算(算法待定)
+                //1.先出第一组数据
+                ElevenNumber elevenNumber = elevenNumberList.get(0);
+                int[] oneXOR = new int[11];
+                oneXOR[0] = (elevenNumber.getOneNum().equals(tenTongJi.getOne())) ? 1 : 0;
+                oneXOR[1] = (elevenNumber.getTwoNum().equals(tenTongJi.getTwo())) ? 1 : 0;
+                oneXOR[2] = (elevenNumber.getThreeNum().equals(tenTongJi.getThree())) ? 1 : 0;
+                oneXOR[3] = (elevenNumber.getFourNum().equals(tenTongJi.getFour())) ? 1 : 0;
+                oneXOR[4] = (elevenNumber.getFiveNum().equals(tenTongJi.getFive())) ? 1 : 0;
+                oneXOR[5] = (elevenNumber.getSixNum().equals(tenTongJi.getSix())) ? 1 : 0;
+                oneXOR[6] = (elevenNumber.getSevenNum().equals(tenTongJi.getSeven())) ? 1 : 0;
+                oneXOR[7] = (elevenNumber.getEightNum().equals(tenTongJi.getEight())) ? 1 : 0;
+                oneXOR[8] = (elevenNumber.getNineNum().equals(tenTongJi.getNine())) ? 1 : 0;
+                oneXOR[9] = (elevenNumber.getTenNum().equals(tenTongJi.getTen())) ? 1 : 0;
+                oneXOR[10] = (elevenNumber.getElevenNum().equals(tenTongJi.getEleven())) ? 1 : 0;
+
+                int[] twoXOR = new int[11];
+                ThreePeriod threePeriod1 = new ThreePeriod();
+                threePeriod1.setPeriod(elevenNumberList.get(0).getPeriod());
+                Example<ThreePeriod> example = Example.of(threePeriod1);
+                ThreePeriod threePeriod = threePeriodMapper.findOne(example).get();
+                TongJi tongJi = tongJiMapper.findAll().get(0);
+                twoXOR[0] = (threePeriod.getOneNum().equals(tongJi.getOne())) ? 1 : 0;
+                twoXOR[1] = (threePeriod.getTwoNum().equals(tongJi.getTwo())) ? 1 : 0;
+                twoXOR[2] = (threePeriod.getThreeNum().equals(tongJi.getThree())) ? 1 : 0;
+                twoXOR[3] = (threePeriod.getFourNum().equals(tongJi.getFour())) ? 1 : 0;
+                twoXOR[4] = (threePeriod.getFiveNum().equals(tongJi.getFive())) ? 1 : 0;
+                twoXOR[5] = (threePeriod.getSixNum().equals(tongJi.getSix())) ? 1 : 0;
+                twoXOR[6] = (threePeriod.getSevenNum().equals(tongJi.getSeven())) ? 1 : 0;
+                twoXOR[7] = (threePeriod.getEightNum().equals(tongJi.getEight())) ? 1 : 0;
+                twoXOR[8] = (threePeriod.getNineNum().equals(tongJi.getNine())) ? 1 : 0;
+                twoXOR[9] = (threePeriod.getTenNum().equals(tongJi.getTen())) ? 1 : 0;
+                twoXOR[10] = (threePeriod.getElevenNum().equals(tongJi.getEleven())) ? 1 : 0;
+                //TODO 这边做一下尝试性的测试.
+                //No.1 试一下与操作
+                List<Integer> target = new ArrayList<>();
+                for (int j = 0; j < 11; j++) {
+                    int no1 = (oneXOR[j] & twoXOR[j]) * (j + 1);
+                    if(no1 != 0){
+                       target.add(no1);
+                    }
+                }
+                if(target.size()==0){
+                    System.out.println("不太适合选择");
+                }else{
+                    System.out.println(target);
+                }
+                System.out.println();
+                System.out.println("===========================================");
                 System.out.println(result);
-                return result+"开始于:"+(begin+1)+";结束于:"+(begin+4);
+                return result + "开始于:" + (begin + 1) + ";结束于:" + (begin + 4);
             }
         }
         return "不好意思 没匹配到哦";

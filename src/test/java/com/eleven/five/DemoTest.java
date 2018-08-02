@@ -21,12 +21,17 @@ public class DemoTest {
 //
 //        System.out.println(a);
 
-        for (int i=0;i<5;i++){
-            switch (i){
-                case 1:System.out.println(i+"本次测试的结果哦");break;
-            }
-            System.out.println(i);
-        }
+//        for (int i=0;i<5;i++){
+//            switch (i){
+//                case 1:System.out.println(i+"本次测试的结果哦");break;
+//            }
+//            System.out.println(i);
+//        }
+
+//        System.out.println((1^0) == 1?0:1);
+//        System.out.println((0^0)==1 ?0:1);
+//        System.out.println((1^1)==1 ?0:1);
+//        System.out.println((0^1)==1 ?0:1);
 
 
 
