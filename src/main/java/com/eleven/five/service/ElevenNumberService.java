@@ -86,6 +86,7 @@ public class ElevenNumberService {
     }
 
     public void insertIntoThreeTimes() {
+        threePeriodMapper.deleteAll();
         //需要进行双层的循环插入
         Integer firstId = elevenService.SearchFirstId();
         firstId = firstId == 0 ? 1 : firstId;

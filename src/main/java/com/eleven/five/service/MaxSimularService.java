@@ -1,13 +1,7 @@
 package com.eleven.five.service;
 
-import com.eleven.five.entity.ElevenNumber;
-import com.eleven.five.entity.TenTongJi;
-import com.eleven.five.entity.ThreePeriod;
-import com.eleven.five.entity.TongJi;
-import com.eleven.five.mapper.ElevenNumberMapper;
-import com.eleven.five.mapper.TenTongJiMapper;
-import com.eleven.five.mapper.ThreePeriodMapper;
-import com.eleven.five.mapper.TongJiMapper;
+import com.eleven.five.entity.*;
+import com.eleven.five.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -35,6 +29,9 @@ public class MaxSimularService {
 
     @Autowired
     private TongJiMapper tongJiMapper;
+
+    @Autowired
+    private TenTimesMapper tenTimesMapper;
 
     public String findMaxSimularNextPeriod() {
 
@@ -190,7 +187,7 @@ public class MaxSimularService {
                     begin = i;
             }
             List<ElevenNumber> elevenNumberList = elevenNumberMapper.findPeriodLikeFourSort(str);
-
+            String periodLatest = tenTimesMapper.findPeriodLatest();
             if (elevenNumberList.size() > 0) {
                 String result = String.valueOf(Long.valueOf(elevenNumberList.get(0).getSort()) + 1);
                 //TODO 里面需要做逻辑与运算的判断,看看应该怎样操作
@@ -227,24 +224,56 @@ public class MaxSimularService {
                 twoXOR[8] = (threePeriod.getNineNum().equals(tongJi.getNine())) ? 1 : 0;
                 twoXOR[9] = (threePeriod.getTenNum().equals(tongJi.getTen())) ? 1 : 0;
                 twoXOR[10] = (threePeriod.getElevenNum().equals(tongJi.getEleven())) ? 1 : 0;
-                //TODO 这边做一下尝试性的测试.
+                //TODO---> 1 这边做一下尝试性的测试.
                 //No.1 试一下与操作
                 List<Integer> target = new ArrayList<>();
                 for (int j = 0; j < 11; j++) {
                     int no1 = (oneXOR[j] & twoXOR[j]) * (j + 1);
-                    if(no1 != 0){
-                       target.add(no1);
+                    if (no1 != 0) {
+                        target.add(no1);
                     }
                 }
-                if(target.size()==0){
-                    System.out.println("不太适合选择");
-                }else{
-                    System.out.println(target);
+                //TODO---> 2
+                //No.2 尝试另一种与操作
+                int[] threeXOR = new int[11];
+                TenTimes tenTimes =tenTimesMapper.findPeriodOldest();
+                threeXOR[0]=tenTimes.getOneTen();
+                threeXOR[1]=tenTimes.getTwoTen();
+                threeXOR[2]=tenTimes.getThreeTen();
+                threeXOR[3]=tenTimes.getFourTen();
+                threeXOR[4]=tenTimes.getFiveTen();
+                threeXOR[5]=tenTimes.getSixTen();
+                threeXOR[6]=tenTimes.getSevenTen();
+                threeXOR[7]=tenTimes.getEightTen();
+                threeXOR[8]=tenTimes.getNineTen();
+                threeXOR[9]=tenTimes.getTenTen();
+                threeXOR[10]=tenTimes.getElevenTen();
+
+                List<Integer> targetTwo = new ArrayList<>();
+                for (int j = 0; j < 11; j++) {
+                    int no2 = (oneXOR[j] & threeXOR[j]) * (j + 1);
+                    if (no2 != 0) {
+                        targetTwo.add(no2);
+                    }
                 }
-                System.out.println();
-                System.out.println("===========================================");
-                System.out.println(result);
-                return result + "开始于:" + (begin + 1) + ";结束于:" + (begin + 4);
+
+
+                if (target.size() == 0) {
+                    return "第"+ (Long.valueOf(periodLatest)+1) + "期,没有合适的号码,不太适合选择--->第二组:"+targetTwo.toString();
+                } else if (target.size() == 2) {
+
+                    return "第"+ (Long.valueOf(periodLatest)+1) + "期建议选择后面号码:" + target.toString()+"--->第二组:"+targetTwo.toString();
+                } else if (target.size() == 1) {
+                    return "第"+ (Long.valueOf(periodLatest)+1) + "期不建议选择这个号码:" + target.toString()+"--->第二组:"+targetTwo.toString();
+                } else if (target.size() > 2) {
+                    return "第"+ (Long.valueOf(periodLatest)+1) + "期请考虑还其他方案,因为号码太多:" + target.toString()+"--->第二组:"+targetTwo.toString();
+                }
+
+
+//                System.out.println();
+//                System.out.println("===========================================");
+//                System.out.println(result);
+//                return result + "开始于:" + (begin + 1) + ";结束于:" + (begin + 4);
             }
         }
         return "不好意思 没匹配到哦";
