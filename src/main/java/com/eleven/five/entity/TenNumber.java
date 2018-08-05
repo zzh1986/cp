@@ -1,14 +1,15 @@
 package com.eleven.five.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
- * @author zhaozhihong <zhao.zhihong@chinaott.net>
+ * @author 赵志宏
  * @date 2018-08-05
  */
 @Entity
-@Table(name = "eleven_number")
-public class ElevenNumber {
+@Table(name="ten_number")
+public class TenNumber implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

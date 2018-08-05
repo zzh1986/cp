@@ -7,12 +7,11 @@ import javax.persistence.*;
  * @date 2018-08-05
  */
 @Entity
-@Table(name = "eleven_number")
-public class ElevenNumber {
+@Table(name = "eleven_three_period")
+public class ElevenThreePeriod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column(name="one_num")
     private Integer oneNum;
 
@@ -46,8 +45,8 @@ public class ElevenNumber {
     @Column(name="eleven_num")
     private Integer elevenNum;
 
-    @Column(name="sort")
-    private String sort;
+    @Column(name="sort_num")
+    private String sortNum;
 
     @Column(name="period")
     private String period;
@@ -148,12 +147,12 @@ public class ElevenNumber {
         this.elevenNum = elevenNum;
     }
 
-    public String getSort() {
-        return sort;
+    public String getSortNum() {
+        return sortNum;
     }
 
-    public void setSort(String sort) {
-        this.sort = sort;
+    public void setSortNum(String sortNum) {
+        this.sortNum = sortNum;
     }
 
     public String getPeriod() {
@@ -163,4 +162,5 @@ public class ElevenNumber {
     public void setPeriod(String period) {
         this.period = period;
     }
+
 }

@@ -1,6 +1,6 @@
 package com.eleven.five.controller;
 
-import com.eleven.five.service.ElevenNumberService;
+import com.eleven.five.service.TenNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2018-06-19
  */
 @RestController
-public class ElevenNumberController {
+public class TenNumberController {
 
     @Autowired
-    private ElevenNumberService elevenNumberService;
+    private TenNumberService tenNumberService;
 
-    @RequestMapping("/saveElevenNumber")
-    public String saveElevenNumber(){
+    @RequestMapping("/saveTenNumber")
+    public String saveTenNumber(){
         try {
-            elevenNumberService.insertIntoElevenNumbers();
+            tenNumberService.insertIntoTenNumbers();
             return "保存成功...请到数据库查阅";
         }catch (Exception e){
             e.printStackTrace();
@@ -28,7 +28,7 @@ public class ElevenNumberController {
     @RequestMapping("/saveThreeTimes")
     public String saveThreeTimes(){
         try {
-            elevenNumberService.insertIntoThreeTimes();
+            tenNumberService.insertIntoThreeTimes();
             return "保存成功...请到数据库查阅";
         }catch (Exception e){
             e.printStackTrace();

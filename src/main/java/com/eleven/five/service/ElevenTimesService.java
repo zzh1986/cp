@@ -1,19 +1,13 @@
 package com.eleven.five.service;
 
-import com.eleven.five.entity.TenTimes;
-import com.eleven.five.entity.TongJi;
-import com.eleven.five.entity.UrlDateEnum;
-import com.eleven.five.mapper.TenTimesMapper;
-import com.eleven.five.mapper.TongJiMapper;
+import com.eleven.five.entity.*;
+import com.eleven.five.mapper.ElevenThreeTongJiMapper;
+import com.eleven.five.mapper.ElevenTimesMapper;
 import com.eleven.five.util.FiveUtil;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,44 +15,43 @@ import java.util.List;
 
 /**
  * @author zhaozhihong <zhao.zhihong@chinaott.net>
- * @date 2018-06-21
+ * @date 2018-08-05
  */
 @Service
-public class TenTimesService {
-
-    private static String BASE_URL=UrlDateEnum.URL_ENUM.getMsg();
+public class ElevenTimesService {
 
     @Autowired
-    private TenTimesMapper tenTimesMapper;
+    private ElevenTimesMapper elevenTimesMapper;
 
     @Autowired
-    private TongJiMapper tongJiMapper;
+    private ElevenThreeTongJiMapper elevenThreeTongJiMapper;
 
-    public void saveTenTimes(String date, String period) throws IOException {
+    private String BASE_URL = UrlDateEnum.URL_ENUM.getMsg();
+
+        public void saveElevenTimes(String date, String period) throws IOException {
         //TODO 需要对数据库进行清空操作
-        tenTimesMapper.deleteAll();
-        tongJiMapper.deleteAll();
+        elevenTimesMapper.deleteAll();
+        elevenThreeTongJiMapper.deleteAll();
         //================
-        List<TenTimes> tenTimesList = getTenTimes(date, period);
-        for (TenTimes tenTimes : tenTimesList) {
-            tenTimesMapper.save(tenTimes);
+        List<ElevenTimes> elevenTimesList = getElevenTimes(date, period);
+        for (ElevenTimes elevenTimes : elevenTimesList) {
+            elevenTimesMapper.save(elevenTimes);
         }
         // TODO 需要对结果进行处理
-        int one = tenTimesList.get(0).getOneTen() + tenTimesList.get(9).getOneTen() + tenTimesList.get(8).getOneTen();
-        int two = tenTimesList.get(0).getTwoTen() + tenTimesList.get(9).getTwoTen() + tenTimesList.get(8).getTwoTen();
-        int three = tenTimesList.get(0).getThreeTen() + tenTimesList.get(9).getThreeTen() + tenTimesList.get(8).getThreeTen();
-        int four = tenTimesList.get(0).getFourTen() + tenTimesList.get(9).getFourTen() + tenTimesList.get(8).getFourTen();
-        int five = tenTimesList.get(0).getFiveTen() + tenTimesList.get(9).getFiveTen() + tenTimesList.get(8).getFiveTen();
-        int six = tenTimesList.get(0).getSixTen() + tenTimesList.get(9).getSixTen() + tenTimesList.get(8).getSixTen();
-        int seven = tenTimesList.get(0).getSevenTen() + tenTimesList.get(9).getSevenTen() + tenTimesList.get(8).getSevenTen();
-        int eight = tenTimesList.get(0).getEightTen() + tenTimesList.get(9).getEightTen() + tenTimesList.get(8).getEightTen();
-        int nine = tenTimesList.get(0).getNineTen() + tenTimesList.get(9).getNineTen() + tenTimesList.get(8).getNineTen();
-        int ten = tenTimesList.get(0).getTenTen() + tenTimesList.get(9).getTenTen() + tenTimesList.get(8).getTenTen();
-        int eleven = tenTimesList.get(0).getElevenTen() + tenTimesList.get(9).getElevenTen() + tenTimesList.get(8).getElevenTen();
-
+        int one = elevenTimesList.get(0).getOneTen() + elevenTimesList.get(10).getOneTen() + elevenTimesList.get(9).getOneTen();
+        int two = elevenTimesList.get(0).getTwoTen() + elevenTimesList.get(10).getTwoTen() + elevenTimesList.get(9).getTwoTen();
+        int three = elevenTimesList.get(0).getThreeTen() + elevenTimesList.get(10).getThreeTen() + elevenTimesList.get(9).getThreeTen();
+        int four = elevenTimesList.get(0).getFourTen() + elevenTimesList.get(10).getFourTen() + elevenTimesList.get(9).getFourTen();
+        int five = elevenTimesList.get(0).getFiveTen() + elevenTimesList.get(10).getFiveTen() + elevenTimesList.get(9).getFiveTen();
+        int six = elevenTimesList.get(0).getSixTen() + elevenTimesList.get(10).getSixTen() + elevenTimesList.get(9).getSixTen();
+        int seven = elevenTimesList.get(0).getSevenTen() + elevenTimesList.get(10).getSevenTen() + elevenTimesList.get(9).getSevenTen();
+        int eight = elevenTimesList.get(0).getEightTen() + elevenTimesList.get(10).getEightTen() + elevenTimesList.get(9).getEightTen();
+        int nine = elevenTimesList.get(0).getNineTen() + elevenTimesList.get(10).getNineTen() + elevenTimesList.get(9).getNineTen();
+        int ten = elevenTimesList.get(0).getTenTen() + elevenTimesList.get(10).getTenTen() + elevenTimesList.get(9).getTenTen();
+        int eleven = elevenTimesList.get(0).getElevenTen() + elevenTimesList.get(10).getElevenTen() + elevenTimesList.get(9).getElevenTen();
 //        System.out.println("这个是第一组数据----------------------------------->"+tenTimesList.get(0).getPeriod());
-//        System.out.println("这个是第二组数据----------------------------------->"+tenTimesList.get(8).getPeriod());
-//        System.out.println("这个是第三组数据----------------------------------->"+tenTimesList.get(9).getPeriod());
+//        System.out.println("这个是第二组数据----------------------------------->"+tenTimesList.get(9).getPeriod());
+//        System.out.println("这个是第三组数据----------------------------------->"+tenTimesList.get(10).getPeriod());
 
         Integer[] elevens = new Integer[11];
         elevens[0] = one;
@@ -101,10 +94,10 @@ public class TenTimesService {
         }
         System.out.println("==================================");
         if (twoTime.size() > 0) {
-            for (int j=0;j<twoTime.size();j++){
-                System.out.print("出现两次"+twoTime.get(j)+"的数据为:");
+            for (int j = 0; j < twoTime.size(); j++) {
+                System.out.print("出现两次" + twoTime.get(j) + "的数据为:");
                 for (int i = 0; i < elevens.length; i++) {
-                    if (elevens[i].equals(twoTime.get(j)) ) {
+                    if (elevens[i].equals(twoTime.get(j))) {
                         //  此处的i就是我需要的那个数
                         System.out.print(i + 1 + " ");
                     }
@@ -114,25 +107,25 @@ public class TenTimesService {
         System.out.println("==================================");
         Arrays.sort(elevens);
         String sort = "" + elevens[0] + elevens[1] + elevens[2] + elevens[3] + elevens[4] + elevens[5] + elevens[6] + elevens[7] + elevens[8] + elevens[9] + elevens[10];
-        TongJi tongJi = new TongJi();
-        tongJi.setId(null);
-        tongJi.setOne(one);
-        tongJi.setTwo(two);
-        tongJi.setThree(three);
-        tongJi.setFour(four);
-        tongJi.setFive(five);
-        tongJi.setSix(six);
-        tongJi.setSeven(seven);
-        tongJi.setEight(eight);
-        tongJi.setNine(nine);
-        tongJi.setTen(ten);
-        tongJi.setEleven(eleven);
-        tongJi.setPeriod(sort);
-        tongJiMapper.save(tongJi);
+        ElevenThreeTongJi elevenThreeTongJi = new ElevenThreeTongJi();
+        elevenThreeTongJi.setId(null);
+        elevenThreeTongJi.setOne(one);
+        elevenThreeTongJi.setTwo(two);
+        elevenThreeTongJi.setThree(three);
+        elevenThreeTongJi.setFour(four);
+        elevenThreeTongJi.setFive(five);
+        elevenThreeTongJi.setSix(six);
+        elevenThreeTongJi.setSeven(seven);
+        elevenThreeTongJi.setEight(eight);
+        elevenThreeTongJi.setNine(nine);
+        elevenThreeTongJi.setTen(ten);
+        elevenThreeTongJi.setEleven(eleven);
+        elevenThreeTongJi.setPeriod(sort);
+        elevenThreeTongJiMapper.save(elevenThreeTongJi);
 
     }
 
-    private List<TenTimes> getTenTimes(String date, String period) throws IOException {
+    private List<ElevenTimes> getElevenTimes(String date, String period) throws IOException {
         // String url = "http://caipiao.163.com/award/gd11xuan5/"+date+".html";  date=20180620
         String url = BASE_URL + date + ".html";
         Elements elements = Jsoup.connect(url).get().select("[data-period]");
@@ -147,67 +140,68 @@ public class TenTimesService {
 //            }
 //            fiveList.add(result);
 //        }
-        FiveUtil.getOneGroupNumber(fiveList,elements);
-        //只统计10-83期之间的数据,其余均不需要统计
+        FiveUtil.getOneGroupNumber(fiveList, elements);
+        //只统计11-83期之间的数据,其余均不需要统计
         Integer perNum = Integer.valueOf(period);
-        if (perNum < 10 || perNum > 83) {
+        if (perNum < 11 || perNum > 83) {
             return null;
         }
-        //找出最近的10期数据 例如:perNum = 56 [47,56]
-        List<TenTimes> tenTimesList = new ArrayList<>();
+        //找出最近的11期数据 例如:perNum = 56 [47,56]
+        List<ElevenTimes> elevenTimesList = new ArrayList<>();
         t1:
-        for (int i = perNum; i > perNum - 10; i--) {
+        for (int i = perNum; i > perNum - 11; i--) {
             // 期号 18062042
             String iFormat = String.valueOf(i).length() < 2 ? "0" + i : String.valueOf(i);
             String dp = date.substring(2, date.length()) + iFormat;
             for (String s : fiveList) {
                 if (s.contains(dp)) {
                     String[] number = s.split("[\\s]+");
-                    TenTimes tenTimes = new TenTimes();
+                    ElevenTimes elevenTimes = new ElevenTimes();
                     for (int j = 0; j < number.length; j++) {
                         switch (number[j]) {
                             case "01":
-                                tenTimes.setOneTen(1);
+                                elevenTimes.setOneTen(1);
                                 break;
                             case "02":
-                                tenTimes.setTwoTen(1);
+                                elevenTimes.setTwoTen(1);
                                 break;
                             case "03":
-                                tenTimes.setThreeTen(1);
+                                elevenTimes.setThreeTen(1);
                                 break;
                             case "04":
-                                tenTimes.setFourTen(1);
+                                elevenTimes.setFourTen(1);
                                 break;
                             case "05":
-                                tenTimes.setFiveTen(1);
+                                elevenTimes.setFiveTen(1);
                                 break;
                             case "06":
-                                tenTimes.setSixTen(1);
+                                elevenTimes.setSixTen(1);
                                 break;
                             case "07":
-                                tenTimes.setSevenTen(1);
+                                elevenTimes.setSevenTen(1);
                                 break;
                             case "08":
-                                tenTimes.setEightTen(1);
+                                elevenTimes.setEightTen(1);
                                 break;
                             case "09":
-                                tenTimes.setNineTen(1);
+                                elevenTimes.setNineTen(1);
                                 break;
                             case "10":
-                                tenTimes.setTenTen(1);
+                                elevenTimes.setTenTen(1);
                                 break;
                             case "11":
-                                tenTimes.setElevenTen(1);
+                                elevenTimes.setElevenTen(1);
                                 break;
                             default:
-                                tenTimes.setPeriod(number[j]);
+                                elevenTimes.setPeriod(number[j]);
                         }
                     }
-                    tenTimesList.add(tenTimes);
+                    elevenTimesList.add(elevenTimes);
                     continue t1;
                 }
             }
         }
-        return tenTimesList;
+        return elevenTimesList;
     }
 }
+

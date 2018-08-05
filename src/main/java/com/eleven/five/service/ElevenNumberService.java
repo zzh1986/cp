@@ -1,41 +1,36 @@
 package com.eleven.five.service;
 
 import com.eleven.five.entity.ElevenNumber;
-import com.eleven.five.entity.ThreePeriod;
+import com.eleven.five.entity.ElevenThreePeriod;
 import com.eleven.five.mapper.ElevenNumberMapper;
-import com.eleven.five.mapper.ThreePeriodMapper;
+import com.eleven.five.mapper.ElevenThreePeriodMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
- * @author zhaozhihong<zhao.zhihong@chinaott.net>
- * @date 2018-06-19
+ * @author zhaozhihong <zhao.zhihong@chinaott.net>
+ * @date 2018-08-05
  */
 @Service
 public class ElevenNumberService {
-
     @Autowired
     private ElevenNumberMapper elevenNumberMapper;
 
     @Autowired
-    private ElevenService elevenService;
+    private ElevenThreePeriodMapper elevenThreePeriodMapper;
 
     @Autowired
-    private ThreePeriodMapper threePeriodMapper;
+    private ElevenService elevenService;
 
-    /**
-     * 初始化表elevenNumber,添加信息作为备用
-     */
     public void insertIntoElevenNumbers() {
         elevenNumberMapper.deleteAll();
         //需要进行双层的循环插入
         for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 75; j++) {
-                //查询相关的信息 limit(j+i*84,10)
+            for (int j = 0; j < 74; j++) {
+                //查询相关的信息 limit(j+i*84,11)
                 // 查询一次插入一条
                 int offset = j + i * 84;
-                int limit = 10;
+                int limit = 11;
                 Integer oneNum = elevenService.searchOneNumberFromEleven(offset, limit);
                 Integer twoNum = elevenService.searchTwoNumberFromEleven(offset, limit);
                 Integer threeNum = elevenService.searchThreeNumberFromEleven(offset, limit);
@@ -85,42 +80,42 @@ public class ElevenNumberService {
         }
     }
 
-    public void insertIntoThreeTimes() {
-        threePeriodMapper.deleteAll();
+    public void insertIntoElevenThreeTimes() {
+        elevenThreePeriodMapper.deleteAll();
         //需要进行双层的循环插入
         Integer firstId = elevenService.SearchFirstId();
         firstId = firstId == 0 ? 1 : firstId;
         for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 75; j++) {
-                //查询相关的信息 limit(j+i*84,10)
+            for (int j = 0; j < 74; j++) {
+                //查询相关的信息 limit(j+i*84,11)
                 // 查询一次插入一条
                 int offset = j + i * 84;
-                int limit = 10;
-                Integer oneNum = elevenService.searchOneThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer twoNum = elevenService.searchTwoThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer threeNum = elevenService.searchThreeThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer fourNum = elevenService.searchFourThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer fiveNum = elevenService.searchFiveThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer sixNum = elevenService.searchSixThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer sevenNum = elevenService.searchSevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer eightNum = elevenService.searchEightThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer nineNum = elevenService.searchNineThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer tenNum = elevenService.searchTenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
-                Integer elevenNum = elevenService.searchElevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 10);
+                int limit = 11;
+                Integer oneNum = elevenService.searchOneThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer twoNum = elevenService.searchTwoThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer threeNum = elevenService.searchThreeThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer fourNum = elevenService.searchFourThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer fiveNum = elevenService.searchFiveThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer sixNum = elevenService.searchSixThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer sevenNum = elevenService.searchSevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer eightNum = elevenService.searchEightThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer nineNum = elevenService.searchNineThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer tenNum = elevenService.searchTenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
+                Integer elevenNum = elevenService.searchElevenThreeTimesFromEleven(offset + firstId -1 + 1, offset + firstId -1 + 2, offset + firstId -1 + 11);
 
-                ThreePeriod threePeriod = new ThreePeriod();
-                threePeriod.setId(null);
-                threePeriod.setOneNum(oneNum == null ? 0 : oneNum);
-                threePeriod.setTwoNum(twoNum == null ? 0 : twoNum);
-                threePeriod.setThreeNum(threeNum == null ? 0 : threeNum);
-                threePeriod.setFourNum(fourNum == null ? 0 : fourNum);
-                threePeriod.setFiveNum(fiveNum == null ? 0 : fiveNum);
-                threePeriod.setSixNum(sixNum == null ? 0 : sixNum);
-                threePeriod.setSevenNum(sevenNum == null ? 0 : sevenNum);
-                threePeriod.setEightNum(eightNum == null ? 0 : eightNum);
-                threePeriod.setNineNum(nineNum == null ? 0 : nineNum);
-                threePeriod.setTenNum  (tenNum == null ? 0 : tenNum);
-                threePeriod.setElevenNum(elevenNum == null ? 0 : elevenNum);
+                ElevenThreePeriod elevenThreePeriod = new ElevenThreePeriod();
+                elevenThreePeriod.setId(null);
+                elevenThreePeriod.setOneNum(oneNum == null ? 0 : oneNum);
+                elevenThreePeriod.setTwoNum(twoNum == null ? 0 : twoNum);
+                elevenThreePeriod.setThreeNum(threeNum == null ? 0 : threeNum);
+                elevenThreePeriod.setFourNum(fourNum == null ? 0 : fourNum);
+                elevenThreePeriod.setFiveNum(fiveNum == null ? 0 : fiveNum);
+                elevenThreePeriod.setSixNum(sixNum == null ? 0 : sixNum);
+                elevenThreePeriod.setSevenNum(sevenNum == null ? 0 : sevenNum);
+                elevenThreePeriod.setEightNum(eightNum == null ? 0 : eightNum);
+                elevenThreePeriod.setNineNum(nineNum == null ? 0 : nineNum);
+                elevenThreePeriod.setTenNum  (tenNum == null ? 0 : tenNum);
+                elevenThreePeriod.setElevenNum(elevenNum == null ? 0 : elevenNum);
                 Integer[] sort = new Integer[11];
                 sort[0] = oneNum;
                 sort[1] = twoNum;
@@ -134,12 +129,12 @@ public class ElevenNumberService {
                 sort[9] = tenNum;
                 sort[10] = elevenNum;
 //                Arrays.sort(sort);
-                threePeriod.setSortNum("" + sort[0] + sort[1] + sort[2] + sort[3] + sort[4] + sort[5] + sort[6] + sort[7] + sort[8] + sort[9] + sort[10]);
+                elevenThreePeriod.setSortNum("" + sort[0] + sort[1] + sort[2] + sort[3] + sort[4] + sort[5] + sort[6] + sort[7] + sort[8] + sort[9] + sort[10]);
                 //再查询一个最后的一个period
                 Integer latest = offset + limit - 1;
                 String period = elevenService.searchByLatest(latest);
-                threePeriod.setPeriod(period);
-                threePeriodMapper.save(threePeriod);
+                elevenThreePeriod.setPeriod(period);
+                elevenThreePeriodMapper.save(elevenThreePeriod);
             }
         }
     }

@@ -31,4 +31,9 @@ public class MaxSimularController {
         String getFourNumberSimular = maxSimularService.getFourNumberSimular();
         return getFourNumberSimular ;
     }
+    @GetMapping("/getElevenFourNumberSimular")
+    public String getElevenFourNumberSimular() {
+        String getElevenFourNumberSimular = maxSimularService.getElevenFourNumberSimular();
+        return getElevenFourNumberSimular ;
+    }
 }

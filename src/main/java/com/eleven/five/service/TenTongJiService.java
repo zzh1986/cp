@@ -16,7 +16,6 @@ public class TenTongJiService {
     @Autowired
     private TenTongJiMapper tenTongJiMapper;
 
-
     public void saveTenTongJiNumber(){
         // TODO 清空数据库
         tenTongJiMapper.deleteAll();
