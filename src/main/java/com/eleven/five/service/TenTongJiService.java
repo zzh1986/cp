@@ -43,7 +43,8 @@ public class TenTongJiService {
         elevens[8]=nine;
         elevens[9]=ten;
         elevens[10]=eleven;
-       // Arrays.sort(elevens);
+        //暂时需要测试把该排序放开下
+        Arrays.sort(elevens);
         TenTongJi tenTongJi = new TenTongJi();
         tenTongJi.setId(null);
         tenTongJi.setOne(one);

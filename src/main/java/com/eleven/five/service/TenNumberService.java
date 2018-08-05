@@ -7,6 +7,8 @@ import com.eleven.five.mapper.ThreePeriodMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 
 /**
  * @author zhaozhihong<zhao.zhihong@chinaott.net>
@@ -74,7 +76,8 @@ public class TenNumberService {
                 sort[9] = tenNum;
                 sort[10] = elevenNum;
                 //暂时将该排序方式注释掉采用非排序的方式进行统计
-//                Arrays.sort(sort);
+                //排序暂时先放开,如果走接口另一个 需要注释掉排序
+                Arrays.sort(sort);
                 tenNumber.setSort("" + sort[0] + sort[1] + sort[2] + sort[3] + sort[4] + sort[5] + sort[6] + sort[7] + sort[8] + sort[9] + sort[10]);
                 //再查询一个最后的一个period
                 Integer latest = offset + limit - 1;
@@ -133,7 +136,8 @@ public class TenNumberService {
                 sort[8] = nineNum;
                 sort[9] = tenNum;
                 sort[10] = elevenNum;
-//                Arrays.sort(sort);
+                //排序暂时先放开,如果走接口另一个 需要注释掉排序
+                Arrays.sort(sort);
                 threePeriod.setSortNum("" + sort[0] + sort[1] + sort[2] + sort[3] + sort[4] + sort[5] + sort[6] + sort[7] + sort[8] + sort[9] + sort[10]);
                 //再查询一个最后的一个period
                 Integer latest = offset + limit - 1;

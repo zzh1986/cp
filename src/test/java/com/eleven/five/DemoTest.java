@@ -45,12 +45,13 @@ public class DemoTest {
 //        DateTime date = DateUtil.date();
 //        System.out.println(date);
 //        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse("2018-08-05");
-        DateTime dateTime1 = new DateTime(date);
-        System.out.println(dateTime1);
-        DateTime dateTime = DateUtil.offsetDay(date, -1);
-        System.out.println(dateTime);
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date date = sdf.parse("2018-08-05");
+//        DateTime dateTime1 = new DateTime(date);
+//        System.out.println(dateTime1);
+//        DateTime dateTime = DateUtil.offsetDay(date, -1);
+//        System.out.println(dateTime);
+       // System.out.println("1234566".substring(3));
     }
 
 }

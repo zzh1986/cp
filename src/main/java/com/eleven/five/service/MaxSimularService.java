@@ -1,7 +1,9 @@
 package com.eleven.five.service;
 
+import cn.hutool.core.convert.Convert;
 import com.eleven.five.entity.*;
 import com.eleven.five.mapper.*;
+import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -431,5 +433,47 @@ public class MaxSimularService {
         }
         //TODO 这里进行11组数的判断,如果还没有,再考虑其他方案  暂时不实现
         return "不好意思,11组的也没匹配到哦";
+    }
+
+    /**
+     * 这里通过按顺序比较,查询到下一组在进行对应的1或0的比对,然后选出对应的数字
+     *
+     * @return
+     */
+    public String getHopeLastSimular() {
+        List<TenTongJi> tenTongjiList = tenTongJiMapper.findAll();
+        if (tenTongjiList.size() != 1) {
+            return "统计没数据有误!请重新统计!";
+        }
+
+        TenTongJi tenTongJi = tenTongjiList.get(0);
+        String sort = tenTongJi.getSort();
+        for (int i = 0; i < sort.length(); i++) {
+            String sortStr = "%" + sort.substring(i);
+            List<ElevenNumber> elevenNumberList = elevenNumberMapper.findPeriodLikeFourSort(sortStr);
+            if (elevenNumberList.size() > 0) {
+                //已找到 可能多个...
+                int index = 0;
+                for (ElevenNumber elevenNumber : elevenNumberList) {
+                    Integer[][] integers = null;
+                    if (sort.length() == 12) {
+                        char[] chars = sort.substring(i, 11).toCharArray();
+                        integers[index] = Convert.toIntArray(chars);
+                        Arrays.copyOf(integers, integers.length + 1);
+                        integers[integers.length - 1][index++] = 10;
+                    } else {
+                        char[] chars = sort.substring(i).toCharArray();
+                        integers[index++] = Convert.toIntArray(chars);
+                    }
+                    if (integers != null && integers.length > 0) {
+                        for (int z = 0; z < integers.length; z++) {
+                            //TODO 关系太绕了 明天再说吧
+                        }
+                    }
+                }
+
+            }
+        }
+        return null;
     }
 }
