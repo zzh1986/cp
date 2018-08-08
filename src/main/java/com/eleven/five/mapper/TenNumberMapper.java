@@ -14,6 +14,6 @@ import java.util.List;
  */
 @Repository
 public interface TenNumberMapper extends JpaRepository<TenNumber,Integer> {
-    @Query(value = "select * from eleven_number where sort like ?1",nativeQuery = true)
+    @Query(value = "select * from ten_number where sort like ?1",nativeQuery = true)
     List<TenNumber> findPeriodLikeFourSort(String target);
 }

@@ -17,4 +17,7 @@ public interface TenTimesMapper extends JpaRepository<TenTimes,Integer> {
 
     @Query(value = "select * from ten_times order by period asc limit 1",nativeQuery = true)
     TenTimes findPeriodOldest();
+
+    @Query(value = "select * from ten_times order by period desc limit 1",nativeQuery = true)
+    TenTimes findTenTimesLatest();
 }

@@ -34,8 +34,8 @@ public class ElevenService {
             logger.info("10天数据保存完毕!开始统计:每10期的次数!");
             tenNumberService.insertIntoTenNumbers();
             tenNumberService.insertIntoThreeTimes();
-            elevenNumberService.insertIntoElevenNumbers();
-            elevenNumberService.insertIntoElevenThreeTimes();
+//            elevenNumberService.insertIntoElevenNumbers();
+//            elevenNumberService.insertIntoElevenThreeTimes();
             logger.info("数据保存结束!请到数据库查询");
         } catch (Exception e) {
             e.printStackTrace();

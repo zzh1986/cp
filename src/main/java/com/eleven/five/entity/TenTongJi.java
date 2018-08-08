@@ -1,10 +1,15 @@
 package com.eleven.five.entity;
 
+import cn.hutool.core.clone.CloneSupport;
+
 import javax.persistence.*;
 
+/**
+ * @author zhaozhihong
+ */
 @Table(name="ten_tong_ji")
 @Entity
-public class TenTongJi {
+public class TenTongJi extends CloneSupport<TenTongJi> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

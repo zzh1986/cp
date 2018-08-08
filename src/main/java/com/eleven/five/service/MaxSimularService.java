@@ -1,18 +1,15 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.ArrayUtil;
 import com.eleven.five.entity.*;
 import com.eleven.five.mapper.*;
-import org.hibernate.Criteria;
+import com.eleven.five.util.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author zhaozhihong
@@ -46,6 +43,9 @@ public class MaxSimularService {
 
     @Autowired
     private ElevenTimesMapper elevenTimesMapper;
+
+    @Autowired
+    private ElevenMapper elevenMapper;
 
     public String findMaxSimularNextPeriod() {
 
@@ -450,30 +450,360 @@ public class MaxSimularService {
         String sort = tenTongJi.getSort();
         for (int i = 0; i < sort.length(); i++) {
             String sortStr = "%" + sort.substring(i);
-            List<ElevenNumber> elevenNumberList = elevenNumberMapper.findPeriodLikeFourSort(sortStr);
-            if (elevenNumberList.size() > 0) {
+            List<TenNumber> tenNumberList = tenNumberMapper.findPeriodLikeFourSort(sortStr);
+            if (tenNumberList.size() > 0) {
                 //已找到 可能多个...
                 int index = 0;
-                for (ElevenNumber elevenNumber : elevenNumberList) {
-                    Integer[][] integers = null;
-                    if (sort.length() == 12) {
-                        char[] chars = sort.substring(i, 11).toCharArray();
-                        integers[index] = Convert.toIntArray(chars);
-                        Arrays.copyOf(integers, integers.length + 1);
-                        integers[integers.length - 1][index++] = 10;
-                    } else {
-                        char[] chars = sort.substring(i).toCharArray();
-                        integers[index++] = Convert.toIntArray(chars);
-                    }
-                    if (integers != null && integers.length > 0) {
-                        for (int z = 0; z < integers.length; z++) {
-                            //TODO 关系太绕了 明天再说吧
-                        }
-                    }
-                }
+                Integer[][] three = new Integer[tenNumberList.size()][11];
+                Integer[][] integers = new Integer[tenNumberList.size()][11];
+                for (TenNumber tenNumber : tenNumberList) {
+//                    if (sort.length() == 12) {
+//                        char[] chars = sort.substring(i, 11).toCharArray();
+//                        integers[index] = Convert.toIntArray(chars);
+//                        Arrays.copyOf(integers[index], integers[index].length + 1);
+//                        integers[index][integers[index].length - 1] = 10;
+//                    } else {
+//                        char[] chars = sort.substring(i).toCharArray();
+//                        integers[index] = Convert.toIntArray(chars);
+//                    }
 
+                    //TODO 逻辑有问题!!!!!! 应该查询下一组数据 在这组中是多少次来进行判断下一次的数据为出现的数据 逻辑上将只有5个数字
+                    if (tenNumber.getPeriod().endsWith("84")) {
+                        continue;
+                    }
+                    long nextPeriod = Long.valueOf(tenNumber.getPeriod()) + 1;
+                    Elevens elevens = new Elevens();
+                    elevens.setId(null);
+                    elevens.setOne(null);
+                    elevens.setTwo(null);
+                    elevens.setThree(null);
+                    elevens.setFour(null);
+                    elevens.setFive(null);
+                    elevens.setSix(null);
+                    elevens.setSeven(null);
+                    elevens.setEight(null);
+                    elevens.setNine(null);
+                    elevens.setTen(null);
+                    elevens.setEleven(null);
+                    elevens.setPeriod(String.valueOf(nextPeriod));
+                    Example<Elevens> elevensExample = Example.of(elevens);
+                    Elevens elevensTagert = elevenMapper.findOne(elevensExample).get();
+
+                    integers[index][0] = elevensTagert.getOne() == 1 ? 1 : -11;
+                    integers[index][1] = elevensTagert.getTwo() == 1 ? 2 : -11;
+                    integers[index][2] = elevensTagert.getThree() == 1 ? 3 : -11;
+                    integers[index][3] = elevensTagert.getFour() == 1 ? 4 : -11;
+                    integers[index][4] = elevensTagert.getFive() == 1 ? 5 : -11;
+                    integers[index][5] = elevensTagert.getSix() == 1 ? 6 : -11;
+                    integers[index][6] = elevensTagert.getSeven() == 1 ? 7 : -11;
+                    integers[index][7] = elevensTagert.getEight() == 1 ? 8 : -11;
+                    integers[index][8] = elevensTagert.getNine() == 1 ? 9 : -11;
+                    integers[index][9] = elevensTagert.getTen() == 1 ? 10 : -11;
+                    integers[index][10] = elevensTagert.getEleven() == 1 ? 11 : -11;
+
+
+                    /**三组数据的可以暂时先不考虑 试试
+                     * */
+                    ThreePeriod threePeriod = new ThreePeriod();
+                    threePeriod.setId(null);
+                    threePeriod.setOneNum(null);
+                    threePeriod.setTwoNum(null);
+                    threePeriod.setThreeNum(null);
+                    threePeriod.setFourNum(null);
+                    threePeriod.setFiveNum(null);
+                    threePeriod.setSixNum(null);
+                    threePeriod.setSevenNum(null);
+                    threePeriod.setEightNum(null);
+                    threePeriod.setNineNum(null);
+                    threePeriod.setTenNum(null);
+                    threePeriod.setElevenNum(null);
+                    threePeriod.setPeriod(tenNumber.getPeriod());
+                    Example<ThreePeriod> example = Example.of(threePeriod);
+                    ThreePeriod threePeriodTagert = threePeriodMapper.findOne(example).get();
+                    //在查询
+                    TongJi tongJi = tongJiMapper.findAll().get(0);
+                    //这个匹配不到直接赋值 -3
+
+                    three[index][0] = tongJi.getOne().equals(threePeriodTagert.getOneNum()) ? 1 : -3;
+                    three[index][1] = tongJi.getTwo().equals(threePeriodTagert.getTwoNum()) ? 2 : -3;
+                    three[index][2] = tongJi.getThree().equals(threePeriodTagert.getThreeNum()) ? 3 : -3;
+                    three[index][3] = tongJi.getFour().equals(threePeriodTagert.getFourNum()) ? 4 : -3;
+                    three[index][4] = tongJi.getFive().equals(threePeriodTagert.getFiveNum()) ? 5 : -3;
+                    three[index][5] = tongJi.getSix().equals(threePeriodTagert.getSixNum()) ? 6 : -3;
+                    three[index][6] = tongJi.getSeven().equals(threePeriodTagert.getSevenNum()) ? 7 : -3;
+                    three[index][7] = tongJi.getEight().equals(threePeriodTagert.getEightNum()) ? 8 : -3;
+                    three[index][8] = tongJi.getNine().equals(threePeriodTagert.getNineNum()) ? 9 : -3;
+                    three[index][9] = tongJi.getTen().equals(threePeriodTagert.getTenNum()) ? 10 : -3;
+                    three[index][10] = tongJi.getEleven().equals(threePeriodTagert.getElevenNum()) ? 11 : -3;
+
+                    index++;
+                }
+                List<List<String>> result = new ArrayList<>();
+                if (three != null && integers != null && three.length != 0 && integers.length != 0) {
+                    for (int j = 0; j < three.length; j++) {
+                        String[] threeStr = Convert.toStrArray(three[j]);
+                        String[] elevenStr = Convert.toStrArray(integers[j]);
+                        result.add(ArrayUtils.intersect(threeStr, elevenStr));
+                    }
+                    return ArrayUtil.toString(result);
+                }
             }
         }
-        return null;
+        return "实在是匹配不到合适的哦!";
+    }
+
+    /**
+     * 查询sort的相同的数据的下一组,按照是否在sort,如果在sort中,则结果相同,否则结果不同
+     *
+     * @return
+     */
+    public String getTenMaxSimular() {
+        List<TenTongJi> tenTongjiList = tenTongJiMapper.findAll();
+        if (tenTongjiList.size() != 1) {
+            return "统计没数据有误!请重新统计!";
+        }
+
+        TenTongJi tenTongJi = tenTongjiList.get(0);
+        String sort = tenTongJi.getSort();
+        Integer[][] integers = null;
+        Map<Integer, String> map = new HashMap<>();
+        //查询当前数据
+        TenTimes tenTimes = tenTimesMapper.findTenTimesLatest();
+        //保存当前数据的数组
+        String[] eleven = new String[11];
+        eleven[0] = String.valueOf(tenTimes.getOneTen() == 1 ? 1 : -1);
+        eleven[1] = String.valueOf(tenTimes.getTwoTen() == 1 ? 2 : -1);
+        eleven[2] = String.valueOf(tenTimes.getThreeTen() == 1 ? 3 : -1);
+        eleven[3] = String.valueOf(tenTimes.getFourTen() == 1 ? 4 : -1);
+        eleven[4] = String.valueOf(tenTimes.getFiveTen() == 1 ? 5 : -1);
+        eleven[5] = String.valueOf(tenTimes.getSixTen() == 1 ? 6 : -1);
+        eleven[6] = String.valueOf(tenTimes.getSevenTen() == 1 ? 7 : -1);
+        eleven[7] = String.valueOf(tenTimes.getEightTen() == 1 ? 8 : -1);
+        eleven[8] = String.valueOf(tenTimes.getNineTen() == 1 ? 9 : -1);
+        eleven[9] = String.valueOf(tenTimes.getTenTen() == 1 ? 10 : -1);
+        eleven[10] = String.valueOf(tenTimes.getElevenTen() == 1 ? 11 : -1);
+
+        for (int i = 0; i < sort.length(); i++) {
+            String sortStr = "%" + sort.substring(i);
+            List<TenNumber> tenNumberList = tenNumberMapper.findPeriodLikeFourSort(sortStr);
+            if (tenNumberList.size() > 0) {
+                //已找到 可能多个...
+                int index = 0;
+                integers = new Integer[tenNumberList.size()][11];
+                for (TenNumber tenNumber : tenNumberList) {
+                    if (tenNumber.getPeriod().endsWith("84")) {
+                        continue;
+                    }
+
+                    long nextPeriod = Long.valueOf(tenNumber.getPeriod()) + 1;
+                    Elevens elevens = new Elevens();
+                    elevens.setId(null);
+                    elevens.setOne(null);
+                    elevens.setTwo(null);
+                    elevens.setThree(null);
+                    elevens.setFour(null);
+                    elevens.setFive(null);
+                    elevens.setSix(null);
+                    elevens.setSeven(null);
+                    elevens.setEight(null);
+                    elevens.setNine(null);
+                    elevens.setTen(null);
+                    elevens.setEleven(null);
+                    elevens.setPeriod(tenNumber.getPeriod());
+                    Example<Elevens> elevensExample = Example.of(elevens);
+                    Elevens elevensTagert = elevenMapper.findOne(elevensExample).get();
+
+                    integers[index][0] = elevensTagert.getOne() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getOneNum())) != -1 ? 1 : -11;
+                    integers[index][1] = elevensTagert.getTwo() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getTwoNum())) != -1 ? 2 : -11;
+                    integers[index][2] = elevensTagert.getThree() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getThreeNum())) != -1 ? 3 : -11;
+                    integers[index][3] = elevensTagert.getFour() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getFourNum())) != -1 ? 4 : -11;
+                    integers[index][4] = elevensTagert.getFive() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getFiveNum())) != -1 ? 5 : -11;
+                    integers[index][5] = elevensTagert.getSix() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getSixNum())) != -1 ? 6 : -11;
+                    integers[index][6] = elevensTagert.getSeven() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getSevenNum())) != -1 ? 7 : -11;
+                    integers[index][7] = elevensTagert.getEight() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getEightNum())) != -1 ? 8 : -11;
+                    integers[index][8] = elevensTagert.getNine() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getNineNum())) != -1 ? 9 : -11;
+                    integers[index][9] = elevensTagert.getTen() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getTenNum())) != -1 ? 10 : -11;
+                    integers[index][10] = elevensTagert.getEleven() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getElevenNum())) != -1 ? 11 : -11;
+                    //直接在这里取交集
+                    String[] integerStr = Convert.toStrArray(integers[index]);
+                    List<String> intersect = ArrayUtils.intersect(integerStr, eleven);
+                    map.put(intersect.size(), String.valueOf(nextPeriod));
+                    index++;
+                }
+                break;
+            }
+
+        }
+        if (integers == null) {
+            return "没匹配到合适的数据";
+        }
+        Integer[] max = new Integer[map.size()];
+        int asc = 0;
+        Set<Map.Entry<Integer, String>> entrySet = map.entrySet();
+        Iterator<Map.Entry<Integer, String>> iterator = entrySet.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, String> next = iterator.next();
+            max[asc++] = next.getKey();
+        }
+        Arrays.sort(max);
+        String nextPeriod = map.get(max[max.length - 1]);
+        Elevens eleven1 = new Elevens();
+        eleven1.setId(null);
+        eleven1.setOne(null);
+        eleven1.setTwo(null);
+        eleven1.setThree(null);
+        eleven1.setFour(null);
+        eleven1.setFive(null);
+        eleven1.setSix(null);
+        eleven1.setSeven(null);
+        eleven1.setEight(null);
+        eleven1.setNine(null);
+        eleven1.setTen(null);
+        eleven1.setEleven(null);
+        eleven1.setPeriod(nextPeriod);
+        Example<Elevens> elevensExample = Example.of(eleven1);
+        Elevens elevens = elevenMapper.findOne(elevensExample).get();
+        String target = "第"+(Long.valueOf(tenTimes.getPeriod())+1)+"期的目标数据为: [";
+        target += elevens.getOne() == 1 ? "1," : "";
+        target += elevens.getTwo() == 1 ? "2," : "";
+        target += elevens.getThree() == 1 ? "3," : "";
+        target += elevens.getFour() == 1 ? "4," : "";
+        target += elevens.getFive() == 1 ? "5," : "";
+        target += elevens.getSix() == 1 ? "6," : "";
+        target += elevens.getSeven() == 1 ? "7," : "";
+        target += elevens.getEight() == 1 ? "8," : "";
+        target += elevens.getNine() == 1 ? "9," : "";
+        target += elevens.getTen() == 1 ? "10," : "";
+        target += elevens.getEleven() == 1 ? "11," : "";
+        target += "];相似度为:" + max[max.length - 1] +".";
+        return target;
+    }
+
+    /**
+     * 获取三组统计最大相似度的数据输出
+     * @return
+     */
+    public String getThreeMaxSimular() {
+        List<TongJi> tongjiList = tongJiMapper.findAll();
+        if (tongjiList.size() != 1) {
+            return "统计没数据有误!请重新统计!";
+        }
+
+        TongJi tongJi = tongjiList.get(0);
+        String sort = tongJi.getPeriod();
+        Integer[][] integers = null;
+        Map<Integer, String> map = new HashMap<>();
+        //查询当前数据
+        TenTimes tenTimes = tenTimesMapper.findTenTimesLatest();
+        //保存当前数据的数组
+        String[] eleven = new String[11];
+        eleven[0] = String.valueOf(tenTimes.getOneTen() == 1 ? 1 : -1);
+        eleven[1] = String.valueOf(tenTimes.getTwoTen() == 1 ? 2 : -1);
+        eleven[2] = String.valueOf(tenTimes.getThreeTen() == 1 ? 3 : -1);
+        eleven[3] = String.valueOf(tenTimes.getFourTen() == 1 ? 4 : -1);
+        eleven[4] = String.valueOf(tenTimes.getFiveTen() == 1 ? 5 : -1);
+        eleven[5] = String.valueOf(tenTimes.getSixTen() == 1 ? 6 : -1);
+        eleven[6] = String.valueOf(tenTimes.getSevenTen() == 1 ? 7 : -1);
+        eleven[7] = String.valueOf(tenTimes.getEightTen() == 1 ? 8 : -1);
+        eleven[8] = String.valueOf(tenTimes.getNineTen() == 1 ? 9 : -1);
+        eleven[9] = String.valueOf(tenTimes.getTenTen() == 1 ? 10 : -1);
+        eleven[10] = String.valueOf(tenTimes.getElevenTen() == 1 ? 11 : -1);
+
+        for (int i = 0; i < sort.length(); i++) {
+            String sortStr = "%" + sort.substring(i);
+            List<ThreePeriod> threePeriodList = threePeriodMapper.findPeriodLikeFourSort(sortStr);
+            if (threePeriodList.size() > 0) {
+                //已找到 可能多个...
+                int index = 0;
+                integers = new Integer[threePeriodList.size()][11];
+                for (ThreePeriod threePeriod : threePeriodList) {
+                    if (threePeriod.getPeriod().endsWith("84")) {
+                        continue;
+                    }
+
+                    long nextPeriod = Long.valueOf(threePeriod.getPeriod()) + 1;
+                    Elevens elevens = new Elevens();
+                    elevens.setId(null);
+                    elevens.setOne(null);
+                    elevens.setTwo(null);
+                    elevens.setThree(null);
+                    elevens.setFour(null);
+                    elevens.setFive(null);
+                    elevens.setSix(null);
+                    elevens.setSeven(null);
+                    elevens.setEight(null);
+                    elevens.setNine(null);
+                    elevens.setTen(null);
+                    elevens.setEleven(null);
+                    elevens.setPeriod(threePeriod.getPeriod());
+                    Example<Elevens> elevensExample = Example.of(elevens);
+                    Elevens elevensTagert = elevenMapper.findOne(elevensExample).get();
+
+                    integers[index][0] = elevensTagert.getOne() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getOneNum())) != -1 ? 1 : -11;
+                    integers[index][1] = elevensTagert.getTwo() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getTwoNum())) != -1 ? 2 : -11;
+                    integers[index][2] = elevensTagert.getThree() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getThreeNum())) != -1 ? 3 : -11;
+                    integers[index][3] = elevensTagert.getFour() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getFourNum())) != -1 ? 4 : -11;
+                    integers[index][4] = elevensTagert.getFive() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getFiveNum())) != -1 ? 5 : -11;
+                    integers[index][5] = elevensTagert.getSix() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getSixNum())) != -1 ? 6 : -11;
+                    integers[index][6] = elevensTagert.getSeven() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getSevenNum())) != -1 ? 7 : -11;
+                    integers[index][7] = elevensTagert.getEight() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getEightNum())) != -1 ? 8 : -11;
+                    integers[index][8] = elevensTagert.getNine() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getNineNum())) != -1 ? 9 : -11;
+                    integers[index][9] = elevensTagert.getTen() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getTenNum())) != -1 ? 10 : -11;
+                    integers[index][10] = elevensTagert.getEleven() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getElevenNum())) != -1 ? 11 : -11;
+                    //直接在这里取交集
+                    String[] integerStr = Convert.toStrArray(integers[index]);
+                    List<String> intersect = ArrayUtils.intersect(integerStr, eleven);
+                    map.put(intersect.size(), String.valueOf(nextPeriod));
+                    index++;
+                }
+                break;
+            }
+
+        }
+        if (integers == null) {
+            return "没匹配到合适的数据";
+        }
+        Integer[] max = new Integer[map.size()];
+        int asc = 0;
+        Set<Map.Entry<Integer, String>> entrySet = map.entrySet();
+        Iterator<Map.Entry<Integer, String>> iterator = entrySet.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, String> next = iterator.next();
+            max[asc++] = next.getKey();
+        }
+        Arrays.sort(max);
+        String nextPeriod = map.get(max[max.length - 1]);
+        Elevens eleven1 = new Elevens();
+        eleven1.setId(null);
+        eleven1.setOne(null);
+        eleven1.setTwo(null);
+        eleven1.setThree(null);
+        eleven1.setFour(null);
+        eleven1.setFive(null);
+        eleven1.setSix(null);
+        eleven1.setSeven(null);
+        eleven1.setEight(null);
+        eleven1.setNine(null);
+        eleven1.setTen(null);
+        eleven1.setEleven(null);
+        eleven1.setPeriod(nextPeriod);
+        Example<Elevens> elevensExample = Example.of(eleven1);
+        Elevens elevens = elevenMapper.findOne(elevensExample).get();
+        String target = "第"+(Long.valueOf(tenTimes.getPeriod())+1)+"期的目标数据为: [";
+        target += elevens.getOne() == 1 ? "1," : "";
+        target += elevens.getTwo() == 1 ? "2," : "";
+        target += elevens.getThree() == 1 ? "3," : "";
+        target += elevens.getFour() == 1 ? "4," : "";
+        target += elevens.getFive() == 1 ? "5," : "";
+        target += elevens.getSix() == 1 ? "6," : "";
+        target += elevens.getSeven() == 1 ? "7," : "";
+        target += elevens.getEight() == 1 ? "8," : "";
+        target += elevens.getNine() == 1 ? "9," : "";
+        target += elevens.getTen() == 1 ? "10," : "";
+        target += elevens.getEleven() == 1 ? "11," : "";
+        target += "];相似度为:" + max[max.length - 1] +".";
+        return target;
+
+
     }
 }

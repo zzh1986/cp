@@ -45,11 +45,21 @@ public class MaxSimularController {
         return getElevenFourNumberSimular ;
     }
     /**
-     *
+     * 比较的sort相同的下一组数据 出结果
      */
     @GetMapping("/getHopeLastSimular")
     public String getHopeLastSimular() {
         String getHopeLastSimular = maxSimularService.getHopeLastSimular();
         return getHopeLastSimular ;
+    }
+
+    @GetMapping("/getTenMaxSimular")
+    public String getTenMaxSimular(){
+        return maxSimularService.getTenMaxSimular();
+    }
+
+    @GetMapping("/getThreeMaxSimular")
+    public String getThreeMaxSimular(){
+        return maxSimularService.getThreeMaxSimular();
     }
 }

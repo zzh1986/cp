@@ -52,6 +52,16 @@ public class DemoTest {
 //        DateTime dateTime = DateUtil.offsetDay(date, -1);
 //        System.out.println(dateTime);
        // System.out.println("1234566".substring(3));
+
+        Integer[][] tesy ={{1,2,3},{4,6}};
+        for (int i=0;i<tesy.length;i++){
+            for(int j=0;j<tesy[i].length;j++){
+                System.out.println(tesy[i][j]);
+            }
+        }
+
+
+
     }
 
 }
