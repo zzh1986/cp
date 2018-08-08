@@ -663,7 +663,7 @@ public class MaxSimularService {
         eleven1.setPeriod(nextPeriod);
         Example<Elevens> elevensExample = Example.of(eleven1);
         Elevens elevens = elevenMapper.findOne(elevensExample).get();
-        String target = "第"+(Long.valueOf(tenTimes.getPeriod())+1)+"期的目标数据为: [";
+        String target = "第" + (Long.valueOf(tenTimes.getPeriod()) + 1) + "期的目标数据为: [";
         target += elevens.getOne() == 1 ? "1," : "";
         target += elevens.getTwo() == 1 ? "2," : "";
         target += elevens.getThree() == 1 ? "3," : "";
@@ -675,12 +675,13 @@ public class MaxSimularService {
         target += elevens.getNine() == 1 ? "9," : "";
         target += elevens.getTen() == 1 ? "10," : "";
         target += elevens.getEleven() == 1 ? "11," : "";
-        target += "];相似度为:" + max[max.length - 1] +".";
+        target += "];相似度为:" + max[max.length - 1] + ".";
         return target;
     }
 
     /**
      * 获取三组统计最大相似度的数据输出
+     *
      * @return
      */
     public String getThreeMaxSimular() {
@@ -789,7 +790,7 @@ public class MaxSimularService {
         eleven1.setPeriod(nextPeriod);
         Example<Elevens> elevensExample = Example.of(eleven1);
         Elevens elevens = elevenMapper.findOne(elevensExample).get();
-        String target = "第"+(Long.valueOf(tenTimes.getPeriod())+1)+"期的目标数据为: [";
+        String target = "第" + (Long.valueOf(tenTimes.getPeriod()) + 1) + "期的目标数据为: [";
         target += elevens.getOne() == 1 ? "1," : "";
         target += elevens.getTwo() == 1 ? "2," : "";
         target += elevens.getThree() == 1 ? "3," : "";
@@ -801,9 +802,28 @@ public class MaxSimularService {
         target += elevens.getNine() == 1 ? "9," : "";
         target += elevens.getTen() == 1 ? "10," : "";
         target += elevens.getEleven() == 1 ? "11," : "";
-        target += "];相似度为:" + max[max.length - 1] +".";
+        target += "];相似度为:" + max[max.length - 1] + ".";
         return target;
 
 
+    }
+
+    /**
+     * 验证结果并返回
+     *
+     * @return
+     */
+    public String getVerification() {
+        String tenMaxSimular = getTenMaxSimular();
+        String threeMaxSimular = getThreeMaxSimular();
+        String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
+        String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
+        String[] result = ArrayUtil.addAll(fiveFirst, fiveSecond);
+        if (result.length == 8) {
+                //TODO 需要进行再次爬取数据进行验证.
+        }
+        /*if (result.length == 8) {
+            //TODO 另一种用法
+        }*/
     }
 }

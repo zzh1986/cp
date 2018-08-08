@@ -62,4 +62,13 @@ public class MaxSimularController {
     public String getThreeMaxSimular(){
         return maxSimularService.getThreeMaxSimular();
     }
+
+    /**
+     * 验证对应的一天的结果 或者几天的结果 百分比结果
+     * @return
+     */
+    @GetMapping("/verification")
+    public String getVerification(){
+        return maxSimularService.getVerification();
+    }
 }
