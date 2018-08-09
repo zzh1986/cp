@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class TenTimesService {
 
-    private static String BASE_URL=UrlDateEnum.URL_ENUM.getMsg();
+    private static String BASE_URL = UrlDateEnum.URL_ENUM.getMsg();
 
     @Autowired
     private TenTimesMapper tenTimesMapper;
@@ -101,10 +101,10 @@ public class TenTimesService {
         }
         System.out.println("==================================");
         if (twoTime.size() > 0) {
-            for (int j=0;j<twoTime.size();j++){
-                System.out.print("出现两次"+twoTime.get(j)+"的数据为:");
+            for (int j = 0; j < twoTime.size(); j++) {
+                System.out.print("出现两次" + twoTime.get(j) + "的数据为:");
                 for (int i = 0; i < elevens.length; i++) {
-                    if (elevens[i].equals(twoTime.get(j)) ) {
+                    if (elevens[i].equals(twoTime.get(j))) {
                         //  此处的i就是我需要的那个数
                         System.out.print(i + 1 + " ");
                     }
@@ -147,7 +147,7 @@ public class TenTimesService {
 //            }
 //            fiveList.add(result);
 //        }
-        FiveUtil.getOneGroupNumber(fiveList,elements);
+        FiveUtil.getOneGroupNumber(fiveList, elements);
         //只统计10-83期之间的数据,其余均不需要统计
         Integer perNum = Integer.valueOf(period);
         if (perNum < 10 || perNum > 83) {
@@ -210,4 +210,85 @@ public class TenTimesService {
         }
         return tenTimesList;
     }
+
+    /**
+     * 从爱彩乐获取10组数据
+     *
+     * @param date
+     * @param period
+     * @return
+     * @throws IOException
+     */
+    public List<TenTimes> getTenTimesSencond(String date, String period) throws IOException {
+        if(Integer.valueOf(period)<10 || Integer.valueOf(period)>83){
+            return null;
+        }
+        String url = "http://gd11x5.icaile.com/";
+        date = date.substring(2);
+        Elements elements = Jsoup.connect(url).get().select(".chart-bg-qh");
+        if (!elements.isEmpty() && elements.size()>9) {
+            List<TenTimes> tenTimesList = new ArrayList<>();
+            for (Element element : elements) {
+                Long periodtagert = Long.valueOf(element.text());
+                //逻辑不对
+                if (periodtagert > Long.valueOf(date) * 100 + Integer.valueOf(period) - 10 && periodtagert < Long.valueOf(date) * 100 + Integer.valueOf(period) + 1) {
+                    Elements elements1 = element.siblingElements();
+                    String one = elements1.select(".dqhm").get(0).text();
+                    String two = elements1.select(".dqhm").get(1).text();
+                    String three = elements1.select(".dqhm").get(2).text();
+                    String four = elements1.select(".dqhm").get(3).text();
+                    String five = elements1.select(".chart-bg-kjhmo").get(0).text();
+                    TenTimes tenTimes = new TenTimes();
+                    chooseTenTimes(tenTimes,one);
+                    chooseTenTimes(tenTimes,two);
+                    chooseTenTimes(tenTimes,three);
+                    chooseTenTimes(tenTimes,four);
+                    chooseTenTimes(tenTimes,five);
+                    tenTimes.setPeriod(element.text());
+                    tenTimesList.add(tenTimes);
+                }
+
+            }
+            return tenTimesList;
+        }
+        return null;
+    }
+
+    private void chooseTenTimes(TenTimes tenTimes,String num) {
+        switch (num){
+            case "01":
+                tenTimes.setOneTen(1);
+                break;
+            case "02":
+                tenTimes.setTwoTen(1);
+                break;
+            case "03":
+                tenTimes.setThreeTen(1);
+                break;
+            case "04":
+                tenTimes.setFourTen(1);
+                break;
+            case "05":
+                tenTimes.setFiveTen(1);
+                break;
+            case "06":
+                tenTimes.setSixTen(1);
+                break;
+            case "07":
+                tenTimes.setSevenTen(1);
+                break;
+            case "08":
+                tenTimes.setEightTen(1);
+                break;
+            case "09":
+                tenTimes.setNineTen(1);
+                break;
+            case "10":
+                tenTimes.setTenTen(1);
+                break;
+            default:
+                tenTimes.setElevenTen(1);
+        }
+    }
+
 }
