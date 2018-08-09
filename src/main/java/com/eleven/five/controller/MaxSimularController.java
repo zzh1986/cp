@@ -36,15 +36,6 @@ public class MaxSimularController {
     }
 
     /**
-     * 11组数据获取相似的
-     * @return
-     */
-    @GetMapping("/getElevenFourNumberSimular")
-    public String getElevenFourNumberSimular() {
-        String getElevenFourNumberSimular = maxSimularService.getElevenFourNumberSimular();
-        return getElevenFourNumberSimular ;
-    }
-    /**
      * 比较的sort相同的下一组数据 出结果
      */
     @GetMapping("/getHopeLastSimular")
@@ -65,10 +56,16 @@ public class MaxSimularController {
 
     /**
      * 验证对应的一天的结果 或者几天的结果 百分比结果
+     * @param date   格式为: 20180807
      * @return
      */
     @GetMapping("/verification")
-    public String getVerification(){
-        return maxSimularService.getVerification();
+    public String getVerification(String date){
+        return maxSimularService.getVerification(date);
+    }
+
+    @GetMapping("/chooseTwoNumber")
+    public String chooseTwoNumber(){
+        return maxSimularService.chooseTwoNumber();
     }
 }

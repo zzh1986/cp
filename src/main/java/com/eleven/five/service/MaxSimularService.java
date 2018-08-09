@@ -1,14 +1,25 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ArrayUtil;
+import com.eleven.five.controller.TenTimesController;
 import com.eleven.five.entity.*;
 import com.eleven.five.mapper.*;
 import com.eleven.five.util.ArrayUtils;
+import com.eleven.five.util.FiveUtil;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -16,6 +27,8 @@ import java.util.*;
  */
 @Service
 public class MaxSimularService {
+
+    private Logger log = LoggerFactory.getLogger(MaxSimularService.class);
 
     @Autowired
     private TenTongJiMapper tenTongJiMapper;
@@ -32,20 +45,12 @@ public class MaxSimularService {
     @Autowired
     private TenTimesMapper tenTimesMapper;
 
-    @Autowired
-    private ElevenTongJiMapper elevenTongJiMapper;
-
-    @Autowired
-    private ElevenNumberMapper elevenNumberMapper;
-
-    @Autowired
-    private ElevenThreePeriodMapper elevenThreePeriodMapper;
-
-    @Autowired
-    private ElevenTimesMapper elevenTimesMapper;
 
     @Autowired
     private ElevenMapper elevenMapper;
+
+    @Autowired
+    private TenTimesController tenTimesController;
 
     public String findMaxSimularNextPeriod() {
 
@@ -294,146 +299,6 @@ public class MaxSimularService {
         return "不好意思 没匹配到哦";
     }
 
-
-    public String getElevenFourNumberSimular() {
-        //1.查询出目标sort
-        List<ElevenTongJi> elevenTongJiList = elevenTongJiMapper.findAll();
-        if (elevenTongJiList.size() != 1) {
-            return "统计出现异常,需要先进行统计才可以";
-        }
-        ElevenTongJi elevenTongJi = elevenTongJiList.get(0);
-        String str = "";
-        int begin = -1;
-        for (int i = 0; i < 8; i++) {
-            switch (i) {
-                case 0:
-                    str = elevenTongJi.getSort().substring(0 + i, 3 + i) + "________";
-                    begin = i;
-                    break;
-                case 1:
-                    str = "_" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "_______";
-                    begin = i;
-                    break;
-                case 2:
-                    str = "__" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "______";
-                    begin = i;
-                    break;
-                case 3:
-                    str = "___" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "_____";
-                    begin = i;
-                    break;
-                case 4:
-                    str = "____" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "____";
-                    begin = i;
-                    break;
-                case 5:
-                    str = "_____" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "___";
-                    begin = i;
-                    break;
-                case 6:
-                    str = "______" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "__";
-                    begin = i;
-                    break;
-                case 7:
-                    str = "_______" + elevenTongJi.getSort().substring(0 + i, 3 + i) + "_";
-                    begin = i;
-                default:
-                    str = "________" + elevenTongJi.getSort().substring(0 + i, 3 + i);
-                    begin = i;
-            }
-            List<ElevenNumber> elevenNumberList = elevenNumberMapper.findPeriodLikeFourSort(str);
-            String periodLatest = elevenTimesMapper.findPeriodLatest();
-            if (elevenNumberList.size() > 0) {
-                String result = String.valueOf(Long.valueOf(elevenNumberList.get(0).getSort()) + 1);
-                //TODO 里面需要做逻辑与运算的判断,看看应该怎样操作
-                //首先两个对象每一位分别进行异或然后取反(用三目运算)得到的数据需要用三位得出的结果继续逻辑运算(算法待定)
-                //1.先出第一组数据
-                ElevenNumber elevenNumber = elevenNumberList.get(0);
-                int[] oneXOR = new int[11];
-                oneXOR[0] = (elevenNumber.getOneNum().equals(elevenTongJi.getOne())) ? 1 : 0;
-                oneXOR[1] = (elevenNumber.getTwoNum().equals(elevenTongJi.getTwo())) ? 1 : 0;
-                oneXOR[2] = (elevenNumber.getThreeNum().equals(elevenTongJi.getThree())) ? 1 : 0;
-                oneXOR[3] = (elevenNumber.getFourNum().equals(elevenTongJi.getFour())) ? 1 : 0;
-                oneXOR[4] = (elevenNumber.getFiveNum().equals(elevenTongJi.getFive())) ? 1 : 0;
-                oneXOR[5] = (elevenNumber.getSixNum().equals(elevenTongJi.getSix())) ? 1 : 0;
-                oneXOR[6] = (elevenNumber.getSevenNum().equals(elevenTongJi.getSeven())) ? 1 : 0;
-                oneXOR[7] = (elevenNumber.getEightNum().equals(elevenTongJi.getEight())) ? 1 : 0;
-                oneXOR[8] = (elevenNumber.getNineNum().equals(elevenTongJi.getNine())) ? 1 : 0;
-                oneXOR[9] = (elevenNumber.getTenNum().equals(elevenTongJi.getTen())) ? 1 : 0;
-                oneXOR[10] = (elevenNumber.getElevenNum().equals(elevenTongJi.getEleven())) ? 1 : 0;
-
-                int[] twoXOR = new int[11];
-                ElevenThreePeriod threePeriod1 = new ElevenThreePeriod();
-                threePeriod1.setPeriod(elevenNumberList.get(0).getPeriod());
-                Example<ElevenThreePeriod> example = Example.of(threePeriod1);
-                ElevenThreePeriod elevenThreePeriod = elevenThreePeriodMapper.findOne(example).get();
-                ElevenTongJi eleventongJi = elevenTongJiMapper.findAll().get(0);
-                twoXOR[0] = (elevenThreePeriod.getOneNum().equals(eleventongJi.getOne())) ? 1 : 0;
-                twoXOR[1] = (elevenThreePeriod.getTwoNum().equals(eleventongJi.getTwo())) ? 1 : 0;
-                twoXOR[2] = (elevenThreePeriod.getThreeNum().equals(eleventongJi.getThree())) ? 1 : 0;
-                twoXOR[3] = (elevenThreePeriod.getFourNum().equals(eleventongJi.getFour())) ? 1 : 0;
-                twoXOR[4] = (elevenThreePeriod.getFiveNum().equals(eleventongJi.getFive())) ? 1 : 0;
-                twoXOR[5] = (elevenThreePeriod.getSixNum().equals(eleventongJi.getSix())) ? 1 : 0;
-                twoXOR[6] = (elevenThreePeriod.getSevenNum().equals(eleventongJi.getSeven())) ? 1 : 0;
-                twoXOR[7] = (elevenThreePeriod.getEightNum().equals(eleventongJi.getEight())) ? 1 : 0;
-                twoXOR[8] = (elevenThreePeriod.getNineNum().equals(eleventongJi.getNine())) ? 1 : 0;
-                twoXOR[9] = (elevenThreePeriod.getTenNum().equals(eleventongJi.getTen())) ? 1 : 0;
-                twoXOR[10] = (elevenThreePeriod.getElevenNum().equals(eleventongJi.getEleven())) ? 1 : 0;
-                //TODO---> 1 这边做一下尝试性的测试.
-                //No.1 试一下与操作
-                List<Integer> target = new ArrayList<>();
-                for (int j = 0; j < 11; j++) {
-                    int no1 = (oneXOR[j] & twoXOR[j]) * (j + 1);
-                    if (no1 != 0) {
-                        target.add(no1);
-                    }
-                }
-                //TODO---> 2
-                //No.2 尝试另一种与操作
-                int[] threeXOR = new int[11];
-                ElevenTimes elevenTimes = elevenTimesMapper.findPeriodOldest();
-                threeXOR[0] = elevenTimes.getOneTen();
-                threeXOR[1] = elevenTimes.getTwoTen();
-                threeXOR[2] = elevenTimes.getThreeTen();
-                threeXOR[3] = elevenTimes.getFourTen();
-                threeXOR[4] = elevenTimes.getFiveTen();
-                threeXOR[5] = elevenTimes.getSixTen();
-                threeXOR[6] = elevenTimes.getSevenTen();
-                threeXOR[7] = elevenTimes.getEightTen();
-                threeXOR[8] = elevenTimes.getNineTen();
-                threeXOR[9] = elevenTimes.getTenTen();
-                threeXOR[10] = elevenTimes.getElevenTen();
-
-                List<Integer> targetTwo = new ArrayList<>();
-                for (int j = 0; j < 11; j++) {
-                    int no2 = (oneXOR[j] & threeXOR[j]) * (j + 1);
-                    if (no2 != 0) {
-                        targetTwo.add(no2);
-                    }
-                }
-
-
-                if (target.size() == 0) {
-                    return "第" + (Long.valueOf(periodLatest) + 1) + "期,没有合适的号码,不太适合选择--->第二组:" + targetTwo.toString();
-                } else if (target.size() == 2) {
-
-                    return "第" + (Long.valueOf(periodLatest) + 1) + "期建议选择后面号码:" + target.toString() + "--->第二组:" + targetTwo.toString();
-                } else if (target.size() == 1) {
-                    return "第" + (Long.valueOf(periodLatest) + 1) + "期不建议选择这个号码:" + target.toString() + "--->第二组:" + targetTwo.toString();
-                } else if (target.size() > 2) {
-                    return "第" + (Long.valueOf(periodLatest) + 1) + "期请考虑还其他方案,因为号码太多:" + target.toString() + "--->第二组:" + targetTwo.toString();
-                }
-
-
-//                System.out.println();
-//                System.out.println("===========================================");
-//                System.out.println(result);
-//                return result + "开始于:" + (begin + 1) + ";结束于:" + (begin + 4);
-            }
-        }
-        //TODO 这里进行11组数的判断,如果还没有,再考虑其他方案  暂时不实现
-        return "不好意思,11组的也没匹配到哦";
-    }
 
     /**
      * 这里通过按顺序比较,查询到下一组在进行对应的1或0的比对,然后选出对应的数字
@@ -813,17 +678,78 @@ public class MaxSimularService {
      *
      * @return
      */
-    public String getVerification() {
-        String tenMaxSimular = getTenMaxSimular();
-        String threeMaxSimular = getThreeMaxSimular();
-        String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
-        String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
-        String[] result = ArrayUtil.addAll(fiveFirst, fiveSecond);
-        if (result.length == 8) {
-                //TODO 需要进行再次爬取数据进行验证.
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public String getVerification(String date) {
+        int fenZi = 0;
+        int fenMu = 0;
+        try {
+            //少个save操作
+            t1:
+            for (int period = 10; period < 84; period++) {
+
+                tenTimesController.saveTenTimes(date, String.valueOf(period));
+                String tenMaxSimular = getTenMaxSimular();
+                String threeMaxSimular = getThreeMaxSimular();
+                String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
+                String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
+                List<String> intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
+                String[] result = intersect.toArray(new String[0]);
+                if (result.length == 2) {
+                    //TODO 需要进行再次爬取数据进行验证.
+                    String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+
+                    Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
+                    String award = elements.get(0).attr("data-award");
+                    if (StringUtils.isEmpty(award) || award.length() < 10) {
+                        break t1;
+                    }
+                    String[] awardArray = award.split("[\\s]+");
+                    Integer[] awardInt = Convert.toIntArray(awardArray);
+                    Integer[] resultInt = Convert.toIntArray(result);
+                    // 关联的一起改  ============ awardInt.length
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length) {
+                        fenZi++;
+                    }
+                    fenMu++;
+                }
+            }
+        } catch (Exception e) {
+            log.error("抓取下一期的数据异常!");
+            e.printStackTrace();
         }
+        final double percent = fenZi * 1.0 / fenMu;
+        return date + "当天的成功率为:" + percent + "总次数为:" + fenMu + "------>中奖次数为:" + fenZi;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
+    }
+
+    public String chooseTwoNumber() {
+        try {
+            //date 应该是 20180809
+            Date today = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String date = sdf.format(today);
+            String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+            Elements elements = Jsoup.connect(url).get().select("[data-period]");
+            List<String> fiveList = new ArrayList<>();
+            FiveUtil.getOneGroupNumber(fiveList, elements);
+            int period = fiveList.size();
+            tenTimesController.saveTenTimes(date, String.valueOf(period));
+            String tenMaxSimular = getTenMaxSimular();
+            String threeMaxSimular = getThreeMaxSimular();
+            String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
+            String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
+            List<String> intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
+            String[] result = intersect.toArray(new String[0]);
+            if (result.length == 2) {
+                return "请选择" + Arrays.toString(result);
+            }
+            return "不太适合选择:" + Arrays.toString(result);
+        }catch (Exception e){
+            log.error("数据爬取异常!!!");
+            return "数据爬取异常!!!";
+        }
+
     }
 }

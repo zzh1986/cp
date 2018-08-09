@@ -10,7 +10,7 @@ public enum  UrlDateEnum {
      * 保存数据时只用一次即可
      */
     //DATE_ENUM("2018-08-02"),
-    DATE_ENUM(""),
+    DATE_ENUM("2018-08-08"),
     /**
      * 默认url是广东11选5的url
      */
@@ -30,7 +30,12 @@ public enum  UrlDateEnum {
     /**
      *  易乐11选5
      */
-    URL_YILE("http://caipiao.163.com/award/zj11xuan5/");
+    URL_YILE("http://caipiao.163.com/award/zj11xuan5/"),
+
+    /**
+     * 360彩票网址
+     */
+    URL_360("http://caipiao.360.com/award/zj11xuan5/");
     private final String msg;
 
     UrlDateEnum( String msg) {

@@ -19,8 +19,6 @@ public class ElevenService {
     @Autowired
     private TenNumberService tenNumberService;
 
-    @Autowired
-    private ElevenNumberService elevenNumberService;
 
     private Logger logger = LoggerFactory.getLogger(ElevenService.class);
 

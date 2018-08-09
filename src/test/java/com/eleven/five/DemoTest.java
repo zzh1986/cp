@@ -2,7 +2,11 @@ package com.eleven.five;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.eleven.five.entity.UrlDateEnum;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +15,7 @@ import java.util.Date;
  * @author zhaozhihong
  */
 public class DemoTest {
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
 //        String instead = "___________";
 //        System.out.println(instead.substring(0,0)+"****"+instead.substring(0+4));
 //        String s="22222";
@@ -53,12 +57,18 @@ public class DemoTest {
 //        System.out.println(dateTime);
        // System.out.println("1234566".substring(3));
 
-        Integer[][] tesy ={{1,2,3},{4,6}};
+        /*Integer[][] tesy ={{1,2,3},{4,6}};
         for (int i=0;i<tesy.length;i++){
             for(int j=0;j<tesy[i].length;j++){
                 System.out.println(tesy[i][j]);
             }
-        }
+        }*/
+
+        String url = UrlDateEnum.URL_ENUM.getMsg() + 20180802 + ".html";
+
+        Elements elements = Jsoup.connect(url).get().select("[data-period="+ 180802 + (12 + 1)+"]" );
+        String award = elements.get(0).attr("data-award");
+        System.out.println(award);
 
 
 
