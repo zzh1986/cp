@@ -1,8 +1,6 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ArrayUtil;
 import com.eleven.five.controller.TenTimesController;
 import com.eleven.five.entity.*;
 import com.eleven.five.mapper.*;
@@ -406,7 +404,7 @@ public class MaxSimularService {
                 }
 
                 if (three != null && integers != null && three.length != 0 && integers.length != 0) {
-                    Object[][] result=new Object[three.length][];
+                    Object[][] result = new Object[three.length][];
                     for (int j = 0; j < three.length; j++) {
                         String[] threeStr = Convert.toStrArray(three[j]);
                         String[] elevenStr = Convert.toStrArray(integers[j]);
@@ -655,6 +653,7 @@ public class MaxSimularService {
 
     /**
      * 将获取到的最新的一期数据转成字符串数组
+     *
      * @param tenTimes
      * @return
      */
@@ -687,11 +686,15 @@ public class MaxSimularService {
         int oneFenZiNotIn = 0;
         int twoFenZi = 0;
         int fenMu = 0;
-        int zongOneFenZiIn=0;
 
         int threeZeroFenZi = 0;
         int threeOneFenZi = 0;
+        int threeOneFenZiIn=0;
+        int threeOneFenZiNotIn=0;
         int threeTwoFenZi = 0;
+        int threeTwoFenZiZeroIn=0;
+        int threeTwoFenZiOneIn=0;
+        int threeTwoFenZiTwoIn=0;
         int threeThreeFenZi = 0;
         int threeFenMu = 0;
 
@@ -706,10 +709,12 @@ public class MaxSimularService {
                 String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
                 String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
                 Object[] result = ArrayUtils.intersect(fiveFirst, fiveSecond);
+                TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
+                String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
+                Integer[] latestIntTenTimes = Convert.toIntArray(latestTenTimes);
                 if (result.length == 2) {
                     //TODO 需要进行再次爬取数据进行验证.
                     String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
-
                     Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
                     String award = elements.get(0).attr("data-award");
                     if (StringUtils.isEmpty(award) || award.length() < 10) {
@@ -718,29 +723,24 @@ public class MaxSimularService {
                     String[] awardArray = award.split("[\\s]+");
                     Integer[] awardInt = Convert.toIntArray(awardArray);
                     Integer[] resultInt = Convert.toIntArray(result);
-                    TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
-                    String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
-                    Integer[] latestIntTenTimes = Convert.toIntArray(latestTenTimes);
-                    //只有一个数字中奖,如果中奖数字,只有两种情况,在里面(6)和不在里面(7)
-                    if(ArrayUtils.union(ArrayUtils.intersect(resultInt,awardInt),latestIntTenTimes).length==6){
-                        zongOneFenZiIn++;
+
+                    if (ArrayUtils.intersect(resultInt, awardInt).length == 0) {
+                        zeroFenZi++;
                     }
-                    // 关联的一起改  ============ awardInt.length
-                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length) {
-                        twoFenZi++;
-                    }
-                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 1) {
+                    //只有一个数字中奖,如果中奖数字,只有两种情况,在里面(6)和不在里面(7),结果出了两个数字
+                    if (ArrayUtils.intersect(resultInt, awardInt).length == 1) {
                         //只有一个数字中奖,如果中奖数字,只有两种情况,在里面(6)和不在里面(7)
-                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==1){
+                        if (ArrayUtils.intersect(resultInt, awardInt, latestIntTenTimes).length == 1) {
                             oneFenZiIn++;
                         }
-                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==0){
+                        if (ArrayUtils.intersect(resultInt, awardInt, latestIntTenTimes).length == 0) {
                             oneFenZiNotIn++;
                         }
                         oneFenZi++;
                     }
-                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 2) {
-                        zeroFenZi++;
+                    // 关联的一起改  ============ awardInt.length
+                    if (ArrayUtils.intersect(resultInt, awardInt).length == 2) {
+                        twoFenZi++;
                     }
                     fenMu++;
                 }
@@ -762,9 +762,19 @@ public class MaxSimularService {
                         threeThreeFenZi++;
                     }
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 1) {
+                       switch (ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length){
+                           case 0: threeTwoFenZiZeroIn++; break;
+                           case 1: threeTwoFenZiOneIn++; break;
+                           default: threeTwoFenZiTwoIn++;
+                       }
                         threeTwoFenZi++;
                     }
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 2) {
+                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==1){
+                            threeOneFenZiIn++;
+                        }else{
+                            threeOneFenZiNotIn++;
+                        }
                         threeOneFenZi++;
                     }
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 3) {
@@ -780,26 +790,35 @@ public class MaxSimularService {
         final double twoPercent = twoFenZi * 1.0 / fenMu;
         final double onePercent = oneFenZi * 1.0 / fenMu;
         final double oneInPercent = oneFenZiIn * 1.0 / fenMu;
-        final double zongOneInPercent = zongOneFenZiIn * 1.0 / fenMu;
         final double oneNotInPercent = oneFenZiNotIn * 1.0 / fenMu;
         final double zeroPercent = zeroFenZi * 1.0 / fenMu;
         final double threeThreePercent = threeThreeFenZi * 1.0 / threeFenMu;
+        final double threeTwoZeroPercent = threeTwoFenZiZeroIn * 1.0 / threeFenMu;
+        final double threeTwoOnePercent = threeTwoFenZiOneIn * 1.0 / threeFenMu;
+        final double threeTwoTwoPercent = threeTwoFenZiTwoIn * 1.0 / threeFenMu;
         final double threeTwoPercent = threeTwoFenZi * 1.0 / threeFenMu;
+        final double threeOneInPercent = threeOneFenZiIn * 1.0 / threeFenMu;
+        final double threeOneNotInPercent = threeOneFenZiNotIn * 1.0 / threeFenMu;
         final double threeOnePercent = threeOneFenZi * 1.0 / threeFenMu;
         final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
         NumberFormat pnf = NumberFormat.getPercentInstance();
-        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--" + pnf.format(twoPercent)
-                + ";\n 2.一次出现的概率为--" + pnf.format(onePercent)
-                    +":\n\t  2.1.一次出现在上次的概率为--" + pnf.format(oneInPercent)
-                    + ";\n\t 2.2一次没有出现在上次的概率为--" + pnf.format(oneNotInPercent)
-                    + ";\n\t 2.3总共前次出现1次的概率为--" + pnf.format(zongOneInPercent)
-                + ";\n 3.都没有出现在上次的概率为--" + pnf.format(zeroPercent)
-                + ";\n 2次的情况总次数为:" + fenMu
-                + "\n 当天结果为3的成功率如下:\n 1.三次都出现在上次的成功率为--" + pnf.format(threeThreePercent)
-                + ";\n 2.三次中两次出现在上次的概率为--" + pnf.format(threeTwoPercent)
-                + ";\n 3.三次中一次出现在上次的概率为--" + pnf.format(threeOnePercent)
-                + ";\n 3.三次中没有出现在上次的概率为--" + pnf.format(threeZeroPercent)
-                + ";\n 3次的情况总次数为:" + threeFenMu;
+        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--"
+                + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--"
+                + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--"
+                + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--"
+                + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--"
+                + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:"
+                + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--"
+                + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--"
+                + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--"
+                + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--"
+                + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--"
+                + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--"
+                + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--"
+                + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--"
+                + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--"
+                + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
+                + threeFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
@@ -821,9 +840,11 @@ public class MaxSimularService {
             String threeMaxSimular = getThreeMaxSimular();
             String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
             String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
-            Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
+            TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
+            String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
+            Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond,latestTenTimes);
             String[] result = Convert.toStrArray(intersect);
-            if (result.length == 2) {
+            if (result.length == 1) {
                 return "请选择" + Arrays.toString(result);
             }
             return "不太适合选择:" + Arrays.toString(result);
