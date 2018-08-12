@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -403,14 +404,15 @@ public class MaxSimularService {
 
                     index++;
                 }
-                List<List<String>> result = new ArrayList<>();
+
                 if (three != null && integers != null && three.length != 0 && integers.length != 0) {
+                    Object[][] result=new Object[three.length][];
                     for (int j = 0; j < three.length; j++) {
                         String[] threeStr = Convert.toStrArray(three[j]);
                         String[] elevenStr = Convert.toStrArray(integers[j]);
-                        result.add(ArrayUtils.intersect(threeStr, elevenStr));
+                        result[i] = ArrayUtils.intersect(threeStr, elevenStr);
                     }
-                    return ArrayUtil.toString(result);
+                    return Arrays.toString(result);
                 }
             }
         }
@@ -435,18 +437,7 @@ public class MaxSimularService {
         //查询当前数据
         TenTimes tenTimes = tenTimesMapper.findTenTimesLatest();
         //保存当前数据的数组
-        String[] eleven = new String[11];
-        eleven[0] = String.valueOf(tenTimes.getOneTen() == 1 ? 1 : -1);
-        eleven[1] = String.valueOf(tenTimes.getTwoTen() == 1 ? 2 : -1);
-        eleven[2] = String.valueOf(tenTimes.getThreeTen() == 1 ? 3 : -1);
-        eleven[3] = String.valueOf(tenTimes.getFourTen() == 1 ? 4 : -1);
-        eleven[4] = String.valueOf(tenTimes.getFiveTen() == 1 ? 5 : -1);
-        eleven[5] = String.valueOf(tenTimes.getSixTen() == 1 ? 6 : -1);
-        eleven[6] = String.valueOf(tenTimes.getSevenTen() == 1 ? 7 : -1);
-        eleven[7] = String.valueOf(tenTimes.getEightTen() == 1 ? 8 : -1);
-        eleven[8] = String.valueOf(tenTimes.getNineTen() == 1 ? 9 : -1);
-        eleven[9] = String.valueOf(tenTimes.getTenTen() == 1 ? 10 : -1);
-        eleven[10] = String.valueOf(tenTimes.getElevenTen() == 1 ? 11 : -1);
+        String[] eleven = getLatestTenTimes(tenTimes);
 
         for (int i = 0; i < sort.length(); i++) {
             String sortStr = "%" + sort.substring(i);
@@ -491,8 +482,8 @@ public class MaxSimularService {
                     integers[index][10] = elevensTagert.getEleven() == 1 && sort.substring(i).indexOf(String.valueOf(tenNumber.getElevenNum())) != -1 ? 11 : -11;
                     //直接在这里取交集
                     String[] integerStr = Convert.toStrArray(integers[index]);
-                    List<String> intersect = ArrayUtils.intersect(integerStr, eleven);
-                    map.put(intersect.size(), String.valueOf(nextPeriod));
+                    Object[] intersect = ArrayUtils.intersect(integerStr, eleven);
+                    map.put(intersect.length, String.valueOf(nextPeriod));
                     index++;
                 }
                 break;
@@ -562,18 +553,7 @@ public class MaxSimularService {
         //查询当前数据
         TenTimes tenTimes = tenTimesMapper.findTenTimesLatest();
         //保存当前数据的数组
-        String[] eleven = new String[11];
-        eleven[0] = String.valueOf(tenTimes.getOneTen() == 1 ? 1 : -1);
-        eleven[1] = String.valueOf(tenTimes.getTwoTen() == 1 ? 2 : -1);
-        eleven[2] = String.valueOf(tenTimes.getThreeTen() == 1 ? 3 : -1);
-        eleven[3] = String.valueOf(tenTimes.getFourTen() == 1 ? 4 : -1);
-        eleven[4] = String.valueOf(tenTimes.getFiveTen() == 1 ? 5 : -1);
-        eleven[5] = String.valueOf(tenTimes.getSixTen() == 1 ? 6 : -1);
-        eleven[6] = String.valueOf(tenTimes.getSevenTen() == 1 ? 7 : -1);
-        eleven[7] = String.valueOf(tenTimes.getEightTen() == 1 ? 8 : -1);
-        eleven[8] = String.valueOf(tenTimes.getNineTen() == 1 ? 9 : -1);
-        eleven[9] = String.valueOf(tenTimes.getTenTen() == 1 ? 10 : -1);
-        eleven[10] = String.valueOf(tenTimes.getElevenTen() == 1 ? 11 : -1);
+        String[] eleven = getLatestTenTimes(tenTimes);
 
         for (int i = 0; i < sort.length(); i++) {
             String sortStr = "%" + sort.substring(i);
@@ -618,8 +598,8 @@ public class MaxSimularService {
                     integers[index][10] = elevensTagert.getEleven() == 1 && sort.substring(i).indexOf(String.valueOf(threePeriod.getElevenNum())) != -1 ? 11 : -11;
                     //直接在这里取交集
                     String[] integerStr = Convert.toStrArray(integers[index]);
-                    List<String> intersect = ArrayUtils.intersect(integerStr, eleven);
-                    map.put(intersect.size(), String.valueOf(nextPeriod));
+                    Object[] intersect = ArrayUtils.intersect(integerStr, eleven);
+                    map.put(intersect.length, String.valueOf(nextPeriod));
                     index++;
                 }
                 break;
@@ -674,14 +654,47 @@ public class MaxSimularService {
     }
 
     /**
+     * 将获取到的最新的一期数据转成字符串数组
+     * @param tenTimes
+     * @return
+     */
+    public String[] getLatestTenTimes(TenTimes tenTimes) {
+        String[] eleven = new String[11];
+        eleven[0] = String.valueOf(tenTimes.getOneTen() == 1 ? 1 : -1);
+        eleven[1] = String.valueOf(tenTimes.getTwoTen() == 1 ? 2 : -1);
+        eleven[2] = String.valueOf(tenTimes.getThreeTen() == 1 ? 3 : -1);
+        eleven[3] = String.valueOf(tenTimes.getFourTen() == 1 ? 4 : -1);
+        eleven[4] = String.valueOf(tenTimes.getFiveTen() == 1 ? 5 : -1);
+        eleven[5] = String.valueOf(tenTimes.getSixTen() == 1 ? 6 : -1);
+        eleven[6] = String.valueOf(tenTimes.getSevenTen() == 1 ? 7 : -1);
+        eleven[7] = String.valueOf(tenTimes.getEightTen() == 1 ? 8 : -1);
+        eleven[8] = String.valueOf(tenTimes.getNineTen() == 1 ? 9 : -1);
+        eleven[9] = String.valueOf(tenTimes.getTenTen() == 1 ? 10 : -1);
+        eleven[10] = String.valueOf(tenTimes.getElevenTen() == 1 ? 11 : -1);
+        return eleven;
+    }
+
+    /**
      * 验证结果并返回
      *
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String getVerification(String date) {
-        int fenZi = 0;
+        int zeroFenZi = 0;
+        int oneFenZi = 0;
+        int oneFenZiIn = 0;
+        int oneFenZiNotIn = 0;
+        int twoFenZi = 0;
         int fenMu = 0;
+        int zongOneFenZiIn=0;
+
+        int threeZeroFenZi = 0;
+        int threeOneFenZi = 0;
+        int threeTwoFenZi = 0;
+        int threeThreeFenZi = 0;
+        int threeFenMu = 0;
+
         try {
             //少个save操作
             t1:
@@ -692,8 +705,7 @@ public class MaxSimularService {
                 String threeMaxSimular = getThreeMaxSimular();
                 String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
                 String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
-                List<String> intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
-                String[] result = intersect.toArray(new String[0]);
+                Object[] result = ArrayUtils.intersect(fiveFirst, fiveSecond);
                 if (result.length == 2) {
                     //TODO 需要进行再次爬取数据进行验证.
                     String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
@@ -706,19 +718,88 @@ public class MaxSimularService {
                     String[] awardArray = award.split("[\\s]+");
                     Integer[] awardInt = Convert.toIntArray(awardArray);
                     Integer[] resultInt = Convert.toIntArray(result);
+                    TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
+                    String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
+                    Integer[] latestIntTenTimes = Convert.toIntArray(latestTenTimes);
+                    //只有一个数字中奖,如果中奖数字,只有两种情况,在里面(6)和不在里面(7)
+                    if(ArrayUtils.union(ArrayUtils.intersect(resultInt,awardInt),latestIntTenTimes).length==6){
+                        zongOneFenZiIn++;
+                    }
                     // 关联的一起改  ============ awardInt.length
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length) {
-                        fenZi++;
+                        twoFenZi++;
+                    }
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 1) {
+                        //只有一个数字中奖,如果中奖数字,只有两种情况,在里面(6)和不在里面(7)
+                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==1){
+                            oneFenZiIn++;
+                        }
+                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==0){
+                            oneFenZiNotIn++;
+                        }
+                        oneFenZi++;
+                    }
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 2) {
+                        zeroFenZi++;
                     }
                     fenMu++;
+                }
+                if (result.length == 3) {
+                    //TODO 需要进行再次爬取数据进行验证.
+                    String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+
+                    Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
+                    String award = elements.get(0).attr("data-award");
+                    if (StringUtils.isEmpty(award) || award.length() < 10) {
+                        break t1;
+                    }
+                    String[] awardArray = award.split("[\\s]+");
+                    Integer[] awardInt = Convert.toIntArray(awardArray);
+                    Integer[] resultInt = Convert.toIntArray(result);
+
+                    // 关联的一起改  ============ awardInt.length
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length) {
+                        threeThreeFenZi++;
+                    }
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 1) {
+                        threeTwoFenZi++;
+                    }
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 2) {
+                        threeOneFenZi++;
+                    }
+                    if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 3) {
+                        threeZeroFenZi++;
+                    }
+                    threeFenMu++;
                 }
             }
         } catch (Exception e) {
             log.error("抓取下一期的数据异常!");
             e.printStackTrace();
         }
-        final double percent = fenZi * 1.0 / fenMu;
-        return date + "当天的成功率为:" + percent + "总次数为:" + fenMu + "------>中奖次数为:" + fenZi;
+        final double twoPercent = twoFenZi * 1.0 / fenMu;
+        final double onePercent = oneFenZi * 1.0 / fenMu;
+        final double oneInPercent = oneFenZiIn * 1.0 / fenMu;
+        final double zongOneInPercent = zongOneFenZiIn * 1.0 / fenMu;
+        final double oneNotInPercent = oneFenZiNotIn * 1.0 / fenMu;
+        final double zeroPercent = zeroFenZi * 1.0 / fenMu;
+        final double threeThreePercent = threeThreeFenZi * 1.0 / threeFenMu;
+        final double threeTwoPercent = threeTwoFenZi * 1.0 / threeFenMu;
+        final double threeOnePercent = threeOneFenZi * 1.0 / threeFenMu;
+        final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
+        NumberFormat pnf = NumberFormat.getPercentInstance();
+        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--" + pnf.format(twoPercent)
+                + ";\n 2.一次出现的概率为--" + pnf.format(onePercent)
+                    +":\n\t  2.1.一次出现在上次的概率为--" + pnf.format(oneInPercent)
+                    + ";\n\t 2.2一次没有出现在上次的概率为--" + pnf.format(oneNotInPercent)
+                    + ";\n\t 2.3总共前次出现1次的概率为--" + pnf.format(zongOneInPercent)
+                + ";\n 3.都没有出现在上次的概率为--" + pnf.format(zeroPercent)
+                + ";\n 2次的情况总次数为:" + fenMu
+                + "\n 当天结果为3的成功率如下:\n 1.三次都出现在上次的成功率为--" + pnf.format(threeThreePercent)
+                + ";\n 2.三次中两次出现在上次的概率为--" + pnf.format(threeTwoPercent)
+                + ";\n 3.三次中一次出现在上次的概率为--" + pnf.format(threeOnePercent)
+                + ";\n 3.三次中没有出现在上次的概率为--" + pnf.format(threeZeroPercent)
+                + ";\n 3次的情况总次数为:" + threeFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
@@ -740,13 +821,13 @@ public class MaxSimularService {
             String threeMaxSimular = getThreeMaxSimular();
             String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
             String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
-            List<String> intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
-            String[] result = intersect.toArray(new String[0]);
+            Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond);
+            String[] result = Convert.toStrArray(intersect);
             if (result.length == 2) {
                 return "请选择" + Arrays.toString(result);
             }
             return "不太适合选择:" + Arrays.toString(result);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("数据爬取异常!!!");
             return "数据爬取异常!!!";
         }

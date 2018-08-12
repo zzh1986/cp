@@ -10,10 +10,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author zhaozhihong
@@ -88,9 +90,17 @@ public class DemoTest {
             }
         }
 */
-        TenTimesService tenTimesService = new TenTimesService();
+        /*TenTimesService tenTimesService = new TenTimesService();
         List<TenTimes> tenTimesSencond = tenTimesService.getTenTimesSencond("20180809", "05");
-        System.out.println(tenTimesSencond);
+        System.out.println(tenTimesSencond);*/
+
+//        Locale locale = new Locale("zh","CN");
+//        NumberFormat numberInstance = NumberFormat.getNumberInstance(locale);
+        NumberFormat numberInstance = NumberFormat.getPercentInstance();
+        double value = 0.97123123;
+        System.out.println(numberInstance.format(value));
+
+
     }
 
 }
