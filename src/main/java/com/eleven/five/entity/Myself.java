@@ -3,6 +3,7 @@ package com.eleven.five.entity;
 import java.util.List;
 
 /**
+ * 请求参数需要 是 list 集合中的string
  * @author zhaozhihong <zhao.zhihong@chinaott.net>
  * @date 2018-08-12
  */
