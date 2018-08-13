@@ -689,12 +689,12 @@ public class MaxSimularService {
 
         int threeZeroFenZi = 0;
         int threeOneFenZi = 0;
-        int threeOneFenZiIn=0;
-        int threeOneFenZiNotIn=0;
+        int threeOneFenZiIn = 0;
+        int threeOneFenZiNotIn = 0;
         int threeTwoFenZi = 0;
-        int threeTwoFenZiZeroIn=0;
-        int threeTwoFenZiOneIn=0;
-        int threeTwoFenZiTwoIn=0;
+        int threeTwoFenZiZeroIn = 0;
+        int threeTwoFenZiOneIn = 0;
+        int threeTwoFenZiTwoIn = 0;
         int threeThreeFenZi = 0;
         int threeFenMu = 0;
 
@@ -762,17 +762,22 @@ public class MaxSimularService {
                         threeThreeFenZi++;
                     }
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 1) {
-                       switch (ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length){
-                           case 0: threeTwoFenZiZeroIn++; break;
-                           case 1: threeTwoFenZiOneIn++; break;
-                           default: threeTwoFenZiTwoIn++;
-                       }
+                        switch (ArrayUtils.intersect(resultInt, awardInt, latestIntTenTimes).length) {
+                            case 0:
+                                threeTwoFenZiZeroIn++;
+                                break;
+                            case 1:
+                                threeTwoFenZiOneIn++;
+                                break;
+                            default:
+                                threeTwoFenZiTwoIn++;
+                        }
                         threeTwoFenZi++;
                     }
                     if (ArrayUtils.union(resultInt, awardInt).length == awardInt.length + 2) {
-                        if(ArrayUtils.intersect(resultInt,awardInt,latestIntTenTimes).length==1){
+                        if (ArrayUtils.intersect(resultInt, awardInt, latestIntTenTimes).length == 1) {
                             threeOneFenZiIn++;
-                        }else{
+                        } else {
                             threeOneFenZiNotIn++;
                         }
                         threeOneFenZi++;
@@ -802,29 +807,13 @@ public class MaxSimularService {
         final double threeOnePercent = threeOneFenZi * 1.0 / threeFenMu;
         final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
         NumberFormat pnf = NumberFormat.getPercentInstance();
-        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--"
-                + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--"
-                + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--"
-                + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--"
-                + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--"
-                + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:"
-                + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--"
-                + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--"
-                + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--"
-                + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--"
-                + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--"
-                + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--"
-                + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--"
-                + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--"
-                + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--"
-                + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
-                + threeFenMu;
+        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--" + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--" + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--" + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--" + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--" + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:" + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--" + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--" + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--" + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--" + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--" + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--" + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--" + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--" + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--" + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:" + threeFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
     }
 
-    public String chooseTwoNumber() {
+    public Map<String, Object> chooseTwoNumber() {
         try {
             //date 应该是 20180809
             Date today = new Date();
@@ -842,15 +831,27 @@ public class MaxSimularService {
             String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
             TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
             String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
-            Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond,latestTenTimes);
+            Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond, latestTenTimes);
             String[] result = Convert.toStrArray(intersect);
-            if (result.length == 1) {
-                return "请选择" + Arrays.toString(result);
+            Map<String, Object> map = new HashMap<>();
+            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0,tenTimesLatest.getPeriod().length()-2)+"0"+String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length()-2)) + 1));
+            List<String> numbers = new ArrayList<>();
+            switch (result.length) {
+                case 1:
+                    numbers.add(result[0].length() == 1 ? ("0" + result[0]) : result[0]);
+                    break;
+                case 2:
+                    numbers.add(result[0].length() == 1 ? ("0" + result[0]) : result[0]);
+                    numbers.add(result[1].length() == 1 ? ("0" + result[1]) : result[1]);
+                    break;
+                default:
+                    return null;
             }
-            return "不太适合选择:" + Arrays.toString(result);
+            map.put("numbers", numbers);
+            return map;
         } catch (Exception e) {
             log.error("数据爬取异常!!!");
-            return "数据爬取异常!!!";
+            return null;
         }
 
     }

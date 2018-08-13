@@ -96,10 +96,11 @@ public class DemoTest {
 
 //        Locale locale = new Locale("zh","CN");
 //        NumberFormat numberInstance = NumberFormat.getNumberInstance(locale);
-        NumberFormat numberInstance = NumberFormat.getPercentInstance();
-        double value = 0.97123123;
-        System.out.println(numberInstance.format(value));
-
+//        NumberFormat numberInstance = NumberFormat.getPercentInstance();
+//        double value = 0.97123123;
+//        System.out.println(numberInstance.format(value));
+          Date date = new Date();
+          System.out.println(date.getTime());
 
     }
 
