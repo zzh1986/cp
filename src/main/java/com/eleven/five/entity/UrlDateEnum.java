@@ -10,7 +10,7 @@ public enum  UrlDateEnum {
      * 保存数据时只用一次即可
      */
     //DATE_ENUM("2018-08-02"),
-    DATE_ENUM("2018-08-12"),
+    DATE_ENUM(""),
     /**
      * 默认url是广东11选5的url
      */
