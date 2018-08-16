@@ -27,6 +27,10 @@ public class HttpUtils {
 
 
     public static String loginPost() {
+
+        HttpRequest requestLogOut = HttpUtil.createPost("http://m.zh08823.com/tools/_ajax//forgetPwdSeting");
+        requestLogOut.execute();
+
         HttpRequest httpRequest = HttpUtil.createPost(loginUrl);
         User user = new User();
         user.setIsdefaultLogin(true);
@@ -37,10 +41,12 @@ public class HttpUtils {
         String body = JSONUtil.toJsonStr(user);
         httpRequest.body(body);
         HttpResponse httpResponse = httpRequest.execute();
+        //System.out.println(LocalDate.now()+httpResponse.body());
+        //code  data message 三个参数 data 可以不管 code 必须是success 才算登录成功
         String JSESSIONID = httpResponse.getCookie("JSESSIONID").getValue();
         String sto = httpResponse.getCookie("sto-id-20480").getValue();
         String cookie = "sto-id-20480=" + sto + "; JSESSIONID=" + JSESSIONID;
-
+        httpResponse.close();
         return cookie;
     }
 
@@ -49,7 +55,7 @@ public class HttpUtils {
      * @param numbers   这个结果是02 01&05 这种 注意格式化
      * @return
      */
-    public static int pay(String period, List<String> numbers) {
+    public static void pay(String period, List<String> numbers) {
         HttpRequest httpRequest = HttpUtil.createPost(payUrl);
         String cookie = loginPost();
         httpRequest.cookie(cookie);
@@ -76,7 +82,7 @@ public class HttpUtils {
         Integer nums = 1;
         if(numbers ==null || (numbers.size()!=1 && numbers.size()!=2)){
             //TODO  这里最好写个300 表示不能发出请求
-            return 300;
+            return;
         }
         if (numbers != null && numbers.size() == 1) {
             codes = numbers.get(0);
@@ -99,11 +105,8 @@ public class HttpUtils {
         httpRequest.body(JSONUtil.toJsonStr(elevenRequest));
         System.out.println(JSONUtil.toJsonStr(elevenRequest));
         HttpResponse httpResponse = httpRequest.execute();
-        if (httpResponse.getStatus() == 200) {
-            return 200;
-        } else {
-            return 400;
-        }
+
+
     }
 
     public static void main(String[] args) {

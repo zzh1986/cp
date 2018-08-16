@@ -13,6 +13,6 @@ spring:
     username: root
     password: root
   jpa:
-    show-sql: true
+    show-sql: false
 #logging.level.com.eleven.five.mapper: debug
 

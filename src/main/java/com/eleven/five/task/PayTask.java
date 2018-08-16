@@ -1,6 +1,5 @@
 package com.eleven.five.task;
 
-import cn.hutool.core.date.DateUtil;
 import com.eleven.five.controller.ElevenController;
 import com.eleven.five.controller.MaxSimularController;
 import com.eleven.five.util.HttpUtils;
@@ -8,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +25,8 @@ public class PayTask {
     @Autowired
     private MaxSimularController maxSimularController;
 
+
+
     @Scheduled(cron = "0 4/10 11-23 * * * ")
     public void chooseOne(){
         Map<String, Object> map = maxSimularController.chooseTwoNumber();
@@ -36,13 +35,7 @@ public class PayTask {
         }else {
             String period = (String)map.get("period");
             List<String> numbers = (List<String>) map.get("numbers");
-            int status = HttpUtils.pay(period, numbers);
-            if (status==300||status==200){
-                return;
-            }
-            if (status==400){
-                chooseOne();
-            }
+            HttpUtils.pay(period, numbers);
         }
     }
 
@@ -50,5 +43,15 @@ public class PayTask {
     public void saveHistoryNumber(){
         elevenController.insertNumbers();
     }
+
+//    @Scheduled(cron = "*/1 * * * * * ")
+//    public void getProperties1(){
+//        System.out.println(HttpUtils.nianfen++);
+//    }
+//
+//    @Scheduled(cron = "*/2 * * * * * ")
+//    public void getProperties(){
+//        System.out.println(HttpUtils.nianfen);
+//    }
 
 }
