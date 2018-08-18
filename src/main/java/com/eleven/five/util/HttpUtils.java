@@ -18,17 +18,17 @@ import java.util.List;
  */
 public class HttpUtils {
 
-    static String loginUrl = "http://m.zh08823.com/tools/_ajax/login";
-    static String loginName = "zzh1986";
-    static String pwd = "z13653603146";
+    static String loginUrl = "https://m.zh08823.com/tools/_ajax/login";
+    static String loginName = "mzg159";
+    static String pwd = "zg15934038";
 
 
-    static String payUrl = "http://m.zh08823.com/tools/_ajax/GD11X5/betSingle";
+    static String payUrl = "https://m.zh08823.com/tools/_ajax/GD11X5/betSingle";
 
 
     public static String loginPost() {
 
-        HttpRequest requestLogOut = HttpUtil.createPost("http://m.zh08823.com/tools/_ajax//forgetPwdSeting");
+        HttpRequest requestLogOut = HttpUtil.createPost("https://m.zh08823.com/tools/_ajax//forgetPwdSeting");
         requestLogOut.execute();
 
         HttpRequest httpRequest = HttpUtil.createPost(loginUrl);
@@ -44,8 +44,7 @@ public class HttpUtils {
         //System.out.println(LocalDate.now()+httpResponse.body());
         //code  data message 三个参数 data 可以不管 code 必须是success 才算登录成功
         String JSESSIONID = httpResponse.getCookie("JSESSIONID").getValue();
-        String sto = httpResponse.getCookie("sto-id-20480").getValue();
-        String cookie = "sto-id-20480=" + sto + "; JSESSIONID=" + JSESSIONID;
+        String cookie = "JSESSIONID=" + JSESSIONID;
         httpResponse.close();
         return cookie;
     }
@@ -71,7 +70,7 @@ public class HttpUtils {
         //double :钱数 0.00
         myself.setRebate("0.00");
         //TODO 选择的次数 倍数;
-        myself.setTimes(1);
+        myself.setTimes(10);
         //TODO 模式 暂定1,不太确定具体是干啥用的
         myself.setMode(1);
         //期号 :同 上面的Issue 20180812060
