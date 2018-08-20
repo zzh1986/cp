@@ -807,17 +807,36 @@ public class MaxSimularService {
                 //TODO 查看补集的不出现的概率
 
                 if(buJi.length==3){
+                    //TODO 需要进行再次爬取数据进行验证.
+                    String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+
+                    Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
+                    String award = elements.get(0).attr("data-award");
+                    if (StringUtils.isEmpty(award) || award.length() < 10) {
+                        break t1;
+                    }
+                    String[] awardArray = Convert.toStrArray(Convert.toIntArray(award.split("[\\s]+")));
                     Object[] intersect = ArrayUtils.intersect(buJi, latestTenTimes);
-                    switch (intersect.length){
-                        case 0: threeZeroBuJiFenZi++;break;
-                        case 1: threeOneBuJiFenZi++;break;
-                        case 2: threeTwoBuJiFenZi++;break;
-                        default: threeThreeBuJiFenZi++;
+
+                    if(intersect.length==2){
+                        switch (ArrayUtils.intersect(intersect,awardArray).length){
+                            case 0: threeTwoBuJiFenZiZeroIn++;break;
+                            case 1: threeTwoBuJiFenZiOneIn++;break;
+                            default: threeTwoBuJiFenZiTwoIn++;
+                        }
+
+                    }
+                    if(intersect.length==1){
+                        switch (ArrayUtils.intersect(intersect,awardArray).length){
+                            case 0: threeOneBuJiFenZiNotIn++;break;
+                            default: threeOneBuJiFenZiIn++;
+                        }
                     }
                     threeBuJiFenMu++;
+
                 }
                 if(buJi.length==2){
-
+                    System.out.println();
                 }
                 if (buJi.length==4){
 
@@ -843,10 +862,11 @@ public class MaxSimularService {
         final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
 
 
-        final double threeZeroBuJiPercent = threeZeroBuJiFenZi * 1.0 / threeBuJiFenMu;
-        final double threeOneBuJiPercent = threeOneBuJiFenZi * 1.0 / threeBuJiFenMu;
-        final double threeTwoBuJiPercent = threeTwoBuJiFenZi * 1.0 / threeBuJiFenMu;
-        final double threeThreeBuJiPercent = threeThreeBuJiFenZi * 1.0 / threeBuJiFenMu;
+        final double threeZeroBuJiPercent = threeTwoBuJiFenZiZeroIn * 1.0 / threeBuJiFenMu;
+        final double threeOneBuJiPercent = threeTwoBuJiFenZiOneIn * 1.0 / threeBuJiFenMu;
+        final double threeTwoBuJiPercent = threeTwoBuJiFenZiTwoIn * 1.0 / threeBuJiFenMu;
+        final double threeOneBuJiInPercent = threeOneBuJiFenZiIn * 1.0 / threeBuJiFenMu;
+        final double threeOneBuJiNotInPercent = threeOneBuJiFenZiNotIn * 1.0 / threeBuJiFenMu;
 
 
         NumberFormat pnf = NumberFormat.getPercentInstance();
@@ -869,7 +889,13 @@ public class MaxSimularService {
                 + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
                 + threeFenMu
                 + "\n===================================================="
-                + "\n 当天补集结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--";
+                + "\n 当天补集结果为2的成功率如下:\n\t  4.1两次都不出现在上次的成功率为--"
+                + pnf.format(threeZeroBuJiPercent) + "\n\t  4.2两次只有一次出现在上次的成功率为--"
+                + pnf.format(threeOneBuJiPercent) + "\n\t  4.3两次都出现在上次的成功率为--"
+                + pnf.format(threeTwoBuJiPercent) + "\n\t  4.4一次不出现在上次的成功率为--"
+                + pnf.format(threeOneBuJiNotInPercent) + "\n\t  4.4一次出现在上次的成功率为--"
+                + pnf.format(threeOneBuJiInPercent) + "\n\t  4.5出现的总次数为:"
+                + threeBuJiFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
