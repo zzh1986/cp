@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
 public class ElevenController {
     @Autowired
     private ElevenService elevenService;
 
     @Autowired
     private PayTask payTask;
-    @GetMapping("insert")
+    @GetMapping("/insert")
     public void insertNumbers(){
            elevenService.insertNumbers();
     }
