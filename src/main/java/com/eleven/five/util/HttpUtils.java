@@ -108,49 +108,49 @@ public class HttpUtils {
 
     }
 
-    public static void main(String[] args) {
-  /*  String period = "20180812060";
-    List<String> numbers = new ArrayList<>();
-    numbers.add("01");
-    numbers.add("02");
-    pay(period,numbers);*/
-
-        HttpRequest get = HttpUtil.createGet("http://www.baidu.com");
-        HttpResponse response = get.execute();
-System.out.println(response.getStatus());
-
-
-
-       /* ElevenRequest elevenRequest = new ElevenRequest();
-        elevenRequest.setAccountId(161355);
-        elevenRequest.setClientTime(System.currentTimeMillis());
-        elevenRequest.setGameId("GD11X5");
-        //TODO 期号 这个数字建议传入20180812060
-        elevenRequest.setIssue("20180812060");
-        List<String> myselfList = new ArrayList<>();
-        Myself myself = new Myself();
-        //应该是选择1个号的
-        myself.setMethodid("XX5011001001");
-        //实际选择几个数字,跟codes 有关系
-        myself.setNums(1);
-        //double :钱数 0.00
-        myself.setRebate("0.00");
-        //TODO 选择的次数 倍数;
-        myself.setTimes(1);
-        //钱数 2代表2元,也跟codes 和 times 有关系
-        myself.setMoney(2);
-        //TODO 模式 暂定1,不太确定具体是干啥用的
-        myself.setMode(1);
-        //期号 :同 上面的Issue 20180812060
-        myself.setIssueNo("20180812060");
-        //实际要买的数字,建议传入
-        String codes = "01&02";
-        myself.setCodes(codes);
-        myself.setPlayId(new ArrayList<>());
-        myselfList.add(JSONUtil.toJsonStr(myself));
-        elevenRequest.setItem(myselfList);
-        System.out.println(JSONUtil.toJsonStr(elevenRequest));*/
-    }
+//    public static void main(String[] args) {
+//  /*  String period = "20180812060";
+//    List<String> numbers = new ArrayList<>();
+//    numbers.add("01");
+//    numbers.add("02");
+//    pay(period,numbers);*/
+//
+//       /* HttpRequest get = HttpUtil.createGet("http://www.baidu.com");
+//        HttpResponse response = get.execute();
+//System.out.println(response.getStatus());*/
+//
+//
+//
+//       /* ElevenRequest elevenRequest = new ElevenRequest();
+//        elevenRequest.setAccountId(161355);
+//        elevenRequest.setClientTime(System.currentTimeMillis());
+//        elevenRequest.setGameId("GD11X5");
+//        //TODO 期号 这个数字建议传入20180812060
+//        elevenRequest.setIssue("20180812060");
+//        List<String> myselfList = new ArrayList<>();
+//        Myself myself = new Myself();
+//        //应该是选择1个号的
+//        myself.setMethodid("XX5011001001");
+//        //实际选择几个数字,跟codes 有关系
+//        myself.setNums(1);
+//        //double :钱数 0.00
+//        myself.setRebate("0.00");
+//        //TODO 选择的次数 倍数;
+//        myself.setTimes(1);
+//        //钱数 2代表2元,也跟codes 和 times 有关系
+//        myself.setMoney(2);
+//        //TODO 模式 暂定1,不太确定具体是干啥用的
+//        myself.setMode(1);
+//        //期号 :同 上面的Issue 20180812060
+//        myself.setIssueNo("20180812060");
+//        //实际要买的数字,建议传入
+//        String codes = "01&02";
+//        myself.setCodes(codes);
+//        myself.setPlayId(new ArrayList<>());
+//        myselfList.add(JSONUtil.toJsonStr(myself));
+//        elevenRequest.setItem(myselfList);
+//        System.out.println(JSONUtil.toJsonStr(elevenRequest));*/
+//    }
 
 
 }

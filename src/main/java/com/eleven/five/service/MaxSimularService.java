@@ -698,6 +698,17 @@ public class MaxSimularService {
         int threeThreeFenZi = 0;
         int threeFenMu = 0;
 
+        int threeZeroBuJiFenZi = 0;
+        int threeOneBuJiFenZi = 0;
+        int threeOneBuJiFenZiIn = 0;
+        int threeOneBuJiFenZiNotIn = 0;
+        int threeTwoBuJiFenZi = 0;
+        int threeTwoBuJiFenZiZeroIn = 0;
+        int threeTwoBuJiFenZiOneIn = 0;
+        int threeTwoBuJiFenZiTwoIn = 0;
+        int threeThreeBuJiFenZi = 0;
+        int threeBuJiFenMu = 0;
+
         try {
             //少个save操作
             t1:
@@ -708,7 +719,13 @@ public class MaxSimularService {
                 String threeMaxSimular = getThreeMaxSimular();
                 String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
                 String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
+                //先出一个11个数字的数组
+                String[] elevenStr = {"1","2","3","4","5","6","7","8","9","10","11"};
                 Object[] result = ArrayUtils.intersect(fiveFirst, fiveSecond);
+                Object[] firstMinus = ArrayUtils.minus(elevenStr, fiveFirst);
+                Object[] secondMinus = ArrayUtils.minus(elevenStr, fiveSecond);
+                Object[] buJi = ArrayUtils.intersect(firstMinus, secondMinus);
+
                 TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
                 String[] latestTenTimes = getLatestTenTimes(tenTimesLatest);
                 Integer[] latestIntTenTimes = Convert.toIntArray(latestTenTimes);
@@ -787,6 +804,24 @@ public class MaxSimularService {
                     }
                     threeFenMu++;
                 }
+                //TODO 查看补集的不出现的概率
+
+                if(buJi.length==3){
+                    Object[] intersect = ArrayUtils.intersect(buJi, latestTenTimes);
+                    switch (intersect.length){
+                        case 0: threeZeroBuJiFenZi++;break;
+                        case 1: threeOneBuJiFenZi++;break;
+                        case 2: threeTwoBuJiFenZi++;break;
+                        default: threeThreeBuJiFenZi++;
+                    }
+                    threeBuJiFenMu++;
+                }
+                if(buJi.length==2){
+
+                }
+                if (buJi.length==4){
+
+                }
             }
         } catch (Exception e) {
             log.error("抓取下一期的数据异常!");
@@ -806,8 +841,35 @@ public class MaxSimularService {
         final double threeOneNotInPercent = threeOneFenZiNotIn * 1.0 / threeFenMu;
         final double threeOnePercent = threeOneFenZi * 1.0 / threeFenMu;
         final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
+
+
+        final double threeZeroBuJiPercent = threeZeroBuJiFenZi * 1.0 / threeBuJiFenMu;
+        final double threeOneBuJiPercent = threeOneBuJiFenZi * 1.0 / threeBuJiFenMu;
+        final double threeTwoBuJiPercent = threeTwoBuJiFenZi * 1.0 / threeBuJiFenMu;
+        final double threeThreeBuJiPercent = threeThreeBuJiFenZi * 1.0 / threeBuJiFenMu;
+
+
         NumberFormat pnf = NumberFormat.getPercentInstance();
-        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--" + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--" + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--" + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--" + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--" + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:" + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--" + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--" + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--" + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--" + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--" + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--" + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--" + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--" + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--" + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:" + threeFenMu;
+
+        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--"
+                + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--"
+                + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--"
+                + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--"
+                + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--"
+                + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:"
+                + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--"
+                + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--"
+                + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--"
+                + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--"
+                + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--"
+                + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--"
+                + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--"
+                + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--"
+                + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--"
+                + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
+                + threeFenMu
+                + "\n===================================================="
+                + "\n 当天补集结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--";
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/

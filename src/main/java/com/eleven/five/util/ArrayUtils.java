@@ -6,8 +6,6 @@
 
 package com.eleven.five.util;
 
-import cn.hutool.core.convert.Convert;
-
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -179,11 +177,11 @@ public class ArrayUtils {
 
    /* public static void main(String[] args) {
         Integer[] str1 = {1, 2, 3, 4, 5, 0};
-        Integer[] str2 = {1, 4, 5, 6};
+        Integer[] str2 = {1, 4, 5};
         Integer[] str3 = {1, 7, 9, 10, 12};
         Integer[] str4 = {1, 7, 9, 10, 12, 19};
-        Object[] minus = minus(str1, str2, str3, str4);
+        Object[] minus = minus(str1, str2);
         System.out.println(Arrays.toString(minus));
-    }*/
-
+    }
+*/
 }
