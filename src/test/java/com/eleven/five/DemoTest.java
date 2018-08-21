@@ -1,21 +1,10 @@
 package com.eleven.five;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import com.eleven.five.entity.TenTimes;
-import com.eleven.five.entity.UrlDateEnum;
-import com.eleven.five.service.TenTimesService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author zhaozhihong
@@ -99,8 +88,16 @@ public class DemoTest {
 //        NumberFormat numberInstance = NumberFormat.getPercentInstance();
 //        double value = 0.97123123;
 //        System.out.println(numberInstance.format(value));
-          Date date = new Date();
-          System.out.println(date.getTime());
+         /* Date date = new Date();
+          System.out.println(date.getTime());*/
+
+         List<Integer> list = new ArrayList<>();
+         list.add(1);
+         list.add(2);
+         list.add(3);
+         list.add(4);
+        Object[] objects = list.toArray();
+        System.out.println(Arrays.toString(objects));
 
     }
 

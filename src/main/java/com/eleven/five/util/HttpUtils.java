@@ -21,6 +21,8 @@ public class HttpUtils {
     static String loginUrl = "https://m.zh08823.com/tools/_ajax/login";
     static String loginName = "mzg159";
     static String pwd = "zg15934038";
+     /*static String loginName = "zzh1986";
+     static String pwd = "z13653603146";*/
 
 
     static String payUrl = "https://m.zh08823.com/tools/_ajax/GD11X5/betSingle";
@@ -70,7 +72,7 @@ public class HttpUtils {
         //double :钱数 0.00
         myself.setRebate("0.00");
         //TODO 选择的次数 倍数;
-        myself.setTimes(10);
+        myself.setTimes(1);
         //TODO 模式 暂定1,不太确定具体是干啥用的
         myself.setMode(1);
         //期号 :同 上面的Issue 20180812060
@@ -105,6 +107,53 @@ public class HttpUtils {
         System.out.println(JSONUtil.toJsonStr(elevenRequest));
         HttpResponse httpResponse = httpRequest.execute();
 
+
+    }
+
+    public static void payTwo(String period, List<String> numbers) {
+
+        HttpRequest httpRequest = HttpUtil.createPost(payUrl);
+        String cookie = loginPost();
+        httpRequest.cookie(cookie);
+        ElevenRequest elevenRequest = new ElevenRequest();
+        elevenRequest.setAccountId(161355);
+        elevenRequest.setClientTime(System.currentTimeMillis());
+        elevenRequest.setGameId("GD11X5");
+        elevenRequest.setIssue(period);
+        List<String> myselfList = new ArrayList<>();
+        Myself myself = new Myself();
+        //应该是选择1个号的
+        myself.setMethodid("XX5011001001");
+        //double :钱数 0.00
+        myself.setRebate("0.00");
+        //TODO 选择的次数 倍数;
+        myself.setTimes(10);
+        //TODO 模式 暂定1,不太确定具体是干啥用的
+        myself.setMode(1);
+        //期号 :同 上面的Issue 20180812060
+        myself.setIssueNo(period);
+        //实际要买的数字,建议传入
+        String codes = "";
+        Integer money = 2;
+        if(numbers ==null || (numbers.size()<1)){
+            return;
+        }
+        for(int i =0;i<numbers.size();i++){
+            codes += numbers.get(i)+"&";
+        }
+        codes = codes.substring(0, codes.lastIndexOf("&"));
+        //实际选择几个数字,跟codes 有关系
+        myself.setNums(numbers.size());
+        //钱数 2代表2元,也跟codes 和 times 有关系
+        myself.setMoney(money*myself.getTimes()*numbers.size());
+        myself.setCodes(codes);
+        myself.setPlayId(new ArrayList<>());
+        myselfList.add(JSONUtil.toJsonStr(myself));
+        elevenRequest.setItem(myselfList);
+        httpRequest.body(JSONUtil.toJsonStr(elevenRequest));
+        System.out.println(JSONUtil.toJsonStr(elevenRequest));
+        HttpResponse httpResponse = httpRequest.execute();
+        //System.out.println(httpResponse);
 
     }
 
@@ -151,6 +200,11 @@ public class HttpUtils {
 //        elevenRequest.setItem(myselfList);
 //        System.out.println(JSONUtil.toJsonStr(elevenRequest));*/
 //    }
+
+/**
+ * 查询 当前余额的接口
+ */
+
 
 
 }

@@ -1,15 +1,11 @@
 package com.eleven.five.controller;
 
-import cn.hutool.core.date.DateUtil;
 import com.eleven.five.service.MaxSimularService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -76,4 +72,34 @@ public class MaxSimularController {
         return maxSimularService.chooseTwoNumber();
     }
 
+    /**
+     * 验证对应的一天的结果 或者几天的结果 百分比结果
+     * @param date   格式为: 20180807
+     * @return
+     */
+    @GetMapping("/getThreePercent")
+    public String getThreePercent(String date){
+        return maxSimularService.getThreePercent(date);
+    }
+    @GetMapping("/chooseTarget")
+    public Map<String, Object> chooseTarget() {
+        return maxSimularService.chooseTarget();
+    }
+
+
+    public void getUserBanlance() throws IOException {
+         maxSimularService.getUserBanlance();
+    }
+
+    /*@GetMapping("/test01")
+    public void test01(){
+        Map<String, Object> map = chooseTarget();
+        if(null == map){
+            return;
+        }else {
+            String period = (String)map.get("period");
+            List<String> numbers = (List<String>) map.get("numbers");
+            HttpUtils.payTwo(period, numbers);
+        }
+    }*/
 }

@@ -1,6 +1,11 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import com.eleven.five.controller.TenTimesController;
 import com.eleven.five.entity.*;
 import com.eleven.five.mapper.*;
@@ -17,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -698,17 +704,6 @@ public class MaxSimularService {
         int threeThreeFenZi = 0;
         int threeFenMu = 0;
 
-        int threeZeroBuJiFenZi = 0;
-        int threeOneBuJiFenZi = 0;
-        int threeOneBuJiFenZiIn = 0;
-        int threeOneBuJiFenZiNotIn = 0;
-        int threeTwoBuJiFenZi = 0;
-        int threeTwoBuJiFenZiZeroIn = 0;
-        int threeTwoBuJiFenZiOneIn = 0;
-        int threeTwoBuJiFenZiTwoIn = 0;
-        int threeThreeBuJiFenZi = 0;
-        int threeBuJiFenMu = 0;
-
         try {
             //少个save操作
             t1:
@@ -804,43 +799,6 @@ public class MaxSimularService {
                     }
                     threeFenMu++;
                 }
-                //TODO 查看补集的不出现的概率
-
-                if(buJi.length==3){
-                    //TODO 需要进行再次爬取数据进行验证.
-                    String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
-
-                    Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
-                    String award = elements.get(0).attr("data-award");
-                    if (StringUtils.isEmpty(award) || award.length() < 10) {
-                        break t1;
-                    }
-                    String[] awardArray = Convert.toStrArray(Convert.toIntArray(award.split("[\\s]+")));
-                    Object[] intersect = ArrayUtils.intersect(buJi, latestTenTimes);
-
-                    if(intersect.length==2){
-                        switch (ArrayUtils.intersect(intersect,awardArray).length){
-                            case 0: threeTwoBuJiFenZiZeroIn++;break;
-                            case 1: threeTwoBuJiFenZiOneIn++;break;
-                            default: threeTwoBuJiFenZiTwoIn++;
-                        }
-
-                    }
-                    if(intersect.length==1){
-                        switch (ArrayUtils.intersect(intersect,awardArray).length){
-                            case 0: threeOneBuJiFenZiNotIn++;break;
-                            default: threeOneBuJiFenZiIn++;
-                        }
-                    }
-                    threeBuJiFenMu++;
-
-                }
-                if(buJi.length==2){
-                    System.out.println();
-                }
-                if (buJi.length==4){
-
-                }
             }
         } catch (Exception e) {
             log.error("抓取下一期的数据异常!");
@@ -861,14 +819,6 @@ public class MaxSimularService {
         final double threeOnePercent = threeOneFenZi * 1.0 / threeFenMu;
         final double threeZeroPercent = threeZeroFenZi * 1.0 / threeFenMu;
 
-
-        final double threeZeroBuJiPercent = threeTwoBuJiFenZiZeroIn * 1.0 / threeBuJiFenMu;
-        final double threeOneBuJiPercent = threeTwoBuJiFenZiOneIn * 1.0 / threeBuJiFenMu;
-        final double threeTwoBuJiPercent = threeTwoBuJiFenZiTwoIn * 1.0 / threeBuJiFenMu;
-        final double threeOneBuJiInPercent = threeOneBuJiFenZiIn * 1.0 / threeBuJiFenMu;
-        final double threeOneBuJiNotInPercent = threeOneBuJiFenZiNotIn * 1.0 / threeBuJiFenMu;
-
-
         NumberFormat pnf = NumberFormat.getPercentInstance();
 
         return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--"
@@ -887,15 +837,7 @@ public class MaxSimularService {
                 + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--"
                 + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--"
                 + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
-                + threeFenMu
-                + "\n===================================================="
-                + "\n 当天补集结果为2的成功率如下:\n\t  4.1两次都不出现在上次的成功率为--"
-                + pnf.format(threeZeroBuJiPercent) + "\n\t  4.2两次只有一次出现在上次的成功率为--"
-                + pnf.format(threeOneBuJiPercent) + "\n\t  4.3两次都出现在上次的成功率为--"
-                + pnf.format(threeTwoBuJiPercent) + "\n\t  4.4一次不出现在上次的成功率为--"
-                + pnf.format(threeOneBuJiNotInPercent) + "\n\t  4.4一次出现在上次的成功率为--"
-                + pnf.format(threeOneBuJiInPercent) + "\n\t  4.5出现的总次数为:"
-                + threeBuJiFenMu;
+                + threeFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
@@ -943,4 +885,478 @@ public class MaxSimularService {
         }
 
     }
+
+    public String getThreePercent(String date) {
+        int zeroCount=0;
+        int oneCount=0;
+        int twoCount=0;
+        int threeCount=0;
+        int fourCount=0;
+
+        int fourFenZi=0;
+        int threeFenZi=0;
+        int twoFenZi=0;
+        int oneFenZi=0;
+        int zeroBuFenZi=0;
+
+        try {
+            //少个save操作
+            for (int period = 10; period < 84; period++) {
+
+                tenTimesController.saveTenTimes(date, String.valueOf(period));
+                //取统计中的4和5的所有数值放到集合中
+                TenTongJi tenTongJi = tenTongJiMapper.findAll().get(0);
+                List<Integer> tenTongJiFourList = new ArrayList<>();
+                List<Integer> tenTongJiFiveList = new ArrayList<>();
+                List<Integer> tenTongJiNumberList = new ArrayList<>();
+                //+++++++++++++++++次数为4次的统计+++++++++++++++++++//
+                if(tenTongJi.getOne()==4){
+                    tenTongJiFourList.add(1);
+                }
+                if(tenTongJi.getTwo()==4){
+                    tenTongJiFourList.add(2);
+                }
+                if(tenTongJi.getThree()==4){
+                    tenTongJiFourList.add(3);
+                }
+                if(tenTongJi.getFour()==4){
+                    tenTongJiFourList.add(4);
+                }
+                if(tenTongJi.getFive()==4){
+                    tenTongJiFourList.add(5);
+                }
+                if(tenTongJi.getSix()==4){
+                    tenTongJiFourList.add(6);
+                }
+                if(tenTongJi.getSeven()==4){
+                    tenTongJiFourList.add(7);
+                }
+                if(tenTongJi.getEight()==4){
+                    tenTongJiFourList.add(8);
+                }
+                if(tenTongJi.getNine()==4){
+                    tenTongJiFourList.add(9);
+                }
+                if(tenTongJi.getTen()==4){
+                    tenTongJiFourList.add(10);
+                }
+                if(tenTongJi.getEleven()==4){
+                    tenTongJiFourList.add(11);
+                }
+                //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
+                if(tenTongJi.getOne()==5){
+                    tenTongJiFiveList.add(1);
+                }
+                if(tenTongJi.getTwo()==5){
+                    tenTongJiFiveList.add(2);
+                }
+                if(tenTongJi.getThree()==5){
+                    tenTongJiFiveList.add(3);
+                }
+                if(tenTongJi.getFour()==5){
+                    tenTongJiFiveList.add(4);
+                }
+                if(tenTongJi.getFive()==5){
+                    tenTongJiFiveList.add(5);
+                }
+                if(tenTongJi.getSix()==5){
+                    tenTongJiFiveList.add(6);
+                }
+                if(tenTongJi.getSeven()==5){
+                    tenTongJiFiveList.add(7);
+                }
+                if(tenTongJi.getEight()==5){
+                    tenTongJiFiveList.add(8);
+                }
+                if(tenTongJi.getNine()==5){
+                    tenTongJiFiveList.add(9);
+                }
+                if(tenTongJi.getTen()==5){
+                    tenTongJiFiveList.add(10);
+                }
+                if(tenTongJi.getEleven()==5){
+                    tenTongJiFiveList.add(11);
+                }
+                //+++++++++++++++++++++结果集合的处理+++++++++++++++//
+                if(tenTongJiFourList.size()>=5){
+                    tenTongJiNumberList.addAll(tenTongJiFourList);
+                }else if(tenTongJiFiveList.size()>=5){
+                    tenTongJiNumberList.addAll(tenTongJiFiveList);
+                }else{
+                    tenTongJiNumberList.addAll(tenTongJiFourList);
+                    tenTongJiNumberList.addAll(tenTongJiFiveList);
+                }
+                //取统计中的结果为1的放到集合中
+                TongJi tongJi = tongJiMapper.findAll().get(0);
+                List<Integer> tongJiList = new ArrayList<>();
+                //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
+                if(tongJi.getOne()==1){
+                    tongJiList.add(1);
+                }
+                if(tongJi.getTwo()==1){
+                    tongJiList.add(2);
+                }
+                if(tongJi.getThree()==1){
+                    tongJiList.add(3);
+                }
+                if(tongJi.getFour()==1){
+                    tongJiList.add(4);
+                }
+                if(tongJi.getFive()==1){
+                    tongJiList.add(5);
+                }
+                if(tongJi.getSix()==1){
+                    tongJiList.add(6);
+                }
+                if(tongJi.getSeven()==1){
+                    tongJiList.add(7);
+                }
+                if(tongJi.getEight()==1){
+                    tongJiList.add(8);
+                }
+                if(tongJi.getNine()==1){
+                    tongJiList.add(9);
+                }
+                if(tongJi.getTen()==1){
+                    tongJiList.add(10);
+                }
+                if(tongJi.getEleven()==1){
+                    tongJiList.add(11);
+                }
+                //将集合转化成数组,求交集 和与11 的补集
+                //先出一个11个数字的数组
+                String[] elevenStr = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"};
+                //先将集合转为数组
+
+                String[] intersect = Convert.toStrArray(ArrayUtils.intersect(tenTongJiNumberList.toArray(), tongJiList.toArray()));
+                //对结果进行分析和判断  可能有几种情况 0,1,2,3,4;最多应该集中在 2,3 上面
+                //TODO 需要进行再次爬取数据进行验证.
+                String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+                Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (period + 1) + "]");
+                String award = elements.get(0).attr("data-award");
+                String[] awardArray = award.split("[\\s]+");
+                String[] awardStr = Convert.toStrArray(Convert.toIntArray(awardArray));
+                if(intersect.length==4){
+                    fourCount++;
+                    if (ArrayUtils.intersect(intersect,awardStr).length>=2){
+                        fourFenZi++;
+                    }
+                }
+                if(intersect.length==3){
+                    threeCount++;
+                    if (ArrayUtils.intersect(intersect,awardStr).length>=2){
+                        threeFenZi++;
+                    }
+                }
+                if(intersect.length==2){
+                    twoCount++;
+                    if (ArrayUtils.intersect(intersect,awardStr).length>=1){
+                        twoFenZi++;
+                    }
+                }
+                if(intersect.length==1){
+                    oneCount++;
+                    if (ArrayUtils.intersect(intersect,awardStr).length>=1){
+                        oneFenZi++;
+                    }
+                }
+                if(intersect.length==0){
+                    zeroCount++;
+                    if(ArrayUtils.intersect(ArrayUtils.minus(elevenStr,Convert.toStrArray(ArrayUtils.union(tenTongJiNumberList.toArray(), tongJiList.toArray()))),awardArray).length==1){
+                        zeroBuFenZi++;
+                    }
+                }
+
+            }
+            double fourPercent = fourFenZi * 1.0 / fourCount;
+            double threePercent = threeFenZi * 1.0 / threeCount;
+            double twoPercent = twoFenZi * 1.0 / twoCount;
+            double onePercent = oneFenZi * 1.0 / oneCount;
+            double zeroBuPercent = zeroBuFenZi * 1.0 / zeroCount;
+            NumberFormat pnf = NumberFormat.getPercentInstance();
+
+            return date + "当天结果次数及成功率如下:\n\t  1.四次都出现的次数为:"+fourCount+";成功率为--"
+                    + pnf.format(fourPercent) + ";\n\t  2.三次出现的次数为:"+threeCount+";成功率为--"
+                    + pnf.format(threePercent) + ":\n\t  3.两次出现的次数为:"+twoCount+";成功率为--"
+                    + pnf.format(twoPercent) + ";\n\t  4.一次出现的次数为:"+oneCount+";成功率为--"
+                    + pnf.format(onePercent) + ";\n\t 5.没有交集出现的次数--"+ zeroCount+";补集成功率为--"
+                    + pnf.format(zeroBuPercent);
+        } catch (Exception e) {
+            log.error("抓取下一期的数据异常!");
+            e.printStackTrace();
+            return "抓取数据异常";
+        }
+
+    }
+
+    public Map<String, Object> chooseTarget() {
+        try {
+            //date 应该是 20180809
+            Date today = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String date = sdf.format(today);
+            String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+            Elements elements = Jsoup.connect(url).get().select("[data-period]");
+            List<String> fiveList = new ArrayList<>();
+            FiveUtil.getOneGroupNumber(fiveList, elements);
+            int period = fiveList.size();
+            tenTimesController.saveTenTimes(date, String.valueOf(period));
+            //取统计中的4和5的所有数值放到集合中
+            TenTongJi tenTongJi = tenTongJiMapper.findAll().get(0);
+            List<Integer> tenTongJiFourList = new ArrayList<>();
+            List<Integer> tenTongJiFiveList = new ArrayList<>();
+            List<Integer> tenTongJiNumberList = new ArrayList<>();
+            //+++++++++++++++++次数为4次的统计+++++++++++++++++++//
+            if(tenTongJi.getOne()==4){
+                tenTongJiFourList.add(1);
+            }
+            if(tenTongJi.getTwo()==4){
+                tenTongJiFourList.add(2);
+            }
+            if(tenTongJi.getThree()==4){
+                tenTongJiFourList.add(3);
+            }
+            if(tenTongJi.getFour()==4){
+                tenTongJiFourList.add(4);
+            }
+            if(tenTongJi.getFive()==4){
+                tenTongJiFourList.add(5);
+            }
+            if(tenTongJi.getSix()==4){
+                tenTongJiFourList.add(6);
+            }
+            if(tenTongJi.getSeven()==4){
+                tenTongJiFourList.add(7);
+            }
+            if(tenTongJi.getEight()==4){
+                tenTongJiFourList.add(8);
+            }
+            if(tenTongJi.getNine()==4){
+                tenTongJiFourList.add(9);
+            }
+            if(tenTongJi.getTen()==4){
+                tenTongJiFourList.add(10);
+            }
+            if(tenTongJi.getEleven()==4){
+                tenTongJiFourList.add(11);
+            }
+            //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
+            if(tenTongJi.getOne()==5){
+                tenTongJiFiveList.add(1);
+            }
+            if(tenTongJi.getTwo()==5){
+                tenTongJiFiveList.add(2);
+            }
+            if(tenTongJi.getThree()==5){
+                tenTongJiFiveList.add(3);
+            }
+            if(tenTongJi.getFour()==5){
+                tenTongJiFiveList.add(4);
+            }
+            if(tenTongJi.getFive()==5){
+                tenTongJiFiveList.add(5);
+            }
+            if(tenTongJi.getSix()==5){
+                tenTongJiFiveList.add(6);
+            }
+            if(tenTongJi.getSeven()==5){
+                tenTongJiFiveList.add(7);
+            }
+            if(tenTongJi.getEight()==5){
+                tenTongJiFiveList.add(8);
+            }
+            if(tenTongJi.getNine()==5){
+                tenTongJiFiveList.add(9);
+            }
+            if(tenTongJi.getTen()==5){
+                tenTongJiFiveList.add(10);
+            }
+            if(tenTongJi.getEleven()==5){
+                tenTongJiFiveList.add(11);
+            }
+            //+++++++++++++++++++++结果集合的处理+++++++++++++++//
+            if(tenTongJiFourList.size()>=5){
+                tenTongJiNumberList.addAll(tenTongJiFourList);
+            }else if(tenTongJiFiveList.size()>=5){
+                tenTongJiNumberList.addAll(tenTongJiFiveList);
+            }else{
+                tenTongJiNumberList.addAll(tenTongJiFourList);
+                tenTongJiNumberList.addAll(tenTongJiFiveList);
+            }
+            //取统计中的结果为1的放到集合中
+            TongJi tongJi = tongJiMapper.findAll().get(0);
+            List<Integer> tongJiList = new ArrayList<>();
+            //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
+            if(tongJi.getOne()==1){
+                tongJiList.add(1);
+            }
+            if(tongJi.getTwo()==1){
+                tongJiList.add(2);
+            }
+            if(tongJi.getThree()==1){
+                tongJiList.add(3);
+            }
+            if(tongJi.getFour()==1){
+                tongJiList.add(4);
+            }
+            if(tongJi.getFive()==1){
+                tongJiList.add(5);
+            }
+            if(tongJi.getSix()==1){
+                tongJiList.add(6);
+            }
+            if(tongJi.getSeven()==1){
+                tongJiList.add(7);
+            }
+            if(tongJi.getEight()==1){
+                tongJiList.add(8);
+            }
+            if(tongJi.getNine()==1){
+                tongJiList.add(9);
+            }
+            if(tongJi.getTen()==1){
+                tongJiList.add(10);
+            }
+            if(tongJi.getEleven()==1){
+                tongJiList.add(11);
+            }
+            String[] elevens = {"1","2","3","4","5","6","7","8","9","10","11"};
+            Object[] intersect = ArrayUtils.intersect(tenTongJiNumberList.toArray(), tongJiList.toArray());
+            String[] result = Convert.toStrArray(intersect);
+            List<String> numbers = new ArrayList<>();
+            Map<String, Object> map = new HashMap<>();
+            TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
+            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0,tenTimesLatest.getPeriod().length()-2)+"0"+String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length()-2)) + 1));
+            if (result==null || result.length<1){
+                if(tongJiList.size()<=3){
+                    for (Integer i : tongJiList){
+                        numbers.add(String.valueOf(i).length()==1?("0"+i):(""+i));
+                    }
+                    map.put("numbers",numbers);
+                    return map;
+                }
+                return null;
+            }
+            if(result.length >= 4){
+                List<Integer> tongJiTwoList = new ArrayList<>();
+                //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
+                if(tongJi.getOne()==2){
+                    tongJiTwoList.add(1);
+                }
+                if(tongJi.getTwo()==2){
+                    tongJiTwoList.add(2);
+                }
+                if(tongJi.getThree()==2){
+                    tongJiTwoList.add(3);
+                }
+                if(tongJi.getFour()==2){
+                    tongJiTwoList.add(4);
+                }
+                if(tongJi.getFive()==2){
+                    tongJiTwoList.add(5);
+                }
+                if(tongJi.getSix()==2){
+                    tongJiTwoList.add(6);
+                }
+                if(tongJi.getSeven()==2){
+                    tongJiTwoList.add(7);
+                }
+                if(tongJi.getEight()==2){
+                    tongJiTwoList.add(8);
+                }
+                if(tongJi.getNine()==2){
+                    tongJiTwoList.add(9);
+                }
+                if(tongJi.getTen()==2){
+                    tongJiTwoList.add(10);
+                }
+                if(tongJi.getEleven()==2){
+                    tongJiTwoList.add(11);
+                }
+                Object[] minus = ArrayUtils.minus(elevens, Convert.toStrArray(tenTongJiNumberList.toArray()));
+                String[] fourResult = Convert.toStrArray(ArrayUtils.intersect(minus, Convert.toStrArray(tongJiTwoList.toArray())));
+                if (fourResult == null || fourResult.length<1){
+                    return null;
+                }
+                for (String s : fourResult){
+                    numbers.add(s.length()==1?("0"+s):s);
+                }
+                map.put("numbers",numbers);
+                return map;
+            }
+            if (result.length==1){
+                if(tongJiList.size()<=3){
+                    for (Integer i : tongJiList){
+                        numbers.add(String.valueOf(i).length()==1?("0"+i):(""+i));
+                    }
+                    map.put("numbers",numbers);
+                    return map;
+                }
+                return null;
+            }
+            for (String s : result){
+                numbers.add(s.length()==1?("0"+s):s);
+            }
+           map.put("numbers",numbers);
+            return map;
+        } catch (Exception e) {
+            log.error("数据爬取异常!!!");
+            return null;
+        }
+
+    }
+
+    /**
+     * 获取当前的余额的方法
+     * 注意: 二哥的号
+     */
+    public void getUserBanlance() throws IOException {
+        String balanceUrl = "https://m.zh08823.com/tools/_ajax//getUserBanlance";
+        HttpRequest httpRequest = HttpUtil.createPost(balanceUrl);
+        String cookie = loginPost();
+        UserFind userFind = new UserFind();
+        userFind.setUserName("mzg159");
+        String body = JSONUtil.toJsonStr(userFind);
+        httpRequest.cookie(cookie);
+        httpRequest.body(body);
+        HttpResponse httpResponse = httpRequest.execute();
+        String responseBodyStr = httpResponse.body();
+        ResponseBody responseBody = JSONUtil.toBean(responseBodyStr, ResponseBody.class);
+        double balance = responseBody.getData().getMoney();
+        log.info("当前余额为:"+balance);
+        if(balance>500){
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("shutdown -s -t 00");
+        }
+    }
+
+    /**
+     * 注意:二哥的号cookie
+     * @return
+     */
+    public String loginPost() {
+
+        HttpRequest requestLogOut = HttpUtil.createPost("https://m.zh08823.com/tools/_ajax//forgetPwdSeting");
+        requestLogOut.execute();
+        String loginUrl = "https://m.zh08823.com/tools/_ajax/login";
+        String loginName = "mzg159";
+        String pwd = "zg15934038";
+        HttpRequest httpRequest = HttpUtil.createPost(loginUrl);
+        User user = new User();
+        user.setIsdefaultLogin(true);
+        user.setLoginName(loginName);
+        user.setLoginPwd(SecureUtil.md5(pwd));
+        user.setValidCode("");
+        user.setValidateDate(System.currentTimeMillis());
+        String body = JSONUtil.toJsonStr(user);
+        httpRequest.body(body);
+        HttpResponse httpResponse = httpRequest.execute();
+        //System.out.println(LocalDate.now()+httpResponse.body());
+        //code  data message 三个参数 data 可以不管 code 必须是success 才算登录成功
+        String JSESSIONID = httpResponse.getCookie("JSESSIONID").getValue();
+        String cookie = "JSESSIONID=" + JSESSIONID;
+        httpResponse.close();
+        return cookie;
+    }
+
 }

@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8070
   servlet:
     path: /
 mybatis:
@@ -9,7 +9,7 @@ mybatis:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql:///cp
+    url: jdbc:mysql:///cp_test
     username: root
     password: root
   jpa:
