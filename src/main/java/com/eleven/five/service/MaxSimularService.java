@@ -1305,7 +1305,7 @@ public class MaxSimularService {
         HttpRequest httpRequest = HttpUtil.createPost(balanceUrl);
         String cookie = loginPost();
         UserFind userFind = new UserFind();
-        userFind.setUserName("mzg159");
+        userFind.setUserName("zzh1986");
         String body = JSONUtil.toJsonStr(userFind);
         httpRequest.cookie(cookie);
         httpRequest.body(body);

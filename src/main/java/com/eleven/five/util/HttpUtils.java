@@ -19,8 +19,8 @@ import java.util.List;
 public class HttpUtils {
 
     static String loginUrl = "https://m.zh08823.com/tools/_ajax/login";
-    static String loginName = "mzg159";
-    static String pwd = "zg15934038";
+    static String loginName = "zzh1986";
+    static String pwd = "z13653603146";
      /*static String loginName = "zzh1986";
      static String pwd = "z13653603146";*/
 
