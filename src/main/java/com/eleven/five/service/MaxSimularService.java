@@ -1227,8 +1227,8 @@ public class MaxSimularService {
             Map<String, Object> map = new HashMap<>();
             TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
             map.put("period", 20 + tenTimesLatest.getPeriod().substring(0,tenTimesLatest.getPeriod().length()-2)+"0"+String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length()-2)) + 1));
-            if (result==null || result.length<1){
-                if(tongJiList.size()<=3){
+            if (result==null || result.length <= 1){
+                if(tongJiList.size() <= 3 && tongJiList.size() != 1){
                     for (Integer i : tongJiList){
                         numbers.add(String.valueOf(i).length()==1?("0"+i):(""+i));
                     }
@@ -1237,7 +1237,7 @@ public class MaxSimularService {
                 }
                 return null;
             }
-            if(result.length >= 4){
+            if(result.length > 4){
                 List<Integer> tongJiTwoList = new ArrayList<>();
                 //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
                 if(tongJi.getOne()==2){
@@ -1283,16 +1283,6 @@ public class MaxSimularService {
                 }
                 map.put("numbers",numbers);
                 return map;
-            }
-            if (result.length==1){
-                if(tongJiList.size()<=3){
-                    for (Integer i : tongJiList){
-                        numbers.add(String.valueOf(i).length()==1?("0"+i):(""+i));
-                    }
-                    map.put("numbers",numbers);
-                    return map;
-                }
-                return null;
             }
             for (String s : result){
                 numbers.add(s.length()==1?("0"+s):s);
