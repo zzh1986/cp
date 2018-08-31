@@ -20,4 +20,28 @@ public interface TenTimesMapper extends JpaRepository<TenTimes,Integer> {
 
     @Query(value = "select * from ten_times order by period desc limit 1",nativeQuery = true)
     TenTimes findTenTimesLatest();
+
+    @Query(value = "select one_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectFirstColumn();
+    @Query(value = "select two_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectSecondColumn();
+    @Query(value = "select three_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectThirdColumn();
+    @Query(value = "select four_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectForthColumn();
+    @Query(value = "select five_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectFifthColumn();
+    @Query(value = "select six_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectSixthColumn();
+    @Query(value = "select seven_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectSeventhColumn();
+    @Query(value = "select eight_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectEighthColumn();
+    @Query(value = "select nine_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectNinthColumn();
+    @Query(value = "select ten_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectTenthColumn();
+    @Query(value = "select eleven_ten from ten_times order by period asc ",nativeQuery = true)
+    Integer[] selectEleventhColumn();
+
 }

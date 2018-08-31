@@ -3,7 +3,6 @@ package com.eleven.five;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -91,14 +90,23 @@ public class DemoTest {
          /* Date date = new Date();
           System.out.println(date.getTime());*/
 
-         List<Integer> list = new ArrayList<>();
+        /* List<Integer> list = new ArrayList<>();
          list.add(1);
          list.add(2);
          list.add(3);
          list.add(4);
         Object[] objects = list.toArray();
-        System.out.println(Arrays.toString(objects));
-
+        System.out.println(Arrays.toString(objects));*/
+       /* FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Administrator\\Desktop\\m文件\\1.m"));
+        fos.write("你好世界".getBytes());
+        fos.close();*/
+       /* Integer[] s = {1,2,4,6,8,9,0,3};
+        System.out.println(Arrays.toString(s));*/
+        List<Integer> list = new ArrayList<>();
+        list.add(null);
+        list.add(1);
+        list.add(null);
+        System.out.println(list);
     }
 
 }

@@ -1,19 +1,21 @@
 package com.eleven.five.service;
 
 import com.eleven.five.entity.TenTimes;
+import com.eleven.five.entity.TenTongJi;
 import com.eleven.five.entity.TongJi;
 import com.eleven.five.entity.UrlDateEnum;
 import com.eleven.five.mapper.TenTimesMapper;
+import com.eleven.five.mapper.TenTongJiMapper;
 import com.eleven.five.mapper.TongJiMapper;
 import com.eleven.five.util.FiveUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +35,9 @@ public class TenTimesService {
 
     @Autowired
     private TongJiMapper tongJiMapper;
+
+    @Autowired
+    private TenTongJiMapper tenTongJiMapper;
 
     public void saveTenTimes(String date, String period) throws IOException {
         //TODO 需要对数据库进行清空操作
@@ -220,13 +225,13 @@ public class TenTimesService {
      * @throws IOException
      */
     public List<TenTimes> getTenTimesSencond(String date, String period) throws IOException {
-        if(Integer.valueOf(period)<10 || Integer.valueOf(period)>83){
+        if (Integer.valueOf(period) < 10 || Integer.valueOf(period) > 83) {
             return null;
         }
         String url = "http://gd11x5.icaile.com/";
         date = date.substring(2);
         Elements elements = Jsoup.connect(url).get().select(".chart-bg-qh");
-        if (!elements.isEmpty() && elements.size()>9) {
+        if (!elements.isEmpty() && elements.size() > 9) {
             List<TenTimes> tenTimesList = new ArrayList<>();
             for (Element element : elements) {
                 Long periodtagert = Long.valueOf(element.text());
@@ -239,11 +244,11 @@ public class TenTimesService {
                     String four = elements1.select(".dqhm").get(3).text();
                     String five = elements1.select(".chart-bg-kjhmo").get(0).text();
                     TenTimes tenTimes = new TenTimes();
-                    chooseTenTimes(tenTimes,one);
-                    chooseTenTimes(tenTimes,two);
-                    chooseTenTimes(tenTimes,three);
-                    chooseTenTimes(tenTimes,four);
-                    chooseTenTimes(tenTimes,five);
+                    chooseTenTimes(tenTimes, one);
+                    chooseTenTimes(tenTimes, two);
+                    chooseTenTimes(tenTimes, three);
+                    chooseTenTimes(tenTimes, four);
+                    chooseTenTimes(tenTimes, five);
                     tenTimes.setPeriod(element.text());
                     tenTimesList.add(tenTimes);
                 }
@@ -254,8 +259,8 @@ public class TenTimesService {
         return null;
     }
 
-    private void chooseTenTimes(TenTimes tenTimes,String num) {
-        switch (num){
+    private void chooseTenTimes(TenTimes tenTimes, String num) {
+        switch (num) {
             case "01":
                 tenTimes.setOneTen(1);
                 break;
@@ -291,4 +296,192 @@ public class TenTimesService {
         }
     }
 
+    public String saveMFileOneToEleven() throws IOException {
+        Integer[][] count = new Integer[11][];
+        count[0] = tenTimesMapper.selectFirstColumn();
+        count[1] = tenTimesMapper.selectSecondColumn();
+        count[2] = tenTimesMapper.selectThirdColumn();
+        count[3] = tenTimesMapper.selectForthColumn();
+        count[4] = tenTimesMapper.selectFifthColumn();
+        count[5] = tenTimesMapper.selectSixthColumn();
+        count[6] = tenTimesMapper.selectSeventhColumn();
+        count[7] = tenTimesMapper.selectEighthColumn();
+        count[8] = tenTimesMapper.selectNinthColumn();
+        count[9] = tenTimesMapper.selectTenthColumn();
+        count[10] = tenTimesMapper.selectEleventhColumn();
+        FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Administrator\\Desktop\\m文件\\target.m"));
+        String target = "x=1:10;\n";
+        for (int i = 0; i < count.length; i++) {
+
+            target += "y" + (i + 1) + "=" + Arrays.toString(count[i]) + ";\n"
+                    + "figure(" + (i + 1) + ");\n"
+                    + "plot(x,y" + (i + 1) + ");\n";
+        }
+        TenTongJi tenTongJi = tenTongJiMapper.findAll().get(0);
+        Integer[] count1 = new Integer[11];
+        count1[0] = tenTongJi.getOne();
+        count1[1] = tenTongJi.getTwo();
+        count1[2] = tenTongJi.getThree();
+        count1[3] = tenTongJi.getFour();
+        count1[4] = tenTongJi.getFive();
+        count1[5] = tenTongJi.getSix();
+        count1[6] = tenTongJi.getSeven();
+        count1[7] = tenTongJi.getEight();
+        count1[8] = tenTongJi.getNine();
+        count1[9] = tenTongJi.getTen();
+        count1[10] = tenTongJi.getEleven();
+
+
+        String target2 = "x1=1:11;\n"
+                + "ytotal=" + Arrays.toString(count1) + ";\n"
+                + "figure(12);\n"
+                + "plot(x1,ytotal);";
+        fos.write(target.getBytes());
+        fos.write(target2.getBytes());
+        fos.close();
+        return "保存成功";
+    }
+
+
+    public String saveMFileRencentTen() throws IOException {
+        List<TenTimes> tenTimesList = tenTimesMapper.findAll();
+        FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\Administrator\\Desktop\\m文件\\10.m"));
+        String target = "x = 1:1:11;\n"
+                + "y1 =  (x-" + (tenTimesList.get(0).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(0).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y2 =  (x-" + (tenTimesList.get(1).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(1).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y3 =  (x-" + (tenTimesList.get(2).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(2).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y4 =  (x-" + (tenTimesList.get(3).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(3).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y5 =  (x-" + (tenTimesList.get(4).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(4).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y6 =  (x-" + (tenTimesList.get(5).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(5).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y7 =  (x-" + (tenTimesList.get(6).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(6).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y8 =  (x-" + (tenTimesList.get(7).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(7).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y9 =  (x-" + (tenTimesList.get(8).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(8).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                + "y10 = (x-" + (tenTimesList.get(9).getOneTen() == 0 ? 0 : 1) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getTwoTen() == 0 ? 0 : 2) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getThreeTen() == 0 ? 0 : 3) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getFourTen() == 0 ? 0 : 4) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getFiveTen() == 0 ? 0 : 5) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getSixTen() == 0 ? 0 : 6) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getSevenTen() == 0 ? 0 : 7) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getEightTen() == 0 ? 0 : 8) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getNineTen() == 0 ? 0 : 9) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getTenTen() == 0 ? 0 : 10) + ").*" +
+                        "(x-" + (tenTimesList.get(9).getElevenTen() == 0 ? 0 : 11) + ");\n"
+                +       "plot(x,y1);\n" +
+                        "hold on;\n"    +
+                        "plot(x,y2);\n" +
+                        "plot(x,y3);\n" +
+                        "plot(x,y4);\n" +
+                        "plot(x,y5);\n" +
+                        "plot(x,y6);\n" +
+                        "plot(x,y7);\n" +
+                        "plot(x,y8);\n" +
+                        "plot(x,y9);\n" +
+                        "plot(x,y10);";
+        target = target.replace(".*(x-0)", "");
+        target = target.replace("(x-0).*","");
+        System.out.println(target);
+                fos.write(target.getBytes());
+                fos.close();
+        return "保存成功";
+
+
+
+
+
+
+
+
+
+    }
 }
