@@ -2,15 +2,9 @@ package com.eleven.five.task;
 
 import com.eleven.five.controller.ElevenController;
 import com.eleven.five.controller.MaxSimularController;
-import com.eleven.five.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhaozhihong <zhao.zhihong@chinaott.net>
@@ -40,10 +34,10 @@ public class PayTask {
 //        }
 //    }
 
-    @Scheduled(cron = "0 0/30 9 * * * ")
+ /*   @Scheduled(cron = "0 0/30 9 * * * ")
     public void saveHistoryNumber(){
         elevenController.insertNumbers();
-    }
+    }*/
 
 //    @Scheduled(cron = "*/1 * * * * * ")
 //    public void getProperties1(){
@@ -55,23 +49,23 @@ public class PayTask {
 //        System.out.println(HttpUtils.nianfen);
 //    }
 
-    @Scheduled(cron = "0 5/10 11-23 * * * ")
-    public void chooseTarget(){
-        Map<String, Object> map = maxSimularController.chooseTarget();
-        if(null == map){
-            return;
-        }else {
-            String period = (String)map.get("period");
-            List<String> numbers = (List<String>) map.get("numbers");
-            HttpUtils.payTwo(period, numbers);
-        }
-    }
+//    @Scheduled(cron = "0 5/10 11-23 * * * ")
+//    public void chooseTarget(){
+//        Map<String, Object> map = maxSimularController.chooseTarget();
+//        if(null == map){
+//            return;
+//        }else {
+//            String period = (String)map.get("period");
+//            List<String> numbers = (List<String>) map.get("numbers");
+//            HttpUtils.payTwo(period, numbers);
+//        }
+//    }
 
     /**
      * 查询当前余额的定时任务
      */
-    @Scheduled(cron = "0 3/10 11-23 * * * ")
-    public void getUserBanlance() throws IOException {
-        maxSimularController.getUserBanlance();
-    }
+//    @Scheduled(cron = "0 3/10 11-23 * * * ")
+//    public void getUserBanlance() throws IOException {
+//        maxSimularController.getUserBanlance();
+//    }
 }

@@ -15,7 +15,7 @@ public class GroupUtils {
         /**
          * @param args
          */
-        public static void main(String[] args) {
+       /* public static void main(String[] args) {
             // TODO Auto-generated method stub
             Object[] tmp={"01","02","03","04","05","06","07","08","09","10","11"};
 //        ArrayList<Object[]> rs=RandomC(tmp);
@@ -25,14 +25,14 @@ public class GroupUtils {
             for (int i = 0;i<groupEntityList.size();i++){
                 System.out.println(groupEntityList.get(i));
             }
-        }
+        }*/
 
     /**
      * 获取一个数组11个数的全排列组合
      * @param numbers
      * @return
      */
-    static List<GroupEntity> getAllC(Object[] numbers,int one_group,int two_group){
+   public static List<GroupEntity> getAllC(Object[] numbers,int one_group,int two_group){
         List<GroupEntity> result = new ArrayList<>();
         ArrayList<Object[]> cmn = cmn(numbers, one_group);
         for (int i=0;i<cmn.size();i++){
@@ -54,7 +54,7 @@ public class GroupUtils {
     /**
      * 求一个数组的任意组合
      */
-        static ArrayList<Object[]> RandomC(Object[] source)
+       public static ArrayList<Object[]> RandomC(Object[] source)
         {
             ArrayList<Object[]> result=new ArrayList<>();
             if(source.length==1)
@@ -93,7 +93,7 @@ public class GroupUtils {
      * @param n
      * @return
      */
-        static ArrayList<Object[]> cmn(Object[] source, int n)
+       public static ArrayList<Object[]> cmn(Object[] source, int n)
         {
             ArrayList<Object[]> result=new ArrayList<Object[]>();
             if(n==1)
