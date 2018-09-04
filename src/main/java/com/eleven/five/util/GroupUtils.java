@@ -1,6 +1,5 @@
 package com.eleven.five.util;
 
-import cn.hutool.core.util.ArrayUtil;
 import com.eleven.five.entity.GroupEntity;
 
 import java.util.ArrayList;
@@ -11,16 +10,18 @@ import java.util.List;
  * @date 2018-09-03
  */
 public class GroupUtils {
+
+
         /**
          * @param args
          */
         public static void main(String[] args) {
             // TODO Auto-generated method stub
-            Object[] tmp={1,2,3,4,5,6,7,8,9,10,11};
+            Object[] tmp={"01","02","03","04","05","06","07","08","09","10","11"};
 //        ArrayList<Object[]> rs=RandomC(tmp);
-            ArrayList<Object[]> rs=cmn(tmp,4);
-            List<GroupEntity> groupEntityList = getAllC(tmp);
-            System.out.println(rs.size());
+//            ArrayList<Object[]> rs=cmn(tmp,5);
+            List<GroupEntity> groupEntityList = getAllC(tmp,8,3);
+//            System.out.println(rs.size());
             for (int i = 0;i<groupEntityList.size();i++){
                 System.out.println(groupEntityList.get(i));
             }
@@ -31,14 +32,14 @@ public class GroupUtils {
      * @param numbers
      * @return
      */
-    static List<GroupEntity> getAllC(Object[] numbers){
+    static List<GroupEntity> getAllC(Object[] numbers,int one_group,int two_group){
         List<GroupEntity> result = new ArrayList<>();
-        ArrayList<Object[]> cmn = cmn(numbers, 4);
+        ArrayList<Object[]> cmn = cmn(numbers, one_group);
         for (int i=0;i<cmn.size();i++){
             GroupEntity groupEntity = new GroupEntity();
             groupEntity.setOne(cmn.get(i));
             Object[] minus = ArrayUtils.minus(numbers, cmn.get(i));
-            ArrayList<Object[]> cmn1 = cmn(minus, 4);
+            ArrayList<Object[]> cmn1 = cmn(minus, two_group);
             groupEntity.setTwo(cmn1);
             List<Object[]> three = new ArrayList<>();
             for(int j = 0;j<cmn1.size();j++){
