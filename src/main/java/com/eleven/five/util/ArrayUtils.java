@@ -175,13 +175,12 @@ public class ArrayUtils {
         return result.toString();
     }
 
-   /* public static void main(String[] args) {
-        Integer[] str1 = {1, 2, 3, 4, 5, 0};
+    public static void main(String[] args) {
+        Integer[] str1 = {1, 2};
         Integer[] str2 = {1, 4, 5};
         Integer[] str3 = {1, 7, 9, 10, 12};
         Integer[] str4 = {1, 7, 9, 10, 12, 19};
         Object[] minus = minus(str1, str2);
         System.out.println(Arrays.toString(minus));
     }
-*/
 }

@@ -14,5 +14,9 @@ spring:
     password: root
   jpa:
     show-sql: false
+  devtools:
+    restart:
+      additional-paths: /caipiao
+      enabled: false
 #logging.level.com.eleven.five.mapper: debug
 

@@ -3,6 +3,7 @@ package com.eleven.five.util;
 import com.eleven.five.entity.GroupEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,17 +16,35 @@ public class GroupUtils {
         /**
          * @param args
          */
-       /* public static void main(String[] args) {
+        public static void main(String[] args) {
             // TODO Auto-generated method stub
-            Object[] tmp={"01","02","03","04","05","06","07","08","09","10","11"};
-//        ArrayList<Object[]> rs=RandomC(tmp);
-//            ArrayList<Object[]> rs=cmn(tmp,5);
-            List<GroupEntity> groupEntityList = getAllC(tmp,8,3);
-//            System.out.println(rs.size());
-            for (int i = 0;i<groupEntityList.size();i++){
-                System.out.println(groupEntityList.get(i));
+            Object[] one = {3,4,5,7,9};
+            Object[] two = {2,3,5,7,10};
+            ArrayList<Object[]> oneCmn = cmn(one, 2);
+            ArrayList<Object[]> twoCmn = cmn(two, 2);
+            Object[] three = {1,4,7,10};
+            Object[] four = {2,5,8,11};
+            Object[] five = {3,6,9};
+            Object[] six = {1,2,3,4};
+            Object[] seven = {8,9,10,11};
+            Object[] eight = {5,6,7};
+            List<Object[]> result = new ArrayList<>();
+            for (int i=0;i<oneCmn.size();i++){
+                for (int j=0;j<twoCmn.size();j++){
+                    Object[] union = ArrayUtils.union(oneCmn.get(i), twoCmn.get(j));
+                    if(union.length==3&&ArrayUtils.intersect(union,three).length>=1
+                            &&ArrayUtils.intersect(union,four).length>=1&&ArrayUtils.intersect(union,six).length>=1
+                            &&ArrayUtils.intersect(union,seven).length>=1
+                    ){
+                        result.add(union);
+                    }
+                }
             }
-        }*/
+            for (Object[] objects : result){
+                System.out.println(Arrays.toString(objects));
+            }
+            System.out.println(result.size());
+        }
 
     /**
      * 获取一个数组11个数的全排列组合

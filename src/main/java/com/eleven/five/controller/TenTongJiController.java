@@ -30,4 +30,9 @@ public class TenTongJiController {
             return "统计数据异常,请处理异常信息";
         }
     }
+
+    @GetMapping("/getPercentFromTenDays")
+    public String getPercentFromTenDays(){
+        return tenTongJiService.getPercentFromTenDays();
+    }
 }

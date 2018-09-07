@@ -22,10 +22,24 @@ public class GroupService {
         List<Object[]> oneOrTwoGroup = getOneOrTwoGroup(date, period, 6, 3);
         List<Object[]> oneOrTwoGroup1 = getOneOrTwoGroup(date, period, 5, 3);
         List<Object[]> oneOrTwoGroup2 = getOneOrTwoGroup(date, period, 4, 2);
-        //List<Object[]> oneOrTwoGroup3 = getOneOrTwoGroup(date, period, 3, 1);
+        //List<Object[]> oneOrTwoGroup3 = getOneOrTwoGroup(date, period, 9, 4);
         //List<Object[]> oneOrTwoGroup4 = getOneOrTwoGroup(date, period, 2, 1);
         List<Object[]> result = new ArrayList<>();
         Object[] standard={"01","02","03","04","05","06","07","08","09","10","11"};
+//        if(oneOrTwoGroup3!=null){
+//            if(oneOrTwoGroup3.size()==2){
+//                Object[] minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup3.get(0), oneOrTwoGroup3.get(1)));
+//                if(minus.length==3){
+//                    result.add(minus);
+//                    return result;
+//                }
+//            }
+//            if(oneOrTwoGroup3.size()==1){
+//                Object[] minus = ArrayUtils.minus(standard, oneOrTwoGroup3.get(0));
+//                result.add(minus);
+//                return result;
+//            }
+//        }
         if(oneOrTwoGroup!=null&&oneOrTwoGroup.size()==1
                 &&oneOrTwoGroup1!=null&&oneOrTwoGroup1.size()==1
                 &&oneOrTwoGroup2!=null&&oneOrTwoGroup2.size()==1){
@@ -147,7 +161,7 @@ public class GroupService {
             List<String[]> tenTimes = getTenTimes(date, period,z);
             //准备好所有分类 allC  8组 出5个试试
             Object[] standard={"01","02","03","04","05","06","07","08","09","10","11"};
-            List<GroupEntity> allC = GroupUtils.getAllC(standard, n, 3);
+            List<GroupEntity> allC = GroupUtils.getAllC(standard, n, 2);
             List<Object[]> objectList = new ArrayList<>();
             t1:
             for(int i=0;i<allC.size();i++){
