@@ -9,8 +9,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author zhaozhihong
@@ -184,6 +183,35 @@ public class GroupService {
     }
 
 
-
-
+    public Map<String,Object> getFiveNumbers(String date, String period) throws IOException {
+        List<String[]> tenTimeList = getTenTimes(date, period,10);
+        Integer[] count = {0,0,0,0,0,0,0,0,0,0,0};
+        Integer[] beforeFive = {0,0,0,0,0,0,0,0,0,0,0};
+        for (int i = 0; i < tenTimeList.size(); i++) {
+            if(i<5){
+                for (int j = 0; j <tenTimeList.get(i).length ; j++) {
+                    int index = Integer.valueOf(tenTimeList.get(i)[j]) - 1;
+                    count[index]++;
+                }
+            }else{
+                for (int j = 0; j <tenTimeList.get(i).length ; j++) {
+                    int index = Integer.valueOf(tenTimeList.get(i)[j]) - 1;
+                    beforeFive[index]++;
+                }
+            }
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("period",date+0+period);
+        List<String> numbers = new ArrayList<>();
+        for (int i = 0; i < count.length; i++) {
+            if(count[i]==3){
+                numbers.add(String.valueOf(i+1).length()==1?("0"+(i+1)):(""+(i+1)));
+            }
+        }
+        map.put("numbers",numbers);
+        System.out.println(Arrays.toString(count));
+        System.out.println(Arrays.toString(beforeFive));
+        System.out.println("================================");
+        return map;
+    }
 }
