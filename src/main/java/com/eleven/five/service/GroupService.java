@@ -200,6 +200,16 @@ public class GroupService {
                 }
             }
         }
+        Integer[] total = new Integer[11];
+        for (int i = 0; i <total.length ; i++) {
+            total[i]=count[i]+beforeFive[i];
+        }
+        Integer[] three = {0,0,0,0,0,0,0,0,0,0,0};
+        for (int j = 0; j < 5 ; j++) {
+            three[Integer.valueOf(tenTimeList.get(0)[j]) - 1]++;
+            three[Integer.valueOf(tenTimeList.get(8)[j]) - 1]++;
+            three[Integer.valueOf(tenTimeList.get(9)[j]) - 1]++;
+        }
         Map<String,Object> map = new HashMap<>();
         map.put("period",date+0+period);
         List<String> numbers = new ArrayList<>();
@@ -209,8 +219,21 @@ public class GroupService {
             }
         }
         map.put("numbers",numbers);
+        Integer[] ou = new Integer[11];
+        for (int i = 0; i < ou.length; i++) {
+            ou[i] = count[i]+beforeFive[i]+total[i]+three[i];
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < ou.length; i++) {
+            if(ou[i]%2==0){
+                result.add(i+1);
+            }
+        }
         System.out.println(Arrays.toString(count));
         System.out.println(Arrays.toString(beforeFive));
+        System.out.println(Arrays.toString(total));
+        System.out.println(Arrays.toString(three));
+        System.out.println(result);
         System.out.println("================================");
         return map;
     }
