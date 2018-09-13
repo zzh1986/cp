@@ -175,12 +175,30 @@ public class ArrayUtils {
         return result.toString();
     }
 
+    /**
+     * 统计数组中相同内容出现的次数
+     * @param args
+     */
+
+    public static Map<Object,Integer> getRepeatNum(Object[] args){
+
+        Map<Object,Integer> sameElement=new HashMap<>();
+        for(int i=0,k=args.length;i<k;i++){
+            Integer sum=sameElement.get(args[i]);
+            sameElement.put(args[i], sum==null?1:sum+1);
+        }
+        return sameElement;
+    }
     public static void main(String[] args) {
-        Integer[] str1 = {1, 2};
-        Integer[] str2 = {1, 4, 5};
-        Integer[] str3 = {1, 7, 9, 10, 12};
-        Integer[] str4 = {1, 7, 9, 10, 12, 19};
-        Object[] minus = minus(str1, str2);
-        System.out.println(Arrays.toString(minus));
+        String[] num = {"[1,2,3]","[4,5,6]","[1,2,3]","[4,5]","[1,2,3]","[4,5,6]","[5,6,7]"};
+        Map<Object, Integer> repeatNum = getRepeatNum(num);
+        Integer[] intNum = {1,2,3,1,22,1111,1,2,33,3,4};
+        Map<Object, Integer> repeatIntNum = getRepeatNum(intNum);
+        /*for (Map.Entry<Object, Integer> entry : repeatNum.entrySet()){
+            System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
+        }*/
+        for (Map.Entry<Object, Integer> entry : repeatIntNum.entrySet()){
+            System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
+        }
     }
 }

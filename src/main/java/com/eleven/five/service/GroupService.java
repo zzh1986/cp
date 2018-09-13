@@ -1,5 +1,6 @@
 package com.eleven.five.service;
 
+import cn.hutool.core.convert.Convert;
 import com.eleven.five.entity.GroupEntity;
 import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
@@ -24,7 +25,7 @@ public class GroupService {
         //List<Object[]> oneOrTwoGroup3 = getOneOrTwoGroup(date, period, 9, 4);
         //List<Object[]> oneOrTwoGroup4 = getOneOrTwoGroup(date, period, 2, 1);
         List<Object[]> result = new ArrayList<>();
-        Object[] standard={"01","02","03","04","05","06","07","08","09","10","11"};
+        Object[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
 //        if(oneOrTwoGroup3!=null){
 //            if(oneOrTwoGroup3.size()==2){
 //                Object[] minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup3.get(0), oneOrTwoGroup3.get(1)));
@@ -39,51 +40,51 @@ public class GroupService {
 //                return result;
 //            }
 //        }
-        if(oneOrTwoGroup!=null&&oneOrTwoGroup.size()==1
-                &&oneOrTwoGroup1!=null&&oneOrTwoGroup1.size()==1
-                &&oneOrTwoGroup2!=null&&oneOrTwoGroup2.size()==1){
+        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1
+                && oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1
+                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
             return oneOrTwoGroup2;
         }
-        if(oneOrTwoGroup1!=null&&oneOrTwoGroup1.size()==1
-                &&oneOrTwoGroup2!=null&&oneOrTwoGroup2.size()==1){
+        if (oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1
+                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
             Object[] minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup1.get(0), oneOrTwoGroup2.get(0)));
             result.add(minus);
             return result;
         }
-        if (oneOrTwoGroup1!=null&&oneOrTwoGroup1.size()==2){
+        if (oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 2) {
             Object[] minus = ArrayUtils.minus(ArrayUtils.union(oneOrTwoGroup1.get(0), oneOrTwoGroup1.get(1)), ArrayUtils.intersect(oneOrTwoGroup1.get(0), oneOrTwoGroup1.get(1)));
-            if(minus.length<4){
+            if (minus.length < 4) {
                 result.add(minus);
-            }else {
+            } else {
                 minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup1.get(0), oneOrTwoGroup1.get(1)));
-                if(minus.length<4){
+                if (minus.length < 4) {
                     result.add(minus);
                 }
             }
-                return result;
+            return result;
         }
-        if(oneOrTwoGroup!=null&&oneOrTwoGroup.size()==1
-                &&oneOrTwoGroup2!=null&&oneOrTwoGroup2.size()==1){
-            if(ArrayUtils.union(oneOrTwoGroup.get(0),oneOrTwoGroup2.get(0)).length==oneOrTwoGroup.get(0).length){
+        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1
+                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
+            if (ArrayUtils.union(oneOrTwoGroup.get(0), oneOrTwoGroup2.get(0)).length == oneOrTwoGroup.get(0).length) {
                 Object[] minus = ArrayUtils.minus(oneOrTwoGroup.get(0), oneOrTwoGroup2.get(0));
                 result.add(minus);
                 return result;
             }
             Object[] minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup.get(0), oneOrTwoGroup2.get(0)));
-            if(minus.length!=1 && minus.length<5){
+            if (minus.length != 1 && minus.length < 5) {
                 result.add(minus);
                 return result;
             }
             return oneOrTwoGroup2;
         }
-        if(oneOrTwoGroup1!=null&&oneOrTwoGroup1.size()==2){
+        if (oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 2) {
             Object[] minus = ArrayUtils.minus(ArrayUtils.union(oneOrTwoGroup1.get(0), oneOrTwoGroup1.get(1)), ArrayUtils.intersect(oneOrTwoGroup1.get(0), oneOrTwoGroup1.get(1)));
             result.add(minus);
             return result;
         }
-        if(oneOrTwoGroup2!=null&&oneOrTwoGroup2.size()==2){
-            Object[] minus = ArrayUtils.minus(standard,ArrayUtils.minus(ArrayUtils.union(oneOrTwoGroup2.get(0), oneOrTwoGroup2.get(1)), ArrayUtils.intersect(oneOrTwoGroup2.get(0), oneOrTwoGroup2.get(1))));
-            if (minus.length<4){
+        if (oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 2) {
+            Object[] minus = ArrayUtils.minus(standard, ArrayUtils.minus(ArrayUtils.union(oneOrTwoGroup2.get(0), oneOrTwoGroup2.get(1)), ArrayUtils.intersect(oneOrTwoGroup2.get(0), oneOrTwoGroup2.get(1))));
+            if (minus.length < 4) {
                 result.add(minus);
                 return result;
             }
@@ -94,9 +95,9 @@ public class GroupService {
 //            result.add(minus);
 //            return result;
 //        }
-        if(oneOrTwoGroup!=null&&oneOrTwoGroup.size()==2){
+        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 2) {
             Object[] minus = ArrayUtils.minus(ArrayUtils.union(oneOrTwoGroup.get(0), oneOrTwoGroup.get(1)), ArrayUtils.intersect(oneOrTwoGroup.get(0), oneOrTwoGroup.get(1)));
-            if(minus.length<4){
+            if (minus.length < 4) {
                 result.add(minus);
                 return result;
             }
@@ -113,12 +114,13 @@ public class GroupService {
 
     /**
      * 倒序的哦
+     *
      * @param date
      * @param period
      * @return
      * @throws IOException
      */
-    private List<String[]> getTenTimes(String date, String period,int num) throws IOException {
+    private List<String[]> getTenTimes(String date, String period, int num) throws IOException {
         String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
         Elements elements = Jsoup.connect(url).get().select("[data-period]");
         List<String> fiveList = new ArrayList<>();
@@ -137,7 +139,7 @@ public class GroupService {
             String dp = date.substring(2, date.length()) + iFormat;
             for (String s : fiveList) {
                 if (s.contains(dp)) {
-                    String[] number = s.substring(0,15).split("[\\s]+");
+                    String[] number = s.substring(0, 15).split("[\\s]+");
                     stringList.add(number);
                     continue t1;
                 }
@@ -148,24 +150,25 @@ public class GroupService {
 
     /**
      * 写一个方法,用于获取相应的参数,其中的参数有
-     * @param  date string
-     * @param   period String
-     * @param  n  int 每组几个数字
-     * @param  m  int 相同数字个数
+     *
+     * @param date   string
+     * @param period String
+     * @param n      int 每组几个数字
+     * @param m      int 相同数字个数
      * @return list</> 一个集合 一个或两个数组
      */
-    private List<Object[]> getOneOrTwoGroup(String date,String period,int n,int m) throws IOException {
-        for(int z=10;z>0;z--){
+    private List<Object[]> getOneOrTwoGroup(String date, String period, int n, int m) throws IOException {
+        for (int z = 10; z > 0; z--) {
             //先准备目标数据 n(10)组
-            List<String[]> tenTimes = getTenTimes(date, period,z);
+            List<String[]> tenTimes = getTenTimes(date, period, z);
             //准备好所有分类 allC  8组 出5个试试
-            Object[] standard={"01","02","03","04","05","06","07","08","09","10","11"};
+            Object[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
             List<GroupEntity> allC = GroupUtils.getAllC(standard, n, 2);
             List<Object[]> objectList = new ArrayList<>();
             t1:
-            for(int i=0;i<allC.size();i++){
-                for (int j=0;j<tenTimes.size();j++){
-                    if(ArrayUtils.intersect(allC.get(i).getOne(),tenTimes.get(j)).length!=m){
+            for (int i = 0; i < allC.size(); i++) {
+                for (int j = 0; j < tenTimes.size(); j++) {
+                    if (ArrayUtils.intersect(allC.get(i).getOne(), tenTimes.get(j)).length != m) {
                         continue t1;
                     }
                 }
@@ -173,9 +176,9 @@ public class GroupService {
                 Object[] one = allC.get(i).getOne();
                 objectList.add(one);
             }
-            if(objectList.size()==2){
+            if (objectList.size() == 2) {
                 return objectList;
-            }else if(objectList.size()==1){
+            } else if (objectList.size() == 1) {
                 return objectList;
             }
         }
@@ -183,50 +186,50 @@ public class GroupService {
     }
 
 
-    public Map<String,Object> getFiveNumbers(String date, String period) throws IOException {
-        List<String[]> tenTimeList = getTenTimes(date, period,10);
-        Integer[] count = {0,0,0,0,0,0,0,0,0,0,0};
-        Integer[] beforeFive = {0,0,0,0,0,0,0,0,0,0,0};
+    public Map<String, Object> getFiveNumbers(String date, String period) throws IOException {
+        List<String[]> tenTimeList = getTenTimes(date, period, 10);
+        Integer[] count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Integer[] beforeFive = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         for (int i = 0; i < tenTimeList.size(); i++) {
-            if(i<5){
-                for (int j = 0; j <tenTimeList.get(i).length ; j++) {
+            if (i < 5) {
+                for (int j = 0; j < tenTimeList.get(i).length; j++) {
                     int index = Integer.valueOf(tenTimeList.get(i)[j]) - 1;
                     count[index]++;
                 }
-            }else{
-                for (int j = 0; j <tenTimeList.get(i).length ; j++) {
+            } else {
+                for (int j = 0; j < tenTimeList.get(i).length; j++) {
                     int index = Integer.valueOf(tenTimeList.get(i)[j]) - 1;
                     beforeFive[index]++;
                 }
             }
         }
         Integer[] total = new Integer[11];
-        for (int i = 0; i <total.length ; i++) {
-            total[i]=count[i]+beforeFive[i];
+        for (int i = 0; i < total.length; i++) {
+            total[i] = count[i] + beforeFive[i];
         }
-        Integer[] three = {0,0,0,0,0,0,0,0,0,0,0};
-        for (int j = 0; j < 5 ; j++) {
+        Integer[] three = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (int j = 0; j < 5; j++) {
             three[Integer.valueOf(tenTimeList.get(0)[j]) - 1]++;
             three[Integer.valueOf(tenTimeList.get(8)[j]) - 1]++;
             three[Integer.valueOf(tenTimeList.get(9)[j]) - 1]++;
         }
-        Map<String,Object> map = new HashMap<>();
-        map.put("period",date+0+period);
+        Map<String, Object> map = new HashMap<>();
+        map.put("period", date + 0 + period);
         List<String> numbers = new ArrayList<>();
         for (int i = 0; i < count.length; i++) {
-            if(count[i]==3){
-                numbers.add(String.valueOf(i+1).length()==1?("0"+(i+1)):(""+(i+1)));
+            if (count[i] == 3) {
+                numbers.add(String.valueOf(i + 1).length() == 1 ? ("0" + (i + 1)) : ("" + (i + 1)));
             }
         }
-        map.put("numbers",numbers);
+        map.put("numbers", numbers);
         Integer[] ou = new Integer[11];
         for (int i = 0; i < ou.length; i++) {
-            ou[i] = count[i]+beforeFive[i]+total[i]+three[i];
+            ou[i] = count[i] + beforeFive[i] + total[i] + three[i];
         }
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < ou.length; i++) {
-            if(ou[i]%2==0){
-                result.add(i+1);
+            if (ou[i] % 2 == 0) {
+                result.add(i + 1);
             }
         }
         System.out.println(Arrays.toString(count));
@@ -236,5 +239,123 @@ public class GroupService {
         System.out.println(result);
         System.out.println("================================");
         return map;
+    }
+
+    /**
+     * @param date   日期
+     * @param period 期号
+     * @return
+     * @throws IOException
+     */
+    public List<Integer> getSixNumber(String date, String period, List<Integer> list) throws IOException {
+        List<String[]> tenTimeList = getTenTimes(date, period, 10);
+        Integer[] three = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (int j = 0; j < 5; j++) {
+            for (int i = 0; i < list.size(); i++) {
+                three[Integer.valueOf(tenTimeList.get(list.get(i))[j]) - 1]++;
+            }
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("period", date + 0 + period);
+        List<String> numbers = new ArrayList<>();
+        map.put("numbers", numbers);
+        Integer[] ou = new Integer[11];
+        for (int i = 0; i < ou.length; i++) {
+            ou[i] = three[i];
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < ou.length; i++) {
+            if (ou[i] % 2 == 0) {
+                result.add(i + 1);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 用于将前一组数据的计算结果返回去
+     *
+     * @param date
+     * @param period
+     * @return
+     */
+    public List<String> getSixList(String date, String period) throws IOException {
+        //获取下一期的中奖数据  18080138
+        String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
+        Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (Integer.valueOf(period) + 1) + "]");
+        String nextAward = elements.get(0).attr("data-award");
+        Integer[] nextAwardInt = Convert.toIntArray(nextAward.split("\\s"));
+        Integer[] group = {0,1,2,3,4,5,6,7,8,9};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(group, 3);
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < cmn.size(); i++) {
+            Integer[] objects = Convert.toIntArray(cmn.get(i));
+            List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(objects));
+            if (sixNumber.size()==6 && ArrayUtils.intersect(nextAwardInt,sixNumber.toArray()).length>=4){
+                result.add(Arrays.toString(objects));
+            }
+        }
+        return result;
+    }
+
+    public Object getMostFrequently(String date, String period) throws IOException {
+        List result = new ArrayList();
+        for (int i = Integer.valueOf(period)-2; i < Integer.valueOf(period); i++) {
+            List<String> sixList = getSixList(date, String.valueOf(i));
+            result.addAll(sixList);
+        }
+        Map<Object, Integer> repeatNum = ArrayUtils.getRepeatNum(result.toArray());
+        List<Integer> num = new ArrayList<>();
+        for (Map.Entry<Object,Integer> entry : repeatNum.entrySet()){
+           num.add(entry.getValue());
+        }
+        Object[] objects = num.toArray();
+        Arrays.sort(objects);
+        Object key = getKey(repeatNum, objects[objects.length - 1]);
+        System.out.println(key);
+        return key;
+    }
+    public Object getSixLists(String date, String period) throws IOException {
+        Integer[] group = {0,1,2,3,4,5,6,7,8,9};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(group, 3);
+        List result = new ArrayList<>();
+        for (int i = 0; i < cmn.size(); i++) {
+            Integer[] objects = Convert.toIntArray(cmn.get(i));
+            List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(objects));
+            if (sixNumber.size()==6){
+                result.add(Arrays.toString(sixNumber.toArray()));
+            }
+        }
+        return result;
+    }
+    /**
+     * hashmap 通过value 获取key
+     * @param map
+     * @param value
+     * @return
+     */
+    public Object getKey(Map map, Object value){
+        List<Object> keyList = new ArrayList<>();
+        for(Object key: map.keySet()){
+            if(map.get(key).equals(value)){
+                keyList.add(key);
+            }
+        }
+        return keyList;
+    }
+
+    public List getMaxSimularly(String date, String period) throws IOException {
+        Object mostFrequently = getMostFrequently(date, period);
+        List<String> mostFrequently1 = (List) mostFrequently;
+        List result = new ArrayList();
+        if(mostFrequently1.size()!=0){
+            for (String s : mostFrequently1){
+                String[] split = s.substring(1, s.lastIndexOf("]")).split(",");
+                Integer[] integers = Convert.toIntArray(split);
+                List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(integers));
+                result.add(sixNumber);
+            }
+        }
+        return result;
     }
 }

@@ -26,4 +26,22 @@ public class GroupController {
      public Map<String,Object> getFiveNumbers(String date, String period) throws IOException {
           return groupService.getFiveNumbers(date,period);
      }
+
+     @RequestMapping("/getSixList")
+     public List<String> getSixList(String date, String period) throws IOException {
+          return groupService.getSixList(date,period);
+     }
+     @RequestMapping("/getMostFrequently")
+     public Object getMostFrequently(String date, String period) throws IOException {
+          return groupService.getMostFrequently(date,period);
+     }
+     @RequestMapping("/getSixLists")
+     public Object getSixLists(String date, String period) throws IOException {
+          return groupService.getSixLists(date,period);
+     }
+
+     @RequestMapping("/getMaxSimularly")
+     public Object getMaxSimularly(String date, String period) throws IOException {
+          return groupService.getMaxSimularly(date,period);
+     }
 }
