@@ -1,11 +1,16 @@
 package com.eleven.five.service;
 
+import cn.hutool.core.convert.Convert;
 import com.eleven.five.entity.GroupEntity;
+import com.eleven.five.entity.ThreeResult;
+import com.eleven.five.entity.UrlDateEnum;
+import com.eleven.five.mapper.ThreeResultMapper;
 import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
 import com.eleven.five.util.GroupUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,6 +21,10 @@ import java.util.*;
  */
 @Service
 public class GroupService {
+
+
+    @Autowired
+    private ThreeResultMapper threeResultMapper;
 
     public List<Object[]> getGroupResult(String date, String period) throws IOException {
         List<Object[]> oneOrTwoGroup = getOneOrTwoGroup(date, period, 6, 3);
@@ -184,6 +193,7 @@ public class GroupService {
 
 
     public Map<String,Object> getFiveNumbers(String date, String period) throws IOException {
+
         List<String[]> tenTimeList = getTenTimes(date, period,10);
         Integer[] count = {0,0,0,0,0,0,0,0,0,0,0};
         Integer[] beforeFive = {0,0,0,0,0,0,0,0,0,0,0};
@@ -229,6 +239,55 @@ public class GroupService {
                 result.add(i+1);
             }
         }
+
+        //其中three 数组就保存的我要的东西
+        Integer[][] threeGroup= new Integer[4][];
+        List<Integer> tempInt0 = new ArrayList<>();
+        List<Integer> tempInt1 = new ArrayList<>();
+        List<Integer> tempInt2 = new ArrayList<>();
+        List<Integer> tempInt3 = new ArrayList<>();
+        for (int i = 0; i <three.length ; i++) {
+            switch (three[i]){
+                case 0: tempInt0.add(i+1);break;
+                case 1: tempInt1.add(i+1);break;
+                case 2: tempInt2.add(i+1);break;
+                    default: tempInt3.add(i+1);
+            }
+        }
+         threeGroup[0] = Convert.toIntArray(tempInt0.toArray());
+         threeGroup[1] = Convert.toIntArray(tempInt1.toArray());
+         threeGroup[2] = Convert.toIntArray(tempInt2.toArray());
+         threeGroup[3] = Convert.toIntArray(tempInt3.toArray());
+       /* //处理一下数组
+        for (int i = 0; i < threeGroup.length ; i++) {
+            for (int j = 0; j <threeGroup[i].length ; j++) {
+                threeGroup[i][j]=threeGroup[i][j]==0?(-1*i-1):threeGroup[i][j];
+            }
+        }*/
+        //获取下一组中奖号码
+        String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+        Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (Integer.valueOf(period)+ 1) + "]");
+        String award = elements.get(0).attr("data-award");
+        Integer[] awardInt = Convert.toIntArray(award.split("[\\s]+"));
+
+
+        ThreeResult threeResult = new ThreeResult();
+        threeResult.setId(null);
+        threeResult.setZeroOne(ArrayUtils.union(threeGroup[0],threeGroup[1]).length);
+        threeResult.setOneTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[0],threeGroup[1]),awardInt).length);
+        threeResult.setZeroTwo(ArrayUtils.union(threeGroup[0],threeGroup[2]).length);
+        threeResult.setTwoTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[0],threeGroup[2]),awardInt).length);
+        threeResult.setZeroThree(ArrayUtils.union(threeGroup[0],threeGroup[3]).length);
+        threeResult.setThreeTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[0],threeGroup[3]),awardInt).length);
+        threeResult.setOneTwo(ArrayUtils.union(threeGroup[1],threeGroup[2]).length);
+        threeResult.setFourTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[1],threeGroup[2]),awardInt).length);
+        threeResult.setOneThree(ArrayUtils.union(threeGroup[1],threeGroup[3]).length);
+        threeResult.setFiveTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[1],threeGroup[3]),awardInt).length);
+        threeResult.setTwoThree(ArrayUtils.union(threeGroup[2],threeGroup[3]).length);
+        threeResult.setSixTotal(ArrayUtils.intersect(ArrayUtils.union(threeGroup[2],threeGroup[3]),awardInt).length);
+        threeResult.setPeriod(period);
+        threeResultMapper.save(threeResult);
+
         System.out.println(Arrays.toString(count));
         System.out.println(Arrays.toString(beforeFive));
         System.out.println(Arrays.toString(total));
@@ -236,5 +295,13 @@ public class GroupService {
         System.out.println(result);
         System.out.println("================================");
         return map;
+    }
+
+    public String getOneDayResult(String date) throws IOException {
+        threeResultMapper.deleteAll();
+        for (int i = 10; i < 84; i++) {
+             getFiveNumbers(date, String.valueOf(i));
+        }
+        return "统计结束,请到数据库查看";
     }
 }

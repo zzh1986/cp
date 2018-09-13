@@ -26,4 +26,14 @@ public class GroupController {
      public Map<String,Object> getFiveNumbers(String date, String period) throws IOException {
           return groupService.getFiveNumbers(date,period);
      }
+     @RequestMapping("/getOneDayResult")
+     public String getOneDayResult(String date){
+          try {
+               return groupService.getOneDayResult(date);
+          }catch (Exception e){
+               e.printStackTrace();
+               return "有异常!程序中查看";
+          }
+
+     }
 }
