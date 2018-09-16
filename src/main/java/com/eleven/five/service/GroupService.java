@@ -1,15 +1,22 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
+import com.eleven.five.entity.Adjacent;
 import com.eleven.five.entity.GroupEntity;
+import com.eleven.five.entity.TenRepeat;
+import com.eleven.five.mapper.AdjacentMapper;
+import com.eleven.five.mapper.TenRepeatMapper;
 import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
 import com.eleven.five.util.GroupUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -17,6 +24,11 @@ import java.util.*;
  */
 @Service
 public class GroupService {
+    @Autowired
+    private AdjacentMapper adjacentMapper;
+
+    @Autowired
+    private TenRepeatMapper tenRepeatMapper;
 
     public List<Object[]> getGroupResult(String date, String period) throws IOException {
         List<Object[]> oneOrTwoGroup = getOneOrTwoGroup(date, period, 6, 3);
@@ -40,13 +52,10 @@ public class GroupService {
 //                return result;
 //            }
 //        }
-        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1
-                && oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1
-                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
+        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1 && oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1 && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
             return oneOrTwoGroup2;
         }
-        if (oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1
-                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
+        if (oneOrTwoGroup1 != null && oneOrTwoGroup1.size() == 1 && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
             Object[] minus = ArrayUtils.minus(standard, ArrayUtils.union(oneOrTwoGroup1.get(0), oneOrTwoGroup2.get(0)));
             result.add(minus);
             return result;
@@ -63,8 +72,7 @@ public class GroupService {
             }
             return result;
         }
-        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1
-                && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
+        if (oneOrTwoGroup != null && oneOrTwoGroup.size() == 1 && oneOrTwoGroup2 != null && oneOrTwoGroup2.size() == 1) {
             if (ArrayUtils.union(oneOrTwoGroup.get(0), oneOrTwoGroup2.get(0)).length == oneOrTwoGroup.get(0).length) {
                 Object[] minus = ArrayUtils.minus(oneOrTwoGroup.get(0), oneOrTwoGroup2.get(0));
                 result.add(minus);
@@ -285,13 +293,13 @@ public class GroupService {
         Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (Integer.valueOf(period) + 1) + "]");
         String nextAward = elements.get(0).attr("data-award");
         Integer[] nextAwardInt = Convert.toIntArray(nextAward.split("\\s"));
-        Integer[] group = {0,1,2,3,4,5,6,7,8,9};
+        Integer[] group = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         ArrayList<Object[]> cmn = GroupUtils.cmn(group, 3);
         List<String> result = new ArrayList<>();
         for (int i = 0; i < cmn.size(); i++) {
             Integer[] objects = Convert.toIntArray(cmn.get(i));
             List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(objects));
-            if (sixNumber.size()==6 && ArrayUtils.intersect(nextAwardInt,sixNumber.toArray()).length>=4){
+            if (sixNumber.size() == 6 && ArrayUtils.intersect(nextAwardInt, sixNumber.toArray()).length >= 4) {
                 result.add(Arrays.toString(objects));
             }
         }
@@ -300,14 +308,14 @@ public class GroupService {
 
     public Object getMostFrequently(String date, String period) throws IOException {
         List result = new ArrayList();
-        for (int i = Integer.valueOf(period)-2; i < Integer.valueOf(period); i++) {
+        for (int i = Integer.valueOf(period) - 2; i < Integer.valueOf(period); i++) {
             List<String> sixList = getSixList(date, String.valueOf(i));
             result.addAll(sixList);
         }
         Map<Object, Integer> repeatNum = ArrayUtils.getRepeatNum(result.toArray());
         List<Integer> num = new ArrayList<>();
-        for (Map.Entry<Object,Integer> entry : repeatNum.entrySet()){
-           num.add(entry.getValue());
+        for (Map.Entry<Object, Integer> entry : repeatNum.entrySet()) {
+            num.add(entry.getValue());
         }
         Object[] objects = num.toArray();
         Arrays.sort(objects);
@@ -315,29 +323,32 @@ public class GroupService {
         System.out.println(key);
         return key;
     }
+
     public Object getSixLists(String date, String period) throws IOException {
-        Integer[] group = {0,1,2,3,4,5,6,7,8,9};
+        Integer[] group = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         ArrayList<Object[]> cmn = GroupUtils.cmn(group, 3);
         List result = new ArrayList<>();
         for (int i = 0; i < cmn.size(); i++) {
             Integer[] objects = Convert.toIntArray(cmn.get(i));
             List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(objects));
-            if (sixNumber.size()==6){
+            if (sixNumber.size() == 6) {
                 result.add(Arrays.toString(sixNumber.toArray()));
             }
         }
         return result;
     }
+
     /**
      * hashmap 通过value 获取key
+     *
      * @param map
      * @param value
      * @return
      */
-    public Object getKey(Map map, Object value){
+    public Object getKey(Map map, Object value) {
         List<Object> keyList = new ArrayList<>();
-        for(Object key: map.keySet()){
-            if(map.get(key).equals(value)){
+        for (Object key : map.keySet()) {
+            if (map.get(key).equals(value)) {
                 keyList.add(key);
             }
         }
@@ -348,14 +359,59 @@ public class GroupService {
         Object mostFrequently = getMostFrequently(date, period);
         List<String> mostFrequently1 = (List) mostFrequently;
         List result = new ArrayList();
-        if(mostFrequently1.size()!=0){
-            for (String s : mostFrequently1){
+        if (mostFrequently1.size() != 0) {
+            for (String s : mostFrequently1) {
                 String[] split = s.substring(1, s.lastIndexOf("]")).split(",");
                 Integer[] integers = Convert.toIntArray(split);
                 List<Integer> sixNumber = getSixNumber(date, period, Arrays.asList(integers));
-                result.add(sixNumber);
+                result.add(Arrays.toString(sixNumber.toArray()));
             }
         }
         return result;
+    }
+
+    public void saveAdjacentNumbers(String date, String period) throws IOException {
+        //每次先清空
+        adjacentMapper.deleteAll();
+        tenRepeatMapper.deleteAll();
+        //爬取相应的数据 然后保存到数据库
+        List<Object[]> oneDayNumbers = getOneDayNumbers(date, period);
+        for (int i = 0; i <oneDayNumbers.size()-1 ; i++) {
+            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 1));
+            Adjacent adjacent = new Adjacent();
+            adjacent.setId(null);
+            adjacent.setRepeatNum(intersect.length);
+            adjacent.setAwardNum(Arrays.toString(oneDayNumbers.get(i+1)));
+            adjacent.setPeriod(date+(String.valueOf(i+2).length()==1?("0"+(i+2)):(i+2)));
+            adjacentMapper.save(adjacent);
+        }
+        for (int i = 0; i <oneDayNumbers.size()-9 ; i++) {
+            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
+            TenRepeat tenRepeat = new TenRepeat();
+            tenRepeat.setId(null);
+            tenRepeat.setRepeatNum(intersect.length);
+            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i)));
+            tenRepeat.setPeriod(date+(String.valueOf(i+10).length()==1?("0"+(i+10)):(i+10)));
+            tenRepeatMapper.save(tenRepeat);
+        }
+
+    }
+
+    private List<Object[]> getOneDayNumbers(String date, String period) throws IOException {
+        //还是网易 网址爬虫  20180915
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        if (StringUtils.isEmpty(date)) {
+            date = sdf.format(new Date());
+        }
+        String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
+        Elements elements = Jsoup.connect(url).get().select("[data-period]");
+        List<String> fiveList = new ArrayList<>();
+        FiveUtil.getOneGroupNumber(fiveList, elements);
+        List<Object[]> oneDayNumbers = new ArrayList<>();
+        for (int i = 0; i < Integer.valueOf(period); i++) {
+            String[] split = fiveList.get(i).substring(0, 14).split("\\s");
+            oneDayNumbers.add(split);
+        }
+        return oneDayNumbers;
     }
 }

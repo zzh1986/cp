@@ -44,4 +44,11 @@ public class GroupController {
      public Object getMaxSimularly(String date, String period) throws IOException {
           return groupService.getMaxSimularly(date,period);
      }
+     /**
+      * 获取重复数据的记录,分别记录到两个表中,
+      */
+     @RequestMapping("/saveAdjacentNumbers")
+     public void saveAdjacentNumbers(String date,String period) throws IOException {
+           groupService.saveAdjacentNumbers(date,period);
+     }
 }

@@ -2,8 +2,10 @@ package com.eleven.five;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -91,14 +93,16 @@ public class DemoTest {
          /* Date date = new Date();
           System.out.println(date.getTime());*/
 
-         List<Integer> list = new ArrayList<>();
-         list.add(1);
-         list.add(2);
-         list.add(3);
-         list.add(4);
-        Object[] objects = list.toArray();
-        System.out.println(Arrays.toString(objects));
-
+//         List<Integer> list = new ArrayList<>();
+//         list.add(1);
+//         list.add(2);
+//         list.add(3);
+//         list.add(4);
+//        Object[] objects = list.toArray();
+//        System.out.println(Arrays.toString(objects));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String format = sdf.format(new Date());
+        System.out.println(format);
     }
 
 }

@@ -715,7 +715,7 @@ public class MaxSimularService {
                 String[] fiveFirst = tenMaxSimular.substring(tenMaxSimular.indexOf('[') + 1, tenMaxSimular.indexOf(']')).split(",");
                 String[] fiveSecond = threeMaxSimular.substring(threeMaxSimular.indexOf('[') + 1, threeMaxSimular.indexOf(']')).split(",");
                 //先出一个11个数字的数组
-                String[] elevenStr = {"1","2","3","4","5","6","7","8","9","10","11"};
+                String[] elevenStr = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"};
                 Object[] result = ArrayUtils.intersect(fiveFirst, fiveSecond);
                 Object[] firstMinus = ArrayUtils.minus(elevenStr, fiveFirst);
                 Object[] secondMinus = ArrayUtils.minus(elevenStr, fiveSecond);
@@ -821,23 +821,7 @@ public class MaxSimularService {
 
         NumberFormat pnf = NumberFormat.getPercentInstance();
 
-        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--"
-                + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--"
-                + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--"
-                + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--"
-                + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--"
-                + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:"
-                + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--"
-                + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--"
-                + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--"
-                + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--"
-                + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--"
-                + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--"
-                + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--"
-                + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--"
-                + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--"
-                + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:"
-                + threeFenMu;
+        return date + "当天结果为2的成功率如下:\n 1.两次都出现的成功率为--" + pnf.format(twoPercent) + ";\n 2.一次出现的概率为--" + pnf.format(onePercent) + ":\n\t  2.1.一次出现在上次的概率为--" + pnf.format(oneInPercent) + ";\n\t  2.2一次没有出现在上次的概率为--" + pnf.format(oneNotInPercent) + ";\n 3.都没有出现在上次的概率为--" + pnf.format(zeroPercent) + ";\n 两次的情况总次数为:" + fenMu + "\n 当天结果为3的成功率如下:\n\t  3.1三次都出现在上次的成功率为--" + pnf.format(threeThreePercent) + ";\n\t  3.2三次中两次出现的概率为--" + pnf.format(threeTwoPercent) + ";\n\t  3.2.1三次中两次出现且不在上次的概率为--" + pnf.format(threeTwoZeroPercent) + ";\n\t\t 3.2.2三次中两次出现在一次在上次的概率为--" + pnf.format(threeTwoOnePercent) + ";\n\t\t  3.2.3三次中两次出现且都不在上次的概率为--" + pnf.format(threeTwoTwoPercent) + ";\n\t 3.3三次中一次出现的概率为--" + pnf.format(threeOnePercent) + ";\n\t\t  3.3.1三次中一次出现且在上次的概率为--" + pnf.format(threeOneInPercent) + ";\n\t\t  3.3.2三次中一次出现且不在上次的概率为--" + pnf.format(threeOneNotInPercent) + ";\n\t  3.4三次中没有出现在上次的概率为--" + pnf.format(threeZeroPercent) + ";\n 三次的情况总次数为:" + threeFenMu;
         /*if (result.length == 8) {
             //TODO 另一种用法
         }*/
@@ -864,7 +848,7 @@ public class MaxSimularService {
             Object[] intersect = ArrayUtils.intersect(fiveFirst, fiveSecond, latestTenTimes);
             String[] result = Convert.toStrArray(intersect);
             Map<String, Object> map = new HashMap<>();
-            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0,tenTimesLatest.getPeriod().length()-2)+"0"+String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length()-2)) + 1));
+            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0, tenTimesLatest.getPeriod().length() - 2) + "0" + String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length() - 2)) + 1));
             List<String> numbers = new ArrayList<>();
             switch (result.length) {
                 case 1:
@@ -887,17 +871,17 @@ public class MaxSimularService {
     }
 
     public String getThreePercent(String date) {
-        int zeroCount=0;
-        int oneCount=0;
-        int twoCount=0;
-        int threeCount=0;
-        int fourCount=0;
+        int zeroCount = 0;
+        int oneCount = 0;
+        int twoCount = 0;
+        int threeCount = 0;
+        int fourCount = 0;
 
-        int fourFenZi=0;
-        int threeFenZi=0;
-        int twoFenZi=0;
-        int oneFenZi=0;
-        int zeroBuFenZi=0;
+        int fourFenZi = 0;
+        int threeFenZi = 0;
+        int twoFenZi = 0;
+        int oneFenZi = 0;
+        int zeroBuFenZi = 0;
 
         try {
             //少个save操作
@@ -910,79 +894,79 @@ public class MaxSimularService {
                 List<Integer> tenTongJiFiveList = new ArrayList<>();
                 List<Integer> tenTongJiNumberList = new ArrayList<>();
                 //+++++++++++++++++次数为4次的统计+++++++++++++++++++//
-                if(tenTongJi.getOne()==4){
+                if (tenTongJi.getOne() == 4) {
                     tenTongJiFourList.add(1);
                 }
-                if(tenTongJi.getTwo()==4){
+                if (tenTongJi.getTwo() == 4) {
                     tenTongJiFourList.add(2);
                 }
-                if(tenTongJi.getThree()==4){
+                if (tenTongJi.getThree() == 4) {
                     tenTongJiFourList.add(3);
                 }
-                if(tenTongJi.getFour()==4){
+                if (tenTongJi.getFour() == 4) {
                     tenTongJiFourList.add(4);
                 }
-                if(tenTongJi.getFive()==4){
+                if (tenTongJi.getFive() == 4) {
                     tenTongJiFourList.add(5);
                 }
-                if(tenTongJi.getSix()==4){
+                if (tenTongJi.getSix() == 4) {
                     tenTongJiFourList.add(6);
                 }
-                if(tenTongJi.getSeven()==4){
+                if (tenTongJi.getSeven() == 4) {
                     tenTongJiFourList.add(7);
                 }
-                if(tenTongJi.getEight()==4){
+                if (tenTongJi.getEight() == 4) {
                     tenTongJiFourList.add(8);
                 }
-                if(tenTongJi.getNine()==4){
+                if (tenTongJi.getNine() == 4) {
                     tenTongJiFourList.add(9);
                 }
-                if(tenTongJi.getTen()==4){
+                if (tenTongJi.getTen() == 4) {
                     tenTongJiFourList.add(10);
                 }
-                if(tenTongJi.getEleven()==4){
+                if (tenTongJi.getEleven() == 4) {
                     tenTongJiFourList.add(11);
                 }
                 //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
-                if(tenTongJi.getOne()==5){
+                if (tenTongJi.getOne() == 5) {
                     tenTongJiFiveList.add(1);
                 }
-                if(tenTongJi.getTwo()==5){
+                if (tenTongJi.getTwo() == 5) {
                     tenTongJiFiveList.add(2);
                 }
-                if(tenTongJi.getThree()==5){
+                if (tenTongJi.getThree() == 5) {
                     tenTongJiFiveList.add(3);
                 }
-                if(tenTongJi.getFour()==5){
+                if (tenTongJi.getFour() == 5) {
                     tenTongJiFiveList.add(4);
                 }
-                if(tenTongJi.getFive()==5){
+                if (tenTongJi.getFive() == 5) {
                     tenTongJiFiveList.add(5);
                 }
-                if(tenTongJi.getSix()==5){
+                if (tenTongJi.getSix() == 5) {
                     tenTongJiFiveList.add(6);
                 }
-                if(tenTongJi.getSeven()==5){
+                if (tenTongJi.getSeven() == 5) {
                     tenTongJiFiveList.add(7);
                 }
-                if(tenTongJi.getEight()==5){
+                if (tenTongJi.getEight() == 5) {
                     tenTongJiFiveList.add(8);
                 }
-                if(tenTongJi.getNine()==5){
+                if (tenTongJi.getNine() == 5) {
                     tenTongJiFiveList.add(9);
                 }
-                if(tenTongJi.getTen()==5){
+                if (tenTongJi.getTen() == 5) {
                     tenTongJiFiveList.add(10);
                 }
-                if(tenTongJi.getEleven()==5){
+                if (tenTongJi.getEleven() == 5) {
                     tenTongJiFiveList.add(11);
                 }
                 //+++++++++++++++++++++结果集合的处理+++++++++++++++//
-                if(tenTongJiFourList.size()>=5){
+                if (tenTongJiFourList.size() >= 5) {
                     tenTongJiNumberList.addAll(tenTongJiFourList);
-                }else if(tenTongJiFiveList.size()>=5){
+                } else if (tenTongJiFiveList.size() >= 5) {
                     tenTongJiNumberList.addAll(tenTongJiFiveList);
-                }else{
+                } else {
                     tenTongJiNumberList.addAll(tenTongJiFourList);
                     tenTongJiNumberList.addAll(tenTongJiFiveList);
                 }
@@ -990,37 +974,37 @@ public class MaxSimularService {
                 TongJi tongJi = tongJiMapper.findAll().get(0);
                 List<Integer> tongJiList = new ArrayList<>();
                 //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
-                if(tongJi.getOne()==1){
+                if (tongJi.getOne() == 1) {
                     tongJiList.add(1);
                 }
-                if(tongJi.getTwo()==1){
+                if (tongJi.getTwo() == 1) {
                     tongJiList.add(2);
                 }
-                if(tongJi.getThree()==1){
+                if (tongJi.getThree() == 1) {
                     tongJiList.add(3);
                 }
-                if(tongJi.getFour()==1){
+                if (tongJi.getFour() == 1) {
                     tongJiList.add(4);
                 }
-                if(tongJi.getFive()==1){
+                if (tongJi.getFive() == 1) {
                     tongJiList.add(5);
                 }
-                if(tongJi.getSix()==1){
+                if (tongJi.getSix() == 1) {
                     tongJiList.add(6);
                 }
-                if(tongJi.getSeven()==1){
+                if (tongJi.getSeven() == 1) {
                     tongJiList.add(7);
                 }
-                if(tongJi.getEight()==1){
+                if (tongJi.getEight() == 1) {
                     tongJiList.add(8);
                 }
-                if(tongJi.getNine()==1){
+                if (tongJi.getNine() == 1) {
                     tongJiList.add(9);
                 }
-                if(tongJi.getTen()==1){
+                if (tongJi.getTen() == 1) {
                     tongJiList.add(10);
                 }
-                if(tongJi.getEleven()==1){
+                if (tongJi.getEleven() == 1) {
                     tongJiList.add(11);
                 }
                 //将集合转化成数组,求交集 和与11 的补集
@@ -1036,33 +1020,33 @@ public class MaxSimularService {
                 String award = elements.get(0).attr("data-award");
                 String[] awardArray = award.split("[\\s]+");
                 String[] awardStr = Convert.toStrArray(Convert.toIntArray(awardArray));
-                if(intersect.length==4){
+                if (intersect.length == 4) {
                     fourCount++;
-                    if (ArrayUtils.intersect(intersect,awardStr).length>=2){
+                    if (ArrayUtils.intersect(intersect, awardStr).length >= 2) {
                         fourFenZi++;
                     }
                 }
-                if(intersect.length==3){
+                if (intersect.length == 3) {
                     threeCount++;
-                    if (ArrayUtils.intersect(intersect,awardStr).length>=2){
+                    if (ArrayUtils.intersect(intersect, awardStr).length >= 2) {
                         threeFenZi++;
                     }
                 }
-                if(intersect.length==2){
+                if (intersect.length == 2) {
                     twoCount++;
-                    if (ArrayUtils.intersect(intersect,awardStr).length>=1){
+                    if (ArrayUtils.intersect(intersect, awardStr).length >= 1) {
                         twoFenZi++;
                     }
                 }
-                if(intersect.length==1){
+                if (intersect.length == 1) {
                     oneCount++;
-                    if (ArrayUtils.intersect(intersect,awardStr).length>=1){
+                    if (ArrayUtils.intersect(intersect, awardStr).length >= 1) {
                         oneFenZi++;
                     }
                 }
-                if(intersect.length==0){
+                if (intersect.length == 0) {
                     zeroCount++;
-                    if(ArrayUtils.intersect(ArrayUtils.minus(elevenStr,Convert.toStrArray(ArrayUtils.union(tenTongJiNumberList.toArray(), tongJiList.toArray()))),awardArray).length==1){
+                    if (ArrayUtils.intersect(ArrayUtils.minus(elevenStr, Convert.toStrArray(ArrayUtils.union(tenTongJiNumberList.toArray(), tongJiList.toArray()))), awardArray).length == 1) {
                         zeroBuFenZi++;
                     }
                 }
@@ -1075,12 +1059,7 @@ public class MaxSimularService {
             double zeroBuPercent = zeroBuFenZi * 1.0 / zeroCount;
             NumberFormat pnf = NumberFormat.getPercentInstance();
 
-            return date + "当天结果次数及成功率如下:\n\t  1.四次都出现的次数为:"+fourCount+";成功率为--"
-                    + pnf.format(fourPercent) + ";\n\t  2.三次出现的次数为:"+threeCount+";成功率为--"
-                    + pnf.format(threePercent) + ":\n\t  3.两次出现的次数为:"+twoCount+";成功率为--"
-                    + pnf.format(twoPercent) + ";\n\t  4.一次出现的次数为:"+oneCount+";成功率为--"
-                    + pnf.format(onePercent) + ";\n\t 5.没有交集出现的次数--"+ zeroCount+";补集成功率为--"
-                    + pnf.format(zeroBuPercent);
+            return date + "当天结果次数及成功率如下:\n\t  1.四次都出现的次数为:" + fourCount + ";成功率为--" + pnf.format(fourPercent) + ";\n\t  2.三次出现的次数为:" + threeCount + ";成功率为--" + pnf.format(threePercent) + ":\n\t  3.两次出现的次数为:" + twoCount + ";成功率为--" + pnf.format(twoPercent) + ";\n\t  4.一次出现的次数为:" + oneCount + ";成功率为--" + pnf.format(onePercent) + ";\n\t 5.没有交集出现的次数--" + zeroCount + ";补集成功率为--" + pnf.format(zeroBuPercent);
         } catch (Exception e) {
             log.error("抓取下一期的数据异常!");
             e.printStackTrace();
@@ -1107,79 +1086,79 @@ public class MaxSimularService {
             List<Integer> tenTongJiFiveList = new ArrayList<>();
             List<Integer> tenTongJiNumberList = new ArrayList<>();
             //+++++++++++++++++次数为4次的统计+++++++++++++++++++//
-            if(tenTongJi.getOne()==4){
+            if (tenTongJi.getOne() == 4) {
                 tenTongJiFourList.add(1);
             }
-            if(tenTongJi.getTwo()==4){
+            if (tenTongJi.getTwo() == 4) {
                 tenTongJiFourList.add(2);
             }
-            if(tenTongJi.getThree()==4){
+            if (tenTongJi.getThree() == 4) {
                 tenTongJiFourList.add(3);
             }
-            if(tenTongJi.getFour()==4){
+            if (tenTongJi.getFour() == 4) {
                 tenTongJiFourList.add(4);
             }
-            if(tenTongJi.getFive()==4){
+            if (tenTongJi.getFive() == 4) {
                 tenTongJiFourList.add(5);
             }
-            if(tenTongJi.getSix()==4){
+            if (tenTongJi.getSix() == 4) {
                 tenTongJiFourList.add(6);
             }
-            if(tenTongJi.getSeven()==4){
+            if (tenTongJi.getSeven() == 4) {
                 tenTongJiFourList.add(7);
             }
-            if(tenTongJi.getEight()==4){
+            if (tenTongJi.getEight() == 4) {
                 tenTongJiFourList.add(8);
             }
-            if(tenTongJi.getNine()==4){
+            if (tenTongJi.getNine() == 4) {
                 tenTongJiFourList.add(9);
             }
-            if(tenTongJi.getTen()==4){
+            if (tenTongJi.getTen() == 4) {
                 tenTongJiFourList.add(10);
             }
-            if(tenTongJi.getEleven()==4){
+            if (tenTongJi.getEleven() == 4) {
                 tenTongJiFourList.add(11);
             }
             //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
-            if(tenTongJi.getOne()==5){
+            if (tenTongJi.getOne() == 5) {
                 tenTongJiFiveList.add(1);
             }
-            if(tenTongJi.getTwo()==5){
+            if (tenTongJi.getTwo() == 5) {
                 tenTongJiFiveList.add(2);
             }
-            if(tenTongJi.getThree()==5){
+            if (tenTongJi.getThree() == 5) {
                 tenTongJiFiveList.add(3);
             }
-            if(tenTongJi.getFour()==5){
+            if (tenTongJi.getFour() == 5) {
                 tenTongJiFiveList.add(4);
             }
-            if(tenTongJi.getFive()==5){
+            if (tenTongJi.getFive() == 5) {
                 tenTongJiFiveList.add(5);
             }
-            if(tenTongJi.getSix()==5){
+            if (tenTongJi.getSix() == 5) {
                 tenTongJiFiveList.add(6);
             }
-            if(tenTongJi.getSeven()==5){
+            if (tenTongJi.getSeven() == 5) {
                 tenTongJiFiveList.add(7);
             }
-            if(tenTongJi.getEight()==5){
+            if (tenTongJi.getEight() == 5) {
                 tenTongJiFiveList.add(8);
             }
-            if(tenTongJi.getNine()==5){
+            if (tenTongJi.getNine() == 5) {
                 tenTongJiFiveList.add(9);
             }
-            if(tenTongJi.getTen()==5){
+            if (tenTongJi.getTen() == 5) {
                 tenTongJiFiveList.add(10);
             }
-            if(tenTongJi.getEleven()==5){
+            if (tenTongJi.getEleven() == 5) {
                 tenTongJiFiveList.add(11);
             }
             //+++++++++++++++++++++结果集合的处理+++++++++++++++//
-            if(tenTongJiFourList.size()>=5){
+            if (tenTongJiFourList.size() >= 5) {
                 tenTongJiNumberList.addAll(tenTongJiFourList);
-            }else if(tenTongJiFiveList.size()>=5){
+            } else if (tenTongJiFiveList.size() >= 5) {
                 tenTongJiNumberList.addAll(tenTongJiFiveList);
-            }else{
+            } else {
                 tenTongJiNumberList.addAll(tenTongJiFourList);
                 tenTongJiNumberList.addAll(tenTongJiFiveList);
             }
@@ -1187,107 +1166,107 @@ public class MaxSimularService {
             TongJi tongJi = tongJiMapper.findAll().get(0);
             List<Integer> tongJiList = new ArrayList<>();
             //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
-            if(tongJi.getOne()==1){
+            if (tongJi.getOne() == 1) {
                 tongJiList.add(1);
             }
-            if(tongJi.getTwo()==1){
+            if (tongJi.getTwo() == 1) {
                 tongJiList.add(2);
             }
-            if(tongJi.getThree()==1){
+            if (tongJi.getThree() == 1) {
                 tongJiList.add(3);
             }
-            if(tongJi.getFour()==1){
+            if (tongJi.getFour() == 1) {
                 tongJiList.add(4);
             }
-            if(tongJi.getFive()==1){
+            if (tongJi.getFive() == 1) {
                 tongJiList.add(5);
             }
-            if(tongJi.getSix()==1){
+            if (tongJi.getSix() == 1) {
                 tongJiList.add(6);
             }
-            if(tongJi.getSeven()==1){
+            if (tongJi.getSeven() == 1) {
                 tongJiList.add(7);
             }
-            if(tongJi.getEight()==1){
+            if (tongJi.getEight() == 1) {
                 tongJiList.add(8);
             }
-            if(tongJi.getNine()==1){
+            if (tongJi.getNine() == 1) {
                 tongJiList.add(9);
             }
-            if(tongJi.getTen()==1){
+            if (tongJi.getTen() == 1) {
                 tongJiList.add(10);
             }
-            if(tongJi.getEleven()==1){
+            if (tongJi.getEleven() == 1) {
                 tongJiList.add(11);
             }
-            String[] elevens = {"1","2","3","4","5","6","7","8","9","10","11"};
+            String[] elevens = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"};
             Object[] intersect = ArrayUtils.intersect(tenTongJiNumberList.toArray(), tongJiList.toArray());
             String[] result = Convert.toStrArray(intersect);
             List<String> numbers = new ArrayList<>();
             Map<String, Object> map = new HashMap<>();
             TenTimes tenTimesLatest = tenTimesMapper.findTenTimesLatest();
-            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0,tenTimesLatest.getPeriod().length()-2)+"0"+String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length()-2)) + 1));
-            if (result==null || result.length <= 1){
-                if(tongJiList.size() <= 3 && tongJiList.size() != 1){
-                    for (Integer i : tongJiList){
-                        numbers.add(String.valueOf(i).length()==1?("0"+i):(""+i));
+            map.put("period", 20 + tenTimesLatest.getPeriod().substring(0, tenTimesLatest.getPeriod().length() - 2) + "0" + String.valueOf(Long.valueOf(tenTimesLatest.getPeriod().substring(tenTimesLatest.getPeriod().length() - 2)) + 1));
+            if (result == null || result.length <= 1) {
+                if (tongJiList.size() <= 3 && tongJiList.size() != 1) {
+                    for (Integer i : tongJiList) {
+                        numbers.add(String.valueOf(i).length() == 1 ? ("0" + i) : ("" + i));
                     }
-                    map.put("numbers",numbers);
+                    map.put("numbers", numbers);
                     return map;
                 }
                 return null;
             }
-            if(result.length > 4){
+            if (result.length > 4) {
                 List<Integer> tongJiTwoList = new ArrayList<>();
                 //+++++++++++++++++次数为5次的统计+++++++++++++++++++//
-                if(tongJi.getOne()==2){
+                if (tongJi.getOne() == 2) {
                     tongJiTwoList.add(1);
                 }
-                if(tongJi.getTwo()==2){
+                if (tongJi.getTwo() == 2) {
                     tongJiTwoList.add(2);
                 }
-                if(tongJi.getThree()==2){
+                if (tongJi.getThree() == 2) {
                     tongJiTwoList.add(3);
                 }
-                if(tongJi.getFour()==2){
+                if (tongJi.getFour() == 2) {
                     tongJiTwoList.add(4);
                 }
-                if(tongJi.getFive()==2){
+                if (tongJi.getFive() == 2) {
                     tongJiTwoList.add(5);
                 }
-                if(tongJi.getSix()==2){
+                if (tongJi.getSix() == 2) {
                     tongJiTwoList.add(6);
                 }
-                if(tongJi.getSeven()==2){
+                if (tongJi.getSeven() == 2) {
                     tongJiTwoList.add(7);
                 }
-                if(tongJi.getEight()==2){
+                if (tongJi.getEight() == 2) {
                     tongJiTwoList.add(8);
                 }
-                if(tongJi.getNine()==2){
+                if (tongJi.getNine() == 2) {
                     tongJiTwoList.add(9);
                 }
-                if(tongJi.getTen()==2){
+                if (tongJi.getTen() == 2) {
                     tongJiTwoList.add(10);
                 }
-                if(tongJi.getEleven()==2){
+                if (tongJi.getEleven() == 2) {
                     tongJiTwoList.add(11);
                 }
                 Object[] minus = ArrayUtils.minus(elevens, Convert.toStrArray(tenTongJiNumberList.toArray()));
                 String[] fourResult = Convert.toStrArray(ArrayUtils.intersect(minus, Convert.toStrArray(tongJiTwoList.toArray())));
-                if (fourResult == null || fourResult.length<1){
+                if (fourResult == null || fourResult.length < 1) {
                     return null;
                 }
-                for (String s : fourResult){
-                    numbers.add(s.length()==1?("0"+s):s);
+                for (String s : fourResult) {
+                    numbers.add(s.length() == 1 ? ("0" + s) : s);
                 }
-                map.put("numbers",numbers);
+                map.put("numbers", numbers);
                 return map;
             }
-            for (String s : result){
-                numbers.add(s.length()==1?("0"+s):s);
+            for (String s : result) {
+                numbers.add(s.length() == 1 ? ("0" + s) : s);
             }
-           map.put("numbers",numbers);
+            map.put("numbers", numbers);
             return map;
         } catch (Exception e) {
             log.error("数据爬取异常!!!");
@@ -1313,8 +1292,8 @@ public class MaxSimularService {
         String responseBodyStr = httpResponse.body();
         ResponseBody responseBody = JSONUtil.toBean(responseBodyStr, ResponseBody.class);
         double balance = responseBody.getData().getMoney();
-        log.info("当前余额为:"+balance);
-        if(balance>500){
+        log.info("当前余额为:" + balance);
+        if (balance > 500) {
             Runtime runtime = Runtime.getRuntime();
             runtime.exec("shutdown -s -t 00");
         }
@@ -1322,6 +1301,7 @@ public class MaxSimularService {
 
     /**
      * 注意:二哥的号cookie
+     *
      * @return
      */
     public String loginPost() {
@@ -1329,8 +1309,8 @@ public class MaxSimularService {
         HttpRequest requestLogOut = HttpUtil.createPost("https://m.zh08823.com/tools/_ajax//forgetPwdSeting");
         requestLogOut.execute();
         String loginUrl = "https://m.zh08823.com/tools/_ajax/login";
-        String loginName = "mzg159";
-        String pwd = "zg15934038";
+        String loginName = "zzh1986";
+        String pwd = "z13653603146";
         HttpRequest httpRequest = HttpUtil.createPost(loginUrl);
         User user = new User();
         user.setIsdefaultLogin(true);
@@ -1349,4 +1329,29 @@ public class MaxSimularService {
         return cookie;
     }
 
+    public Map<String, Object> chooseOneGroup() throws IOException {
+        //TODO 获取当前期的前10组数据
+        Date today = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String date = sdf.format(today);
+        String url = UrlDateEnum.URL_ENUM.getMsg() + date + ".html";
+        Elements elements = Jsoup.connect(url).get().select("[data-period]");
+        List<String> fiveList = new ArrayList<>();
+        FiveUtil.getOneGroupNumber(fiveList, elements);
+        int period = fiveList.size() + 1;
+        String[][] target = new String[10][5];
+        for (int i = fiveList.size() - 1, j = 0; i > fiveList.size() - 11; i--, j++) {
+            target[j] = fiveList.get(i).substring(0, 14).split("[\\s]+");
+        }
+        Object[] union = ArrayUtils.union(ArrayUtils.intersect(target[9], target[6], target[3], target[0]), ArrayUtils.intersect(target[7], target[4], target[1]), ArrayUtils.intersect(target[8], target[5], target[2]));
+        if (union == null || union.length == 0) {
+            return null;
+        }
+        Map<String, Object> map = new HashMap<>();
+        //组装union 为单个数据返回
+        List<Object> numbers = Arrays.asList(union);
+        map.put("numbers", numbers);
+        map.put("period", date + "0" + period);
+        return map;
+    }
 }
