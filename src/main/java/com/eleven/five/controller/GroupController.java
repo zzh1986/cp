@@ -51,4 +51,12 @@ public class GroupController {
      public void saveAdjacentNumbers(String date,String period) throws IOException {
            groupService.saveAdjacentNumbers(date,period);
      }
+
+    /**
+     * 统计一天的0,1,2,3,4,5,出现的概率
+     */
+    @RequestMapping("/getOneDayPercent")
+    public String getOneDayPercent(String date) throws IOException {
+        return groupService.getOneDayPercent(date);
+    }
 }

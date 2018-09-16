@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -376,22 +377,22 @@ public class GroupService {
         tenRepeatMapper.deleteAll();
         //爬取相应的数据 然后保存到数据库
         List<Object[]> oneDayNumbers = getOneDayNumbers(date, period);
-        for (int i = 0; i <oneDayNumbers.size()-1 ; i++) {
+        for (int i = 0; i < oneDayNumbers.size() - 1; i++) {
             Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 1));
             Adjacent adjacent = new Adjacent();
             adjacent.setId(null);
             adjacent.setRepeatNum(intersect.length);
-            adjacent.setAwardNum(Arrays.toString(oneDayNumbers.get(i+1)));
-            adjacent.setPeriod(date+(String.valueOf(i+2).length()==1?("0"+(i+2)):(i+2)));
+            adjacent.setAwardNum(Arrays.toString(oneDayNumbers.get(i + 1)));
+            adjacent.setPeriod(date + (String.valueOf(i + 2).length() == 1 ? ("0" + (i + 2)) : (i + 2)));
             adjacentMapper.save(adjacent);
         }
-        for (int i = 0; i <oneDayNumbers.size()-9 ; i++) {
+        for (int i = 0; i < oneDayNumbers.size() - 9; i++) {
             Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
             TenRepeat tenRepeat = new TenRepeat();
             tenRepeat.setId(null);
             tenRepeat.setRepeatNum(intersect.length);
             tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i)));
-            tenRepeat.setPeriod(date+(String.valueOf(i+10).length()==1?("0"+(i+10)):(i+10)));
+            tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
             tenRepeatMapper.save(tenRepeat);
         }
 
@@ -413,5 +414,44 @@ public class GroupService {
             oneDayNumbers.add(split);
         }
         return oneDayNumbers;
+    }
+
+    public String getOneDayPercent(String date) throws IOException {
+        saveAdjacentNumbers(date, "84");
+        Integer[] repeatNumbers = adjacentMapper.findRepeatNumbers();
+        // 用数组来进行统计
+        Integer[] numbers = {0,0,0,0,0,0};
+        for (int i = 0; i < repeatNumbers.length; i++) {
+            switch (repeatNumbers[i]) {
+                case 0:
+                    numbers[0]++;
+                    break;
+                case 1:
+                    numbers[1]++;
+                    break;
+                case 2:
+                    numbers[2]++;
+                    break;
+                case 3:
+                    numbers[3]++;
+                    break;
+                case 4:
+                    numbers[4]++;
+                    break;
+                default:
+                    numbers[5]++;
+                    break;
+            }
+        }
+        //TODO 总共 83个数据 需要分别统计每个的概率
+        String[] adjacentPercent = new String[6];
+        NumberFormat pnf = NumberFormat.getPercentInstance();
+        for (int i = 0; i < adjacentPercent.length; i++) {
+            adjacentPercent[i] = pnf.format(1.0 * numbers[i] / 83);
+        }
+
+        //TODO 每 10组的概率待会再统计
+        return Arrays.toString(adjacentPercent);
+
     }
 }
