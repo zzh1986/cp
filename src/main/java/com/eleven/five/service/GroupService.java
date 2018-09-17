@@ -386,16 +386,25 @@ public class GroupService {
             adjacent.setPeriod(date + (String.valueOf(i + 2).length() == 1 ? ("0" + (i + 2)) : (i + 2)));
             adjacentMapper.save(adjacent);
         }
-        for (int i = 0; i < oneDayNumbers.size() - 9; i++) {
-            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
+//        for (int i = 0; i < oneDayNumbers.size() - 9; i++) {
+//            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
+//            TenRepeat tenRepeat = new TenRepeat();
+//            tenRepeat.setId(null);
+//            tenRepeat.setRepeatNum(intersect.length);
+//            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i + 1)));
+//            tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
+//            tenRepeatMapper.save(tenRepeat);
+//        }
+        int m = 3;
+        for (int i = 0; i < oneDayNumbers.size() - oneDayNumbers.size() / m; i++) {
+            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + oneDayNumbers.size() / m));
             TenRepeat tenRepeat = new TenRepeat();
             tenRepeat.setId(null);
             tenRepeat.setRepeatNum(intersect.length);
-            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i)));
-            tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
+            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i + 1)));
+            tenRepeat.setPeriod(date + (String.valueOf(i + 1 + oneDayNumbers.size() / m).length() == 1 ? ("0" + (i + 1 + oneDayNumbers.size() / m)) : (i + 1 + oneDayNumbers.size() / m)));
             tenRepeatMapper.save(tenRepeat);
         }
-
     }
 
     private List<Object[]> getOneDayNumbers(String date, String period) throws IOException {
@@ -420,7 +429,7 @@ public class GroupService {
         saveAdjacentNumbers(date, "84");
         Integer[] repeatNumbers = adjacentMapper.findRepeatNumbers();
         // 用数组来进行统计
-        Integer[] numbers = {0,0,0,0,0,0};
+        Integer[] numbers = {0, 0, 0, 0, 0, 0};
         for (int i = 0; i < repeatNumbers.length; i++) {
             switch (repeatNumbers[i]) {
                 case 0:
