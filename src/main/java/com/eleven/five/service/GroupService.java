@@ -391,7 +391,7 @@ public class GroupService {
             TenRepeat tenRepeat = new TenRepeat();
             tenRepeat.setId(null);
             tenRepeat.setRepeatNum(intersect.length);
-            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i)));
+            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i+1)));
             tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
             tenRepeatMapper.save(tenRepeat);
         }
@@ -421,6 +421,7 @@ public class GroupService {
         Integer[] repeatNumbers = adjacentMapper.findRepeatNumbers();
         // 用数组来进行统计
         Integer[] numbers = {0,0,0,0,0,0};
+
         for (int i = 0; i < repeatNumbers.length; i++) {
             switch (repeatNumbers[i]) {
                 case 0:
@@ -441,6 +442,16 @@ public class GroupService {
                 default:
                     numbers[5]++;
                     break;
+            }
+
+        }
+        int[] missing = new int[numbers[1]+1];
+        int index=0;
+        for (int i = 0; i < repeatNumbers.length; i++) {
+            if (repeatNumbers[i]==1){
+                index++;
+            }else{
+                missing[index]++;
             }
         }
         //TODO 总共 83个数据 需要分别统计每个的概率
