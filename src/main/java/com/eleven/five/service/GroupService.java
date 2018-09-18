@@ -282,6 +282,35 @@ public class GroupService {
     }
 
     /**
+     * 田忌赛马
+     * @param date
+     * @param period
+     * @return
+     * @throws IOException
+     */
+    public List<Integer> getTianJiSaiMa(String date, String period) throws IOException {
+        List<String[]> tenTimeList = getTenTimes(date, period, 10);
+        String[] oneGroup = tenTimeList.get(0);
+        String[] twoGroup = tenTimeList.get(9);
+        String[] threeGroup = tenTimeList.get(1);
+        String[] fourGroup = tenTimeList.get(8);
+        String[] all = {"01","02","03","04","05","06","07","08","09","10","11"};
+        //数据处理
+        //1.处理前两组的交集并集补集
+        Object[] oneIntersect = ArrayUtils.intersect(oneGroup, twoGroup);
+        Object[] oneUnion = ArrayUtils.minus(ArrayUtils.union(oneGroup, twoGroup), oneIntersect);
+        Object[] oneMinus = ArrayUtils.minus(all, ArrayUtils.union(oneGroup, twoGroup));
+
+        Object[] twoIntersect = ArrayUtils.intersect(threeGroup, fourGroup);
+        Object[] twoUnion = ArrayUtils.minus(ArrayUtils.union(threeGroup, fourGroup), twoIntersect);
+        Object[] twoMinus = ArrayUtils.minus(all, ArrayUtils.union(threeGroup, fourGroup));
+
+
+        Object[] union = ArrayUtils.union(ArrayUtils.intersect(oneIntersect, twoIntersect), ArrayUtils.minus(oneUnion, twoUnion), ArrayUtils.minus(oneMinus, twoMinus));
+        List<Integer> resultList = Arrays.asList(Convert.toIntArray(union));
+        return resultList;
+    }
+    /**
      * 用于将前一组数据的计算结果返回去
      *
      * @param date

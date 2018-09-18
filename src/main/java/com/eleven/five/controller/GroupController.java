@@ -59,4 +59,12 @@ public class GroupController {
     public String getOneDayPercent(String date) throws IOException {
         return groupService.getOneDayPercent(date);
     }
+
+     /**
+      * 田忌赛马
+      */
+     @RequestMapping("/getTianJiSaiMa")
+     public List<Integer> getTianJiSaiMa(String date,String period) throws IOException {
+          return groupService.getTianJiSaiMa(date,period);
+     }
 }
