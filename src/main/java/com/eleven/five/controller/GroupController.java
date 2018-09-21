@@ -59,4 +59,13 @@ public class GroupController {
     public String getOneDayPercent(String date) throws IOException {
         return groupService.getOneDayPercent(date);
     }
+
+     /**
+      * 统计10期的1-11,出现的次数
+      */
+     @RequestMapping("/getOneToElevenNumber")
+     public Map getOneToElevenNumber(String date,String period) throws IOException {
+          return groupService.getOneToElevenNumber(date,period);
+     }
+
 }

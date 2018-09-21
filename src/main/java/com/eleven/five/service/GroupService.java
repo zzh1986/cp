@@ -386,13 +386,23 @@ public class GroupService {
             adjacent.setPeriod(date + (String.valueOf(i + 2).length() == 1 ? ("0" + (i + 2)) : (i + 2)));
             adjacentMapper.save(adjacent);
         }
-        for (int i = 0; i < oneDayNumbers.size() - 9; i++) {
-            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
+//        for (int i = 0; i < oneDayNumbers.size() - 9; i++) {
+//            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + 9));
+//            TenRepeat tenRepeat = new TenRepeat();
+//            tenRepeat.setId(null);
+//            tenRepeat.setRepeatNum(intersect.length);
+//            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i+1)));
+//            tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
+//            tenRepeatMapper.save(tenRepeat);
+//        }
+        int m = 4;
+        for (int i = 0; i < oneDayNumbers.size() - oneDayNumbers.size() / m; i++) {
+            Object[] intersect = ArrayUtils.intersect(oneDayNumbers.get(i), oneDayNumbers.get(i + oneDayNumbers.size() / m));
             TenRepeat tenRepeat = new TenRepeat();
             tenRepeat.setId(null);
             tenRepeat.setRepeatNum(intersect.length);
-            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i+1)));
-            tenRepeat.setPeriod(date + (String.valueOf(i + 10).length() == 1 ? ("0" + (i + 10)) : (i + 10)));
+            tenRepeat.setAwardNum(Arrays.toString(oneDayNumbers.get(i + 1)));
+            tenRepeat.setPeriod(date + (String.valueOf(i + 1 + oneDayNumbers.size() / m).length() == 1 ? ("0" + (i + 1 + oneDayNumbers.size() / m)) : (i + 1 + oneDayNumbers.size() / m)));
             tenRepeatMapper.save(tenRepeat);
         }
 
@@ -417,10 +427,10 @@ public class GroupService {
     }
 
     public String getOneDayPercent(String date) throws IOException {
-        saveAdjacentNumbers(date, "84");
-        Integer[] repeatNumbers = adjacentMapper.findRepeatNumbers();
+//        saveAdjacentNumbers(date, "84");
+        Integer[] repeatNumbers = tenRepeatMapper.findRepeatNumbers();
         // 用数组来进行统计
-        Integer[] numbers = {0,0,0,0,0,0};
+        Integer[] numbers = {0, 0, 0, 0, 0, 0};
 
         for (int i = 0; i < repeatNumbers.length; i++) {
             switch (repeatNumbers[i]) {
@@ -445,12 +455,12 @@ public class GroupService {
             }
 
         }
-        int[] missing = new int[numbers[1]+1];
-        int index=0;
+        int[] missing = new int[numbers[1] + 1];
+        int index = 0;
         for (int i = 0; i < repeatNumbers.length; i++) {
-            if (repeatNumbers[i]==1){
+            if (repeatNumbers[i] == 1) {
                 index++;
-            }else{
+            } else {
                 missing[index]++;
             }
         }
@@ -458,11 +468,84 @@ public class GroupService {
         String[] adjacentPercent = new String[6];
         NumberFormat pnf = NumberFormat.getPercentInstance();
         for (int i = 0; i < adjacentPercent.length; i++) {
-            adjacentPercent[i] = pnf.format(1.0 * numbers[i] / 83);
+            adjacentPercent[i] = pnf.format(1.0 * numbers[i] / repeatNumbers.length);
         }
 
         //TODO 每 10组的概率待会再统计
         return Arrays.toString(adjacentPercent);
 
+    }
+
+    public Map getOneToElevenNumber(String date, String period) throws IOException {
+        List<String[]> tenTimeList = getTenTimes(date, period, 10);
+        int[] times = new int[11];
+        for (int i = 0; i < tenTimeList.size(); i++) {
+            for (int j = 0; j < tenTimeList.get(i).length; j++) {
+                getTimes(tenTimeList, times, i, j);
+            }
+
+        }
+        //统计3期号
+        int[] threePeriod = new int[11];
+        for (int i = 0; i <5 ; i++) {
+            getTimes(tenTimeList,threePeriod,0,i);
+            getTimes(tenTimeList,threePeriod,8,i);
+            getTimes(tenTimeList,threePeriod,9,i);
+        }
+        //统计结束,开始进行分组
+        Map<String,List<Integer>> map = new HashMap<>();
+        List<Integer> small = new ArrayList<>();
+        List<Integer> middle1 = new ArrayList<>();
+        List<Integer> middle2 = new ArrayList<>();
+        List<Integer> big = new ArrayList<>();
+        for (int i = 0; i < times.length ; i++) {
+            if(times[i]<4){
+                small.add(i+1);
+            }else if(times[i]>5){
+                big.add(i+1);
+            }else if(times[i]==4) {
+                middle1.add(i+1);
+            }else{
+                middle2.add(i+1);
+            }
+        }
+
+        List<Integer> three0 = new ArrayList<>();
+        List<Integer> three1 = new ArrayList<>();
+        List<Integer> three2 = new ArrayList<>();
+        List<Integer> three3 = new ArrayList<>();
+        for (int i = 0; i < threePeriod.length; i++) {
+            switch (threePeriod[i]){
+                case 0: three0.add(i+1);break;
+                case 1: three1.add(i+1);break;
+                case 2: three2.add(i+1);break;
+                default: three3.add(i+1);break;
+            }
+        }
+        map.put("冷号:",small);
+        map.put("温号4:",middle1);
+        map.put("温号5:",middle2);
+        map.put("热号:",big);
+        map.put("0:",three0);
+        map.put("1:",three1);
+        map.put("2:",three2);
+        map.put("3:",three3);
+        return map;
+    }
+
+    private void getTimes(List<String[]> tenTimeList, int[] times, int i, int j) {
+        switch (tenTimeList.get(i)[j]){
+            case "01": times[0]++;break;
+            case "02": times[1]++;break;
+            case "03": times[2]++;break;
+            case "04": times[3]++;break;
+            case "05": times[4]++;break;
+            case "06": times[5]++;break;
+            case "07": times[6]++;break;
+            case "08": times[7]++;break;
+            case "09": times[8]++;break;
+            case "10": times[9]++;break;
+            default: times[10]++;break;
+        }
     }
 }
