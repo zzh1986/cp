@@ -517,8 +517,8 @@ public class GroupService {
         int[] threePeriod = new int[11];
         for (int i = 0; i <5 ; i++) {
             getTimes(tenTimeList,threePeriod,0,i);
-            getTimes(tenTimeList,threePeriod,8,i);
-            getTimes(tenTimeList,threePeriod,9,i);
+            getTimes(tenTimeList,threePeriod,tenTimeList.size()-2,i);
+            getTimes(tenTimeList,threePeriod,tenTimeList.size()-1,i);
         }
         //统计结束,开始进行分组
         Map<String,List<Integer>> map = new HashMap<>();
