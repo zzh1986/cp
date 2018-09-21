@@ -94,19 +94,19 @@ public class ArrayUtils {
      * @param arr1
      * @return
      */
-    public static Object[] minus(Object[]... arr1) {
-        if (arr1 != null) {
-            Object[] union = union(arr1);
-            Object[] intersect = intersect(arr1);
-            List<Object> unionList = Arrays.asList(union);
-            List<Object> intersectList = Arrays.asList(intersect);
-            ArrayList<Object> unionArrayList = new ArrayList<>(unionList);
-            ArrayList<Object> intersectArrayList = new ArrayList<>(intersectList);
-            unionArrayList.removeAll(intersectArrayList);
-            return unionArrayList.toArray();
-        }
-        return null;
-    }
+//    public static Object[] minus(Object[]... arr1) {
+//        if (arr1 != null) {
+//            Object[] union = union(arr1);
+//            Object[] intersect = intersect(arr1);
+//            List<Object> unionList = Arrays.asList(union);
+//            List<Object> intersectList = Arrays.asList(intersect);
+//            ArrayList<Object> unionArrayList = new ArrayList<>(unionList);
+//            ArrayList<Object> intersectArrayList = new ArrayList<>(intersectList);
+//            unionArrayList.removeAll(intersectArrayList);
+//            return unionArrayList.toArray();
+//        }
+//        return null;
+//    }
 
     /**
      * 差集 求两个数组的差集
@@ -115,7 +115,22 @@ public class ArrayUtils {
      * @param arr2 数组2
      * @return 差集
      */
-    private static Object[] minus(Object[] arr1, Object[] arr2) {
+    //TODO 这里做一个自定义的差集
+    public static Object[] minus(Object[] arr1, Object[] arr2) {
+        Object[] intersect = intersect(arr1, arr2);
+        List<Object> arr1List = Arrays.asList(arr1);
+        List<Object> result = new ArrayList<>();
+        if (null != intersect && intersect.length != 0) {
+            List<Object> intersectList = Arrays.asList(intersect);
+            for (int i = 0; i <arr1List.size() ; i++) {
+                if(!intersectList.contains(arr1List.get(i))){
+                    result.add(arr1List.get(i));
+                }
+            }
+        }
+        return result.toArray();
+    }
+    /*private static Object[] minus(Object[] arr1, Object[] arr2) {
         LinkedList<Object> list = new LinkedList<Object>();
         LinkedList<Object> history = new LinkedList<Object>();
         Object[] longerArr = arr1;
@@ -149,7 +164,7 @@ public class ArrayUtils {
 
         Object[] result = {};
         return list.toArray(result);
-    }
+    }*/
 
     /**
      * 数组转String
@@ -177,28 +192,30 @@ public class ArrayUtils {
 
     /**
      * 统计数组中相同内容出现的次数
+     *
      * @param args
      */
 
-    public static Map<Object,Integer> getRepeatNum(Object[] args){
+    public static Map<Object, Integer> getRepeatNum(Object[] args) {
 
-        Map<Object,Integer> sameElement=new HashMap<>();
-        for(int i=0,k=args.length;i<k;i++){
-            Integer sum=sameElement.get(args[i]);
-            sameElement.put(args[i], sum==null?1:sum+1);
+        Map<Object, Integer> sameElement = new HashMap<>();
+        for (int i = 0, k = args.length; i < k; i++) {
+            Integer sum = sameElement.get(args[i]);
+            sameElement.put(args[i], sum == null ? 1 : sum + 1);
         }
         return sameElement;
     }
+
     public static void main(String[] args) {
-        String[] num = {"[1,2,3]","[4,5,6]","[1,2,3]","[4,5]","[1,2,3]","[4,5,6]","[5,6,7]"};
+        String[] num = {"[1,2,3]", "[4,5,6]", "[1,2,3]", "[4,5]", "[1,2,3]", "[4,5,6]", "[5,6,7]"};
         Map<Object, Integer> repeatNum = getRepeatNum(num);
-        Integer[] intNum = {1,2,3,1,22,1111,1,2,33,3,4};
+        Integer[] intNum = {1, 2, 3, 1, 22, 1111, 1, 2, 33, 3, 4};
         Map<Object, Integer> repeatIntNum = getRepeatNum(intNum);
         /*for (Map.Entry<Object, Integer> entry : repeatNum.entrySet()){
             System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
         }*/
-        for (Map.Entry<Object, Integer> entry : repeatIntNum.entrySet()){
-            System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
+        for (Map.Entry<Object, Integer> entry : repeatIntNum.entrySet()) {
+            System.out.println("出现的重复的内容" + entry.getKey() + "的次数是:" + entry.getValue());
         }
     }
 }
