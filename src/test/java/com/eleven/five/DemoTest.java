@@ -1,5 +1,8 @@
 package com.eleven.five;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -100,9 +103,12 @@ public class DemoTest {
 //         list.add(4);
 //        Object[] objects = list.toArray();
 //        System.out.println(Arrays.toString(objects));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String format = sdf.format(new Date());
-        System.out.println(format);
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//        String format = sdf.format(new Date());
+//        System.out.println(format);
+
+        DateTime parse = DateUtil.parse("2018-09-24");
+        System.out.println(parse);
     }
 
 }

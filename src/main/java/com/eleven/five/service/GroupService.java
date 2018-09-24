@@ -1,6 +1,7 @@
 package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateTime;
 import com.eleven.five.entity.Adjacent;
 import com.eleven.five.entity.GroupEntity;
 import com.eleven.five.entity.TenRepeat;
@@ -141,8 +142,9 @@ public class GroupService {
         }
         //找出最近的10期数据 例如:perNum = 56 [47,56]
         List<String[]> stringList = new ArrayList<>();
+        //此处改为从开始的爬取
         t1:
-        for (int i = perNum; i > perNum - num; i--) {
+        for (int i = perNum - num + 1; i < perNum + 1; i++) {
             // 期号 18062042
             String iFormat = String.valueOf(i).length() < 2 ? "0" + i : String.valueOf(i);
             String dp = date.substring(2, date.length()) + iFormat;
@@ -283,6 +285,7 @@ public class GroupService {
 
     /**
      * 田忌赛马
+     *
      * @param date
      * @param period
      * @return
@@ -294,7 +297,7 @@ public class GroupService {
         String[] twoGroup = tenTimeList.get(9);
         String[] threeGroup = tenTimeList.get(1);
         String[] fourGroup = tenTimeList.get(8);
-        String[] all = {"01","02","03","04","05","06","07","08","09","10","11"};
+        String[] all = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
         //数据处理
         //1.处理前两组的交集并集补集
         Object[] oneIntersect = ArrayUtils.intersect(oneGroup, twoGroup);
@@ -310,6 +313,7 @@ public class GroupService {
         List<Integer> resultList = Arrays.asList(Convert.toIntArray(union));
         return resultList;
     }
+
     /**
      * 用于将前一组数据的计算结果返回去
      *
@@ -319,10 +323,7 @@ public class GroupService {
      */
     public List<String> getSixList(String date, String period) throws IOException {
         //获取下一期的中奖数据  18080138
-        String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
-        Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (Integer.valueOf(period) + 1) + "]");
-        String nextAward = elements.get(0).attr("data-award");
-        Integer[] nextAwardInt = Convert.toIntArray(nextAward.split("\\s"));
+        Integer[] nextAwardInt = getNextAwardNumber(date, period);
         Integer[] group = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         ArrayList<Object[]> cmn = GroupUtils.cmn(group, 3);
         List<String> result = new ArrayList<>();
@@ -334,6 +335,13 @@ public class GroupService {
             }
         }
         return result;
+    }
+
+    public Integer[] getNextAwardNumber(String date, String period) throws IOException {
+        String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
+        Elements elements = Jsoup.connect(url).get().select("[data-period=" + date.substring(2) + (Integer.valueOf(period) + 1) + "]");
+        String nextAward = elements.get(0).attr("data-award");
+        return Convert.toIntArray(nextAward.split("\\s"));
     }
 
     public Object getMostFrequently(String date, String period) throws IOException {
@@ -515,26 +523,26 @@ public class GroupService {
         }
         //统计3期号
         int[] threePeriod = new int[11];
-        for (int i = 0; i <5 ; i++) {
-            getTimes(tenTimeList,threePeriod,0,i);
-            getTimes(tenTimeList,threePeriod,tenTimeList.size()-2,i);
-            getTimes(tenTimeList,threePeriod,tenTimeList.size()-1,i);
+        for (int i = 0; i < 5; i++) {
+            getTimes(tenTimeList, threePeriod, 0, i);
+            getTimes(tenTimeList, threePeriod, tenTimeList.size() - 2, i);
+            getTimes(tenTimeList, threePeriod, tenTimeList.size() - 1, i);
         }
         //统计结束,开始进行分组
-        Map<String,List<Integer>> map = new HashMap<>();
+        Map<String, List<Integer>> map = new HashMap<>();
         List<Integer> small = new ArrayList<>();
         List<Integer> middle1 = new ArrayList<>();
         List<Integer> middle2 = new ArrayList<>();
         List<Integer> big = new ArrayList<>();
-        for (int i = 0; i < times.length ; i++) {
-            if(times[i]<4){
-                small.add(i+1);
-            }else if(times[i]>5){
-                big.add(i+1);
-            }else if(times[i]==4) {
-                middle1.add(i+1);
-            }else{
-                middle2.add(i+1);
+        for (int i = 0; i < times.length; i++) {
+            if (times[i] < 4) {
+                small.add(i + 1);
+            } else if (times[i] > 5) {
+                big.add(i + 1);
+            } else if (times[i] == 4) {
+                middle1.add(i + 1);
+            } else {
+                middle2.add(i + 1);
             }
         }
 
@@ -543,37 +551,161 @@ public class GroupService {
         List<Integer> three2 = new ArrayList<>();
         List<Integer> three3 = new ArrayList<>();
         for (int i = 0; i < threePeriod.length; i++) {
-            switch (threePeriod[i]){
-                case 0: three0.add(i+1);break;
-                case 1: three1.add(i+1);break;
-                case 2: three2.add(i+1);break;
-                default: three3.add(i+1);break;
+            switch (threePeriod[i]) {
+                case 0:
+                    three0.add(i + 1);
+                    break;
+                case 1:
+                    three1.add(i + 1);
+                    break;
+                case 2:
+                    three2.add(i + 1);
+                    break;
+                default:
+                    three3.add(i + 1);
+                    break;
             }
         }
-        map.put("冷号:",small);
-        map.put("温号4:",middle1);
-        map.put("温号5:",middle2);
-        map.put("热号:",big);
-        map.put("0:",three0);
-        map.put("1:",three1);
-        map.put("2:",three2);
-        map.put("3:",three3);
+        map.put("冷号:", small);
+        map.put("温号4:", middle1);
+        map.put("温号5:", middle2);
+        map.put("热号:", big);
+        map.put("0:", three0);
+        map.put("1:", three1);
+        map.put("2:", three2);
+        map.put("3:", three3);
         return map;
     }
 
     private void getTimes(List<String[]> tenTimeList, int[] times, int i, int j) {
-        switch (tenTimeList.get(i)[j]){
-            case "01": times[0]++;break;
-            case "02": times[1]++;break;
-            case "03": times[2]++;break;
-            case "04": times[3]++;break;
-            case "05": times[4]++;break;
-            case "06": times[5]++;break;
-            case "07": times[6]++;break;
-            case "08": times[7]++;break;
-            case "09": times[8]++;break;
-            case "10": times[9]++;break;
-            default: times[10]++;break;
+        switch (tenTimeList.get(i)[j]) {
+            case "01":
+                times[0]++;
+                break;
+            case "02":
+                times[1]++;
+                break;
+            case "03":
+                times[2]++;
+                break;
+            case "04":
+                times[3]++;
+                break;
+            case "05":
+                times[4]++;
+                break;
+            case "06":
+                times[5]++;
+                break;
+            case "07":
+                times[6]++;
+                break;
+            case "08":
+                times[7]++;
+                break;
+            case "09":
+                times[8]++;
+                break;
+            case "10":
+                times[9]++;
+                break;
+            default:
+                times[10]++;
+                break;
         }
     }
+
+    public Map getMaxPercentFromTenNumber(String date, String period) throws IOException {
+        Integer[] ten = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(ten, 2);
+        String[] eleven = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        Map<String, List<Double>> map = new HashMap<>();
+        if (Integer.valueOf(period) < 15) {
+            return null;
+        }
+        List<String[]> tenTimes = getTenTimes(date, String.valueOf(period), Integer.valueOf(period));
+        for (int j = 0; j < cmn.size(); j++) {
+            int minusIndex = 0;
+            int minuxNotIn = 0;
+            int minusElevenIndex = 0;
+            int minusElevenNotIn = 0;
+            for (int i = Integer.valueOf(period) - 10; i < Integer.valueOf(period); i++) {
+                // 获取下一组数据
+                // Integer[] awardNumber = getNextAwardNumber(date, String.valueOf(i));
+                Integer[] awardNumber = Convert.toIntArray(tenTimes.get(i ));
+                Object[] objects = cmn.get(j);
+                Object[] intersect = Convert.toIntArray(ArrayUtils.intersect(tenTimes.get(i - 10 + (Integer) objects[0]), tenTimes.get(i - 10 + (Integer) objects[1])));
+                Object[] union = Convert.toIntArray(ArrayUtils.union(tenTimes.get(i - 10 + (Integer) objects[0]), tenTimes.get(i - 10 + (Integer) objects[1])));
+                Object[] minus = Convert.toIntArray(ArrayUtils.minus(union, intersect));
+                Object[] minusEleven = Convert.toIntArray(ArrayUtils.minus(eleven, minus));
+                if (ArrayUtils.intersect(minus, awardNumber).length > minus.length / 2) {
+                    minusIndex++;
+                } else {
+                    minuxNotIn++;
+                }
+                if (ArrayUtils.intersect(minusEleven, awardNumber).length > minus.length / 2) {
+                    minusElevenIndex++;
+                } else {
+                    minusElevenNotIn++;
+                }
+            }
+            List<Double> list = new ArrayList<>();
+            list.add(minusIndex * 1.0 / (minusIndex + minuxNotIn));
+            list.add(minusElevenIndex * 1.0 / (minusElevenIndex + minusElevenNotIn));
+            map.put(Arrays.toString(cmn.get(j)), list);
+        }
+        return map;
+    }
+    /**
+     * 保存10天的数据进行分析
+     */
+    void getAnalysisFromTenDay(String date){
+        //通过循环获取当前日期前10天的数据,并分析统计到数据库
+
+//        for (int i = 0; i <  ; i++) {
+//
+//        }
+    }
+
+    /**
+     * 获取两个胆码
+     * @param date
+     * @param period
+     * @return
+     */
+    public List<Object[]> getTwoNumbers(String date, String period) throws IOException {
+        //从小到大的顺序咯
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        //统计次数
+        Map oneToElevenNumber = getOneToElevenNumber(date, period);
+//        map.put("冷号:", small);
+//        map.put("温号4:", middle1);
+//        map.put("温号5:", middle2);
+//        map.put("热号:", big);
+//        map.put("0:", three0);
+//        map.put("1:", three1);
+//        map.put("2:", three2);
+//        map.put("3:", three3);
+        Object[] middle1 = ((List<Integer>) oneToElevenNumber.get("温号4:")).toArray() ;
+        Object[] three1 = ((List<Integer>) oneToElevenNumber.get("1:")).toArray();
+        Object[] middle2 =((List<Integer>) oneToElevenNumber.get("温号5:")).toArray();
+        Object[] three3 = ((List<Integer>) oneToElevenNumber.get("2:")).toArray();
+        Object[] intersect1 = ArrayUtils.intersect(Convert.toIntArray(tenTimes.get(9)), middle1, three1);
+        Object[] intersect2 = ArrayUtils.intersect(Convert.toIntArray(tenTimes.get(9)), middle2, three3);
+        List<Object[]> target = new ArrayList<>();
+        target.add(intersect1);
+        target.add(intersect2);
+        return target;
+    }
+    //如果有时间可以统计一下 与每一组出现的数字的交集个数
+    public List<Integer> getRepeatTimes(String date,String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        Integer[] awardNumber = getNextAwardNumber(date, period);
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < tenTimes.size(); i++) {
+            list.add(ArrayUtils.intersect(awardNumber,Convert.toIntArray(tenTimes.get(i))).length);
+        }
+        return list;
+    }
+
 }

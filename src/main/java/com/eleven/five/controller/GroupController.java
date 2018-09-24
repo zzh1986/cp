@@ -2,6 +2,7 @@ package com.eleven.five.controller;
 
 import com.eleven.five.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,5 +68,25 @@ public class GroupController {
      public Map getOneToElevenNumber(String date,String period) throws IOException {
           return groupService.getOneToElevenNumber(date,period);
      }
+    /**
+     * 统计10期的1-11,出现的次数
+     */
+    @RequestMapping("/getMaxPercentFromTenNumber")
+    public Map getMaxPercentFromTenNumber(String date,String period) throws IOException {
+        return groupService.getMaxPercentFromTenNumber(date,period);
+    }
 
+    /**
+     * 获取两个胆号
+     * @return
+     */
+    @GetMapping("/getTwoNumbers")
+    public List<Object[]> getTwoNumbers(String date,String period) throws IOException {
+        return groupService.getTwoNumbers(date,period);
+    }
+
+    @GetMapping("/getRepeatTimes")
+    public List<Integer> getRepeatTimes(String date,String period) throws IOException {
+        return groupService.getRepeatTimes(date,period);
+    }
 }
