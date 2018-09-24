@@ -2,10 +2,13 @@ package com.eleven.five.service;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.eleven.five.entity.Adjacent;
 import com.eleven.five.entity.GroupEntity;
+import com.eleven.five.entity.RepeatTimes;
 import com.eleven.five.entity.TenRepeat;
 import com.eleven.five.mapper.AdjacentMapper;
+import com.eleven.five.mapper.RepeatTimesMapper;
 import com.eleven.five.mapper.TenRepeatMapper;
 import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
@@ -18,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,6 +35,9 @@ public class GroupService {
 
     @Autowired
     private TenRepeatMapper tenRepeatMapper;
+
+    @Autowired
+    private RepeatTimesMapper repeatTimesMapper;
 
     public List<Object[]> getGroupResult(String date, String period) throws IOException {
         List<Object[]> oneOrTwoGroup = getOneOrTwoGroup(date, period, 6, 3);
@@ -632,7 +639,7 @@ public class GroupService {
             for (int i = Integer.valueOf(period) - 10; i < Integer.valueOf(period); i++) {
                 // 获取下一组数据
                 // Integer[] awardNumber = getNextAwardNumber(date, String.valueOf(i));
-                Integer[] awardNumber = Convert.toIntArray(tenTimes.get(i ));
+                Integer[] awardNumber = Convert.toIntArray(tenTimes.get(i));
                 Object[] objects = cmn.get(j);
                 Object[] intersect = Convert.toIntArray(ArrayUtils.intersect(tenTimes.get(i - 10 + (Integer) objects[0]), tenTimes.get(i - 10 + (Integer) objects[1])));
                 Object[] union = Convert.toIntArray(ArrayUtils.union(tenTimes.get(i - 10 + (Integer) objects[0]), tenTimes.get(i - 10 + (Integer) objects[1])));
@@ -656,10 +663,11 @@ public class GroupService {
         }
         return map;
     }
+
     /**
      * 保存10天的数据进行分析
      */
-    void getAnalysisFromTenDay(String date){
+    void getAnalysisFromTenDay(String date) {
         //通过循环获取当前日期前10天的数据,并分析统计到数据库
 
 //        for (int i = 0; i <  ; i++) {
@@ -669,6 +677,7 @@ public class GroupService {
 
     /**
      * 获取两个胆码
+     *
      * @param date
      * @param period
      * @return
@@ -686,9 +695,9 @@ public class GroupService {
 //        map.put("1:", three1);
 //        map.put("2:", three2);
 //        map.put("3:", three3);
-        Object[] middle1 = ((List<Integer>) oneToElevenNumber.get("温号4:")).toArray() ;
+        Object[] middle1 = ((List<Integer>) oneToElevenNumber.get("温号4:")).toArray();
         Object[] three1 = ((List<Integer>) oneToElevenNumber.get("1:")).toArray();
-        Object[] middle2 =((List<Integer>) oneToElevenNumber.get("温号5:")).toArray();
+        Object[] middle2 = ((List<Integer>) oneToElevenNumber.get("温号5:")).toArray();
         Object[] three3 = ((List<Integer>) oneToElevenNumber.get("2:")).toArray();
         Object[] intersect1 = ArrayUtils.intersect(Convert.toIntArray(tenTimes.get(9)), middle1, three1);
         Object[] intersect2 = ArrayUtils.intersect(Convert.toIntArray(tenTimes.get(9)), middle2, three3);
@@ -697,15 +706,61 @@ public class GroupService {
         target.add(intersect2);
         return target;
     }
+
     //如果有时间可以统计一下 与每一组出现的数字的交集个数
-    public List<Integer> getRepeatTimes(String date,String period) throws IOException {
+    public List<Integer> getRepeatTimes(String date, String period) throws IOException {
         List<String[]> tenTimes = getTenTimes(date, period, 10);
         Integer[] awardNumber = getNextAwardNumber(date, period);
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < tenTimes.size(); i++) {
-            list.add(ArrayUtils.intersect(awardNumber,Convert.toIntArray(tenTimes.get(i))).length);
+            list.add(ArrayUtils.intersect(awardNumber, Convert.toIntArray(tenTimes.get(i))).length);
         }
         return list;
     }
 
+    public String saveRepeatTimes(String date, String period) throws Exception {
+        //获取前10天的数据
+        List<String> tenDateList = getLastTenDate(date);
+        List<RepeatTimes> repeatTimesList = new ArrayList<>();
+        for (int i = 0; i < tenDateList.size(); i++) {
+            for (int j = 10; j < 84; j++) {
+                List<Integer> repeatTimes = getRepeatTimes(tenDateList.get(i), String.valueOf(j));
+                RepeatTimes repeatTimesNew = new RepeatTimes();
+                repeatTimesNew.setId(null);
+                repeatTimesNew.setOneTimes(repeatTimes.get(0));
+                repeatTimesNew.setTwoTimes(repeatTimes.get(1));
+                repeatTimesNew.setThreeTimes(repeatTimes.get(2));
+                repeatTimesNew.setFourTimes(repeatTimes.get(3));
+                repeatTimesNew.setFiveTimes(repeatTimes.get(4));
+                repeatTimesNew.setSixTimes(repeatTimes.get(5));
+                repeatTimesNew.setSevenTimes(repeatTimes.get(6));
+                repeatTimesNew.setEightTimes(repeatTimes.get(7));
+                repeatTimesNew.setNineTimes(repeatTimes.get(8));
+                repeatTimesNew.setTenTimes(repeatTimes.get(9));
+                repeatTimesNew.setPeriod(tenDateList.get(i) + String.valueOf(j));
+                repeatTimesList.add(repeatTimesNew);
+            }
+        }
+        repeatTimesMapper.saveAll(repeatTimesList);
+        //暂时先定为保存成功
+        return "保存成功!";
+    }
+
+    /**
+     * 获取前10天
+     *
+     * @param date
+     * @return
+     * @throws ParseException
+     */
+    private List<String> getLastTenDate(String date) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date dateStyle = sdf.parse(date);
+        List<String> dateList = new ArrayList<>();
+        for (int i = 1; i < 11; i++) {
+            DateTime dateTime = DateUtil.offsetDay(dateStyle, -i);
+            dateList.add(dateTime.toString("yyyyMMdd"));
+        }
+        return dateList;
+    }
 }

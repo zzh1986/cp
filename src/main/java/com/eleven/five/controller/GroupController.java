@@ -89,4 +89,12 @@ public class GroupController {
     public List<Integer> getRepeatTimes(String date,String period) throws IOException {
         return groupService.getRepeatTimes(date,period);
     }
+
+    /**
+     *
+     */
+    @GetMapping("/saveRepeatTimes")
+    public String saveRepeatTimes(String date,String period) throws Exception {
+        return groupService.saveRepeatTimes(date,period);
+    }
 }
