@@ -16,6 +16,7 @@ import com.eleven.five.util.GroupUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -144,9 +145,9 @@ public class GroupService {
         FiveUtil.getOneGroupNumber(fiveList, elements);
 
         Integer perNum = Integer.valueOf(period);
-        if (perNum < num || perNum > 83) {
-            return null;
-        }
+//        if (perNum < num || perNum > 83) {
+//            return null;
+//        }
         //找出最近的10期数据 例如:perNum = 56 [47,56]
         List<String[]> stringList = new ArrayList<>();
         //此处改为从开始的爬取
@@ -719,31 +720,118 @@ public class GroupService {
     }
 
     public String saveRepeatTimes(String date, String period) throws Exception {
+        repeatTimesMapper.deleteAll();
         //获取前10天的数据
         List<String> tenDateList = getLastTenDate(date);
         List<RepeatTimes> repeatTimesList = new ArrayList<>();
         for (int i = 0; i < tenDateList.size(); i++) {
+            List<String[]> tenTimes = getTenTimes(tenDateList.get(i), "84", 84);
             for (int j = 10; j < 84; j++) {
-                List<Integer> repeatTimes = getRepeatTimes(tenDateList.get(i), String.valueOf(j));
+                int[] repeatTimes = new int[10];
+                for (int k = 10; k > 0; k--) {
+                    repeatTimes[10 - k] = ArrayUtils.intersect(tenTimes.get(j), tenTimes.get(j - k)).length;
+                }
                 RepeatTimes repeatTimesNew = new RepeatTimes();
                 repeatTimesNew.setId(null);
-                repeatTimesNew.setOneTimes(repeatTimes.get(0));
-                repeatTimesNew.setTwoTimes(repeatTimes.get(1));
-                repeatTimesNew.setThreeTimes(repeatTimes.get(2));
-                repeatTimesNew.setFourTimes(repeatTimes.get(3));
-                repeatTimesNew.setFiveTimes(repeatTimes.get(4));
-                repeatTimesNew.setSixTimes(repeatTimes.get(5));
-                repeatTimesNew.setSevenTimes(repeatTimes.get(6));
-                repeatTimesNew.setEightTimes(repeatTimes.get(7));
-                repeatTimesNew.setNineTimes(repeatTimes.get(8));
-                repeatTimesNew.setTenTimes(repeatTimes.get(9));
+                repeatTimesNew.setOneTimes(repeatTimes[0]);
+                repeatTimesNew.setTwoTimes(repeatTimes[1]);
+                repeatTimesNew.setThreeTimes(repeatTimes[2]);
+                repeatTimesNew.setFourTimes(repeatTimes[3]);
+                repeatTimesNew.setFiveTimes(repeatTimes[4]);
+                repeatTimesNew.setSixTimes(repeatTimes[5]);
+                repeatTimesNew.setSevenTimes(repeatTimes[6]);
+                repeatTimesNew.setEightTimes(repeatTimes[7]);
+                repeatTimesNew.setNineTimes(repeatTimes[8]);
+                repeatTimesNew.setTenTimes(repeatTimes[9]);
                 repeatTimesNew.setPeriod(tenDateList.get(i) + String.valueOf(j));
                 repeatTimesList.add(repeatTimesNew);
             }
+
         }
         repeatTimesMapper.saveAll(repeatTimesList);
         //暂时先定为保存成功
+        //前面的已经OK,下一步
+        //获取本次的前11组数据才好
+
+
         return "保存成功!";
+    }
+
+
+    public List<String[]> getNextExpectNumbers(String date, String period) throws IOException {
+
+        List<String[]> tenTimes = getTenTimes(date, period, 11);
+        //获取交集对象
+        Integer[] target = new Integer[10];
+        for (int i = 0; i < tenTimes.size() - 1; i++) {
+            target[i] = ArrayUtils.intersect(tenTimes.get(i), tenTimes.get(10)).length;
+        }
+        RepeatTimes repeatTimes1 = getRepeatTimesRandom(target);
+        RepeatTimes repeatTimes2 = new RepeatTimes();
+        String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(standard, 5);
+        List<String[]> resultList = new ArrayList<>();
+        if (Integer.valueOf(repeatTimes1.getPeriod().substring(repeatTimes1.getPeriod().length() - 2)) < 83 && Integer.valueOf(repeatTimes1.getPeriod().substring(repeatTimes1.getPeriod().length() - 2)) > 10) {
+            repeatTimes2.setPeriod(String.valueOf(Long.valueOf(repeatTimes1.getPeriod()) + 1));
+            Example<RepeatTimes> of = Example.of(repeatTimes2);
+            RepeatTimes repeatTimes3 = repeatTimesMapper.findOne(of).get();
+            for (int i = 0; i < cmn.size(); i++) {
+                if (
+                        ArrayUtils.intersect(cmn.get(i), tenTimes.get(1)).length == repeatTimes3.getOneTimes()
+                                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(2)).length == repeatTimes3.getTwoTimes()
+//                                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(3)).length == repeatTimes3.getThreeTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(4)).length == repeatTimes3.getFourTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(5)).length == repeatTimes3.getFiveTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(6)).length == repeatTimes3.getSixTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(7)).length == repeatTimes3.getSevenTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(8)).length == repeatTimes3.getEightTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(9)).length == repeatTimes3.getNineTimes()
+//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(10)).length == repeatTimes3.getTenTimes()
+                ) {
+                    //目标出现
+                    resultList.add(Convert.toStrArray(cmn.get(i)));
+                }
+            }
+        }
+
+        return resultList;
+    }
+
+    private RepeatTimes getRepeatTimesRandom(Integer[] target) {
+        RepeatTimes repeatTimes = new RepeatTimes();
+        RepeatTimes repeatTimes1 = new RepeatTimes();
+        t1:
+        for (int i = 9; i >= 0; i--) {
+            t2:
+            for (int j = 0; j <= i; j++) {
+                target[i - j] = null;
+                repeatTimes.setOneTimes(target[0]);
+                repeatTimes.setTwoTimes(target[1]);
+                repeatTimes.setThreeTimes(target[2]);
+                repeatTimes.setFourTimes(target[3]);
+                repeatTimes.setFiveTimes(target[4]);
+                repeatTimes.setSixTimes(target[5]);
+                repeatTimes.setSevenTimes(target[6]);
+                repeatTimes.setEightTimes(target[7]);
+                repeatTimes.setNineTimes(target[8]);
+                repeatTimes.setTenTimes(target[9]);
+                Example<RepeatTimes> example = Example.of(repeatTimes);
+                List<RepeatTimes> repeatTimesList = repeatTimesMapper.findAll(example);
+                if (repeatTimesList.size() == 0) {
+                    continue t2;
+                }else{
+                    for (int k = 0; k < repeatTimesList.size(); k++) {
+                        if(!repeatTimesList.get(k).getPeriod().endsWith("83")){
+                            repeatTimes1 = repeatTimesList.get(k);
+                            break t1;
+                        }
+                    }
+
+                }
+            }
+
+        }
+        return repeatTimes1;
     }
 
     /**
@@ -757,7 +845,7 @@ public class GroupService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date dateStyle = sdf.parse(date);
         List<String> dateList = new ArrayList<>();
-        for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < 181; i++) {
             DateTime dateTime = DateUtil.offsetDay(dateStyle, -i);
             dateList.add(dateTime.toString("yyyyMMdd"));
         }

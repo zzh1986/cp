@@ -97,4 +97,9 @@ public class GroupController {
     public String saveRepeatTimes(String date,String period) throws Exception {
         return groupService.saveRepeatTimes(date,period);
     }
+
+    @GetMapping("/getNextExpectNumbers")
+    public List<String[]> getNextExpectNumbers(String date,String period) throws Exception{
+        return groupService.getNextExpectNumbers(date,period);
+    }
 }
