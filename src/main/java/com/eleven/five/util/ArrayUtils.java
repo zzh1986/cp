@@ -6,6 +6,7 @@
 
 package com.eleven.five.util;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -206,16 +207,35 @@ public class ArrayUtils {
         return sameElement;
     }
 
-    public static void main(String[] args) {
-        String[] num = {"[1,2,3]", "[4,5,6]", "[1,2,3]", "[4,5]", "[1,2,3]", "[4,5,6]", "[5,6,7]"};
-        Map<Object, Integer> repeatNum = getRepeatNum(num);
-        Integer[] intNum = {1, 2, 3, 1, 22, 1111, 1, 2, 33, 3, 4};
-        Map<Object, Integer> repeatIntNum = getRepeatNum(intNum);
-        /*for (Map.Entry<Object, Integer> entry : repeatNum.entrySet()){
-            System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
-        }*/
-        for (Map.Entry<Object, Integer> entry : repeatIntNum.entrySet()) {
-            System.out.println("出现的重复的内容" + entry.getKey() + "的次数是:" + entry.getValue());
+    public static List<Integer> maxIndex(int[] numGroup){
+        int[] clone = numGroup.clone();
+        Arrays.sort(clone);
+        List<Integer> index = new ArrayList<>();
+        for (int i = 0; i < numGroup.length ; i++) {
+            if (numGroup[i]==clone[clone.length-1]){
+                index.add(i);
+            }
         }
+        return index;
+    }
+    public static void main(String[] args) {
+//        String[] num = {"[1,2,3]", "[4,5,6]", "[1,2,3]", "[4,5]", "[1,2,3]", "[4,5,6]", "[5,6,7]"};
+//        Map<Object, Integer> repeatNum = getRepeatNum(num);
+//        Integer[] intNum = {1, 2, 3, 1, 22, 1111, 1, 2, 33, 3, 4};
+//        Map<Object, Integer> repeatIntNum = getRepeatNum(intNum);
+//        /*for (Map.Entry<Object, Integer> entry : repeatNum.entrySet()){
+//            System.out.println("出现的重复的内容"+entry.getKey()+"的次数是:"+entry.getValue());
+//        }*/
+//        for (Map.Entry<Object, Integer> entry : repeatIntNum.entrySet()) {
+//            System.out.println("出现的重复的内容" + entry.getKey() + "的次数是:" + entry.getValue());
+//        }
+       /* Boolean[] booleans = {true,true,false};
+        Boolean[] target = {true,true,true};
+        System.out.println(intersect(booleans,target).length);*/
+
+        Integer[] integers = {1,2,3,4,5,6,7,8,9,10,11};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(integers, 3);
+        System.out.println(cmn.size());
+
     }
 }
