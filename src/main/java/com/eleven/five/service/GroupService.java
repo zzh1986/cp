@@ -3,6 +3,7 @@ package com.eleven.five.service;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import com.eleven.five.entity.Adjacent;
 import com.eleven.five.entity.GroupEntity;
 import com.eleven.five.entity.RepeatTimes;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -775,26 +777,27 @@ public class GroupService {
             repeatTimes2.setPeriod(String.valueOf(Long.valueOf(repeatTimes1.getPeriod()) + 1));
             Example<RepeatTimes> of = Example.of(repeatTimes2);
             RepeatTimes repeatTimes3 = repeatTimesMapper.findOne(of).get();
-            for (int i = 0; i < cmn.size(); i++) {
-                if (
-                        ArrayUtils.intersect(cmn.get(i), tenTimes.get(1)).length == repeatTimes3.getOneTimes()
-                                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(2)).length == repeatTimes3.getTwoTimes()
-//                                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(3)).length == repeatTimes3.getThreeTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(4)).length == repeatTimes3.getFourTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(5)).length == repeatTimes3.getFiveTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(6)).length == repeatTimes3.getSixTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(7)).length == repeatTimes3.getSevenTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(8)).length == repeatTimes3.getEightTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(9)).length == repeatTimes3.getNineTimes()
-//                && ArrayUtils.intersect(cmn.get(i), tenTimes.get(10)).length == repeatTimes3.getTenTimes()
-                ) {
-                    //目标出现
-                    resultList.add(Convert.toStrArray(cmn.get(i)));
-                }
-            }
+            getOneResult(tenTimes, cmn, resultList, repeatTimes3);
         }
 
         return resultList;
+    }
+
+    public void getOneResult(List<String[]> tenTimes, ArrayList<Object[]> cmn, List<String[]> resultList, RepeatTimes repeatTimes3) {
+        for (int i = 0; i < cmn.size(); i++) {
+            if (ArrayUtils.intersect(cmn.get(i), tenTimes.get(1)).length == repeatTimes3.getOneTimes()
+//            && ArrayUtils.intersect(cmn.get(i), tenTimes.get(2)).length == repeatTimes3.getTwoTimes()
+//            && ArrayUtils.intersect(cmn.get(i), tenTimes.get(3)).length == repeatTimes3.getThreeTimes()
+                    && ArrayUtils.intersect(cmn.get(i), tenTimes.get(4)).length == repeatTimes3.getFourTimes() && ArrayUtils.intersect(cmn.get(i), tenTimes.get(5)).length == repeatTimes3.getFiveTimes() && ArrayUtils.intersect(cmn.get(i), tenTimes.get(6)).length == repeatTimes3.getSixTimes() && ArrayUtils.intersect(cmn.get(i), tenTimes.get(7)).length == repeatTimes3.getSevenTimes()
+//            && ArrayUtils.intersect(cmn.get(i), tenTimes.get(8)).length == repeatTimes3.getEightTimes()
+//            && ArrayUtils.intersect(cmn.get(i), tenTimes.get(9)).length == repeatTimes3.getNineTimes()
+                    && ArrayUtils.intersect(cmn.get(i), tenTimes.get(10)).length == repeatTimes3.getTenTimes()) {
+                //目标出现
+                resultList.add(Convert.toStrArray(cmn.get(i)));
+                break;
+            }
+        }
+
     }
 
     private RepeatTimes getRepeatTimesRandom(Integer[] target) {
@@ -819,9 +822,9 @@ public class GroupService {
                 List<RepeatTimes> repeatTimesList = repeatTimesMapper.findAll(example);
                 if (repeatTimesList.size() == 0) {
                     continue t2;
-                }else{
+                } else {
                     for (int k = 0; k < repeatTimesList.size(); k++) {
-                        if(!repeatTimesList.get(k).getPeriod().endsWith("83")){
+                        if (!repeatTimesList.get(k).getPeriod().endsWith("83")) {
                             repeatTimes1 = repeatTimesList.get(k);
                             break t1;
                         }
@@ -850,5 +853,32 @@ public class GroupService {
             dateList.add(dateTime.toString("yyyyMMdd"));
         }
         return dateList;
+    }
+
+    /**
+     * 获取一天内最多的三位组合
+     *
+     * @param date
+     * @param period
+     * @return
+     */
+    public List<String[]> getOneGroupFromThree(String date, String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 83);
+        String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        ArrayList<Object[]> cmn = GroupUtils.cmn(standard, 3);
+        int[] times = new int[cmn.size()];
+        for (int i = 0; i < tenTimes.size(); i++) {
+            for (int j = 0; j < cmn.size(); j++) {
+                if (ArrayUtils.intersect(tenTimes.get(i), cmn.get(j)).length == 3) {
+                    times[j]++;
+                }
+            }
+        }
+        List<Integer> maxIndex = ArrayUtils.maxIndex(times);
+        List<String[]> resultList = new ArrayList<>();
+        for (int i = 0; i <maxIndex.size() ; i++) {
+            resultList.add(Convert.toStrArray(cmn.get(i)));
+        }
+        return resultList;
     }
 }

@@ -102,4 +102,16 @@ public class GroupController {
     public List<String[]> getNextExpectNumbers(String date,String period) throws Exception{
         return groupService.getNextExpectNumbers(date,period);
     }
+
+    /**
+     * 获取一天内出现最多的三位数的组合
+     * @param date
+     * @param period
+     * @return
+     */
+    @GetMapping("/getOneGroupFromThree")
+    public List<String[]> getOneGroupFromThree(String date,String period) throws IOException {
+        return groupService.getOneGroupFromThree(date,period);
+    }
+
 }

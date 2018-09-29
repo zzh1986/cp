@@ -72,9 +72,12 @@ public class FiveUtil {
             String target = element.attr("data-period");
             String target1 = element.attr("data-award");
             String result = target1 + " " + target;
-            if (result.length() < 15) {
-                break;
+            if(StringUtils.isEmpty(target1)){
+                continue;
             }
+            /*if (result.length() < 15) {
+                break;
+            }*/
             fiveStr.add(result);
         }
     }

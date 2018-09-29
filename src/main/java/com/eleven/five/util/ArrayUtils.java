@@ -206,7 +206,9 @@ public class ArrayUtils {
         }
         return sameElement;
     }
-
+    /**
+     *  获取最大值的下标集合
+     */
     public static List<Integer> maxIndex(int[] numGroup){
         int[] clone = numGroup.clone();
         Arrays.sort(clone);
@@ -218,6 +220,22 @@ public class ArrayUtils {
         }
         return index;
     }
+
+    /**
+     *  获取最小值的下标集合
+     */
+    public static List<Integer> minIndex(int[] numGroup){
+        int[] clone = numGroup.clone();
+        Arrays.sort(clone);
+        List<Integer> index = new ArrayList<>();
+        for (int i = 0; i < numGroup.length ; i++) {
+            if (numGroup[i]==clone[0]){
+                index.add(i);
+            }
+        }
+        return index;
+    }
+
     public static void main(String[] args) {
 //        String[] num = {"[1,2,3]", "[4,5,6]", "[1,2,3]", "[4,5]", "[1,2,3]", "[4,5,6]", "[5,6,7]"};
 //        Map<Object, Integer> repeatNum = getRepeatNum(num);
@@ -233,9 +251,16 @@ public class ArrayUtils {
         Boolean[] target = {true,true,true};
         System.out.println(intersect(booleans,target).length);*/
 
-        Integer[] integers = {1,2,3,4,5,6,7,8,9,10,11};
+        /*Integer[] integers = {1,2,3,4,5,6,7,8,9,10,11};
         ArrayList<Object[]> cmn = GroupUtils.cmn(integers, 3);
-        System.out.println(cmn.size());
+        System.out.println(cmn.size());*/
+
+        int[] test = {1,10,4,7,11,8,15,2,3,7,10,15,1};
+        List<Integer> list = maxIndex(test);
+        List<Integer> list1 = minIndex(test);
+        System.out.println("最大值下标"+list);
+        System.out.println("最小值下标"+list1);
+
 
     }
 }
