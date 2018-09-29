@@ -3,7 +3,6 @@ package com.eleven.five.service;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ArrayUtil;
 import com.eleven.five.entity.Adjacent;
 import com.eleven.five.entity.GroupEntity;
 import com.eleven.five.entity.RepeatTimes;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -863,7 +861,7 @@ public class GroupService {
      * @return
      */
     public List<String[]> getOneGroupFromThree(String date, String period) throws IOException {
-        List<String[]> tenTimes = getTenTimes(date, period, 83);
+        List<String[]> tenTimes = getTenTimes(date, period, 80);
         String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
         ArrayList<Object[]> cmn = GroupUtils.cmn(standard, 3);
         int[] times = new int[cmn.size()];
@@ -874,11 +872,84 @@ public class GroupService {
                 }
             }
         }
+        //TODO 该出可修改获取最大最小值
         List<Integer> maxIndex = ArrayUtils.maxIndex(times);
         List<String[]> resultList = new ArrayList<>();
-        for (int i = 0; i <maxIndex.size() ; i++) {
-            resultList.add(Convert.toStrArray(cmn.get(i)));
+        for (int i = 0; i < maxIndex.size(); i++) {
+            resultList.add(Convert.toStrArray(cmn.get(maxIndex.get(i))));
         }
+        List<String> sortMaxAppear = getSortMaxAppear(resultList);
+        System.out.println(sortMaxAppear);
         return resultList;
+    }
+
+    public List<String> getSortMaxAppear(List<String[]> resultList) {
+        int[] standard = new int[11];
+        for (int i = 0; i < resultList.size(); i++) {
+            for (int j = 0; j < resultList.get(i).length; j++) {
+                switch (resultList.get(i)[j]) {
+                    case "01":
+                        standard[0]++;
+                        break;
+                    case "02":
+                        standard[1]++;
+                        break;
+                    case "03":
+                        standard[2]++;
+                        break;
+                    case "04":
+                        standard[3]++;
+                        break;
+                    case "05":
+                        standard[4]++;
+                        break;
+                    case "06":
+                        standard[5]++;
+                        break;
+                    case "07":
+                        standard[6]++;
+                        break;
+                    case "08":
+                        standard[7]++;
+                        break;
+                    case "09":
+                        standard[8]++;
+                        break;
+                    case "10":
+                        standard[9]++;
+                        break;
+                    default:
+                        standard[10]++;
+                        break;
+                }
+            }
+        }
+        int[] clone = standard.clone();
+        Arrays.sort(clone);
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < clone.length; i++) {
+            for (int j = 0; j < standard.length; j++) {
+                //TODO 与前面一起修改
+//                if ( standard[j] == clone[i]) {
+                if (clone[i] != 0 && standard[j] == clone[i]) {
+                    result.add(String.valueOf(j + 1).length() == 1 ? ("0" + String.valueOf(j + 1)) : String.valueOf(j + 1));
+                    standard[j] = -1;
+                    break;
+                }
+            }
+
+        }
+        return result;
+    }
+
+    public List<String[]> getOuShuFromTwo(String date, String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        String[] oushu = {"02","04","06","08","10"};
+        String[] jishu = {"01","03","05","07","09","11"};
+        Object[] ou = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(1), oushu),ArrayUtils.intersect(tenTimes.get(9), oushu));
+        Object[] ji = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(1), jishu),ArrayUtils.intersect(tenTimes.get(9), jishu));
+        List<String[]> result = new ArrayList<>();
+        result.add(Convert.toStrArray(ou));
+        return result;
     }
 }

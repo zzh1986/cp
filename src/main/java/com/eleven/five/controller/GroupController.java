@@ -109,9 +109,19 @@ public class GroupController {
      * @param period
      * @return
      */
+    @GetMapping("/getOuShuFromTwo")
+    public List<String[]> getOuShuFromTwo(String date,String period) throws IOException {
+        return groupService.getOuShuFromTwo(date,period);
+    }
+
+    /**
+     * 获取十期内偶数出现的次数统计 按顺序输出即可[2,4,6,8,10]
+     * @param date
+     * @param period
+     * @return
+     */
     @GetMapping("/getOneGroupFromThree")
     public List<String[]> getOneGroupFromThree(String date,String period) throws IOException {
         return groupService.getOneGroupFromThree(date,period);
     }
-
 }
