@@ -1,5 +1,6 @@
 package com.eleven.five.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,13 +20,13 @@ public class ShuJu {
      * @param jiShu
      * @return
      */
-    public static int isJiShu(String jiShu) {
+    public static boolean isJiShu(String jiShu) {
         String[] jiShuStr = {"01", "03", "05", "07", "09", "11"};
         List<String> jiShuList = Arrays.asList(jiShuStr);
         if (jiShuList.contains(jiShu)) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
     /**
@@ -51,13 +52,13 @@ public class ShuJu {
      * @param zhiShu
      * @return
      */
-    public static int isZhiShu(String zhiShu) {
+    public static boolean isZhiShu(String zhiShu) {
         String[] zhiShuStr = {"01", "02", "03", "05", "07", "11"};
         List<String> zhiShuList = Arrays.asList(zhiShuStr);
         if (zhiShuList.contains(zhiShu)) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
     /**
@@ -83,13 +84,13 @@ public class ShuJu {
      * @param daShu
      * @return
      */
-    public static int isDaShu(String daShu) {
+    public static boolean isDaShu(String daShu) {
         String[] daShuStr = {"06", "07", "08", "09", "10", "11"};
         List<String> daShuList = Arrays.asList(daShuStr);
         if (daShuList.contains(daShu)) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
     /**
@@ -161,5 +162,59 @@ public class ShuJu {
         }
         double jiShuPercent = index * 1.0 / numberList.size();
         return jiShuPercent;
+    }
+
+    /**
+     * 统计温码的数据放入List<String> 并返回
+     */
+    public static List<String> getWenHao(List<String[]> numberList) {
+        List<String> result = new ArrayList<>();
+        String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        int[] index = new int[11];
+        for (int i = 0; i < numberList.size(); i++) {
+            for (int j = 0; j < numberList.get(i).length; j++) {
+                switch (numberList.get(i)[j]) {
+                    case "01":
+                        index[0]++;
+                        break;
+                    case "02":
+                        index[1]++;
+                        break;
+                    case "03":
+                        index[2]++;
+                        break;
+                    case "04":
+                        index[3]++;
+                        break;
+                    case "05":
+                        index[4]++;
+                        break;
+                    case "06":
+                        index[5]++;
+                        break;
+                    case "07":
+                        index[6]++;
+                        break;
+                    case "08":
+                        index[7]++;
+                        break;
+                    case "09":
+                        index[8]++;
+                        break;
+                    case "10":
+                        index[9]++;
+                        break;
+                    default:
+                        index[10]++;
+                }
+            }
+
+        }
+        for (int i = 0; i < index.length; i++) {
+            if ( index[i] == (numberList.size() + 1) / 2 || index[i] == (numberList.size() - 1) / 2 ) {
+                result.add(standard[i]);
+            }
+        }
+        return result;
     }
 }

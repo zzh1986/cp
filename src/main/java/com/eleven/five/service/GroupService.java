@@ -13,6 +13,7 @@ import com.eleven.five.mapper.TenRepeatMapper;
 import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
 import com.eleven.five.util.GroupUtils;
+import com.eleven.five.util.ShuJu;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -942,14 +943,155 @@ public class GroupService {
         return result;
     }
 
+    /**
+     * 该方法即将开启历史的新篇章,也是我的精华之作
+     *
+     * @param date
+     * @param period
+     * @return
+     * @throws IOException
+     */
     public List<String[]> getOuShuFromTwo(String date, String period) throws IOException {
-        List<String[]> tenTimes = getTenTimes(date, period, 10);
-        String[] oushu = {"02","04","06","08","10"};
-        String[] jishu = {"01","03","05","07","09","11"};
-        Object[] ou = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(1), oushu),ArrayUtils.intersect(tenTimes.get(9), oushu));
-        Object[] ji = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(1), jishu),ArrayUtils.intersect(tenTimes.get(9), jishu));
+        List<String[]> tenTimes = getTenTimes(date, period, 14);
+        String[] oushu = {"02", "04", "06", "08", "10"};
+        String[] jishu = {"01", "03", "05", "07", "09", "11"};
+        //需要统计连续出现的次数
+        List<Integer> farGroup = new ArrayList<>();
+        List<Integer> nearGroup = new ArrayList<>();
+
+        List<Integer> ouFarGroup = new ArrayList<>();
+        List<Integer> ouNearGroup = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            farGroup.add(ArrayUtils.intersect(tenTimes.get(i), tenTimes.get(i + 9)).length);
+            ouFarGroup.add(ArrayUtils.intersect(oushu, ArrayUtils.intersect(tenTimes.get(i), tenTimes.get(i + 9))).length);
+        }
+        for (int i = 0; i < 13; i++) {
+            nearGroup.add(ArrayUtils.intersect(tenTimes.get(i), tenTimes.get(i + 1)).length);
+
+            ouNearGroup.add(ArrayUtils.intersect(oushu, ArrayUtils.intersect(tenTimes.get(i), tenTimes.get(i + 1))).length);
+        }
+        System.out.println(farGroup + "\t" + ouFarGroup);
+        System.out.println(nearGroup + "\t" + ouNearGroup);
+
+        Object[] ou = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(5), oushu), ArrayUtils.intersect(tenTimes.get(13), oushu));
+        Object[] ji = ArrayUtils.union(ArrayUtils.intersect(tenTimes.get(5), jishu), ArrayUtils.intersect(tenTimes.get(13), jishu));
         List<String[]> result = new ArrayList<>();
         result.add(Convert.toStrArray(ou));
         return result;
+    }
+
+    /**
+     * 统计10期数据内三组数据各自的占比
+     *
+     * @param date
+     * @param period
+     * @return
+     */
+    public Map<String, Double> getThreeGroupPercent(String date, String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        if (Integer.valueOf(period) < 10) {
+            return null;
+        }
+        Map<String, Double> result = new HashMap<>();
+        double daShuPercent = ShuJu.daShuPercent(tenTimes);
+        double zhiShuPercent = ShuJu.zhiShuPercent(tenTimes);
+        double jiShuPercent = ShuJu.jiShuPercent(tenTimes);
+        result.put("大数概率", daShuPercent);
+        result.put("质数概率", zhiShuPercent);
+        result.put("奇数概率", jiShuPercent);
+        return result;
+    }
+
+    /**
+     * 获取下一组数据的胆码和补码
+     *
+     * @param date
+     * @param period
+     * @return
+     */
+    public Map<String, List<String[]>> getNextProgram(String date, String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        if (Integer.valueOf(tenTimes.get(9)[0]) >= 10 || Integer.valueOf(tenTimes.get(9)[1]) >= 10) {
+            return null;
+        }
+        Integer base = Integer.valueOf(tenTimes.get(9)[0]) * 10 + Integer.valueOf(tenTimes.get(9)[1]);
+        Integer shang = base / 9;
+        Integer yushu = base % 9;
+        Integer he = shang + yushu;
+        Integer cha = Math.abs(shang - yushu);
+        Integer one = he > 11 ? shang : he;
+        Integer two = he > 11 ? yushu : cha;
+        //第一个数据和第二个数据已经算出,下一步去匹配
+        String oneStr = String.valueOf(one).length() == 1 ? ("0" + one) : ("" + one);
+        String twoStr = String.valueOf(two).length() == 1 ? ("0" + two) : ("" + two);
+        //准备好温号
+        List<String> wenHao = ShuJu.getWenHao(tenTimes);
+        int[] wenHaoOneIndex = new int[wenHao.size()];
+        for (int i = 0; i < wenHao.size(); i++) {
+            if (ShuJu.isDaShu(oneStr) ^ ShuJu.isDaShu(wenHao.get(i))) {
+                wenHaoOneIndex[i]++;
+            }
+            if (ShuJu.isJiShu(oneStr) ^ ShuJu.isJiShu(wenHao.get(i))) {
+                wenHaoOneIndex[i]++;
+            }
+            if (ShuJu.isZhiShu(oneStr) ^ ShuJu.isZhiShu(wenHao.get(i))) {
+                wenHaoOneIndex[i]++;
+            }
+        }
+
+        int[] wenHaoTwoIndex = new int[wenHao.size()];
+        for (int i = 0; i < wenHao.size(); i++) {
+            if (ShuJu.isDaShu(twoStr) ^ ShuJu.isDaShu(wenHao.get(i))) {
+                wenHaoTwoIndex[i]++;
+            }
+            if (ShuJu.isJiShu(twoStr) ^ ShuJu.isJiShu(wenHao.get(i))) {
+                wenHaoTwoIndex[i]++;
+            }
+            if (ShuJu.isZhiShu(twoStr) ^ ShuJu.isZhiShu(wenHao.get(i))) {
+                wenHaoTwoIndex[i]++;
+            }
+        }
+
+        //需要找到权重最大的进行选择一个号即可
+        String[] oneGroup = new String[2];
+        oneGroup[0] = oneStr;
+        //获取最大差异程度的温号
+        oneGroup[1] = wenHao.get(ArrayUtils.maxIndex(wenHaoOneIndex).get(0));
+        //TODO 这边还缺少下一组搭档的数据的选择,比如全奇数 还是全质数 还是全偶数 还是全合数 等等
+
+        String[] twoGroup = new String[2];
+        twoGroup[0] =twoStr;
+        //获取最大差异程度的温号
+        twoGroup[1] = wenHao.get(ArrayUtils.maxIndex(wenHaoTwoIndex).get(0));
+        //TODO 这边也需要下一组搭档的数据选择,比如全偶数,全合数的出现 思路:可以根据第10,11期的走向来抉择,也可以考虑按照目前最大(或最小)的概率的走;
+        //获取当前的概率:
+        Map<String, Double> threeGroupPercent = getThreeGroupPercent(date, period);
+        double[] current = new double[3];
+        current[0] = threeGroupPercent.get("大数概率");
+        current[1] = threeGroupPercent.get("质数概率");
+        current[2] = threeGroupPercent.get("奇数概率");
+        Arrays.sort(current);
+        //缺少了最大两个值相同的情况的判断
+        String keyMax = ((List<String>)getKey(threeGroupPercent, current[2])).get(0);
+        String keymid = ((List<String>)getKey(threeGroupPercent, current[1])).get(0);
+        String[] dashu = {"06", "07", "08", "09", "10", "11"};
+        String[] zhishu = {"01", "02", "03", "05", "07", "11"};
+        String[] jishu =  {"01", "03", "05", "07", "09", "11"};
+        List<String[]> groupList = new ArrayList<>();
+        //此处不做修改,也不做简化,直接将对应的数据放到集合中即可
+        switch (keyMax){
+            case "大数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu,oneGroup)));break;
+            case "质数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu,oneGroup)));break;
+            default: groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu,oneGroup)));
+        }
+        switch (keymid){
+            case "大数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu,oneGroup)));break;
+            case "质数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu,oneGroup)));break;
+            default: groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu,oneGroup)));
+        }
+        Map<String,List<String[]>> map = new HashMap<>();
+        map.put(Arrays.toString(oneGroup),groupList);
+        map.put(Arrays.toString(twoGroup),groupList);
+        return map;
     }
 }

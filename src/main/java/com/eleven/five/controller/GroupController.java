@@ -124,4 +124,26 @@ public class GroupController {
     public List<String[]> getOneGroupFromThree(String date,String period) throws IOException {
         return groupService.getOneGroupFromThree(date,period);
     }
+
+    /**
+     * 统计10期数据,返回Map,其中包括,奇数的占比,大数的占比和质数的占比
+     * @param date
+     * @param period
+     * @return
+     */
+    @GetMapping("/getThreeGroupPercent")
+    public Map<String,Double> getThreeGroupPercent(String date,String period) throws IOException {
+        return groupService.getThreeGroupPercent(date,period);
+    }
+
+    /**
+     * 统计10期数据,返回Map,其中包括,奇数的占比,大数的占比和质数的占比
+     * @param date
+     * @param period
+     * @return
+     */
+    @GetMapping("/getNextProgram")
+    public Map<String,List<String[]>> getNextProgram(String date,String period) throws IOException {
+        return groupService.getNextProgram(date,period);
+    }
 }
