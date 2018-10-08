@@ -146,4 +146,11 @@ public class GroupController {
     public Map<String,List<String[]>> getNextProgram(String date,String period) throws IOException {
         return groupService.getNextProgram(date,period);
     }
+    /**
+     *
+     */
+    @GetMapping("/getColdWarmNumber")
+    public Object[] getColdWarmNumber(String date,String period) throws IOException {
+        return groupService.getColdWarmNumber(date,period);
+    }
 }

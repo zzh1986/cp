@@ -217,4 +217,111 @@ public class ShuJu {
         }
         return result;
     }
+
+    /**
+     * 统计冷码的数据放入List<String> 并返回
+     */
+    public static List<String> getLenHao(List<String[]> numberList) {
+        List<String> result = new ArrayList<>();
+        String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        int[] index = new int[11];
+        for (int i = 0; i < numberList.size(); i++) {
+            for (int j = 0; j < numberList.get(i).length; j++) {
+                switch (numberList.get(i)[j]) {
+                    case "01":
+                        index[0]++;
+                        break;
+                    case "02":
+                        index[1]++;
+                        break;
+                    case "03":
+                        index[2]++;
+                        break;
+                    case "04":
+                        index[3]++;
+                        break;
+                    case "05":
+                        index[4]++;
+                        break;
+                    case "06":
+                        index[5]++;
+                        break;
+                    case "07":
+                        index[6]++;
+                        break;
+                    case "08":
+                        index[7]++;
+                        break;
+                    case "09":
+                        index[8]++;
+                        break;
+                    case "10":
+                        index[9]++;
+                        break;
+                    default:
+                        index[10]++;
+                }
+            }
+
+        }
+        for (int i = 0; i < index.length; i++) {
+            if ( index[i] <  (numberList.size() - 1) / 2 ) {
+                result.add(standard[i]);
+            }
+        }
+        return result;
+    }
+    /**
+     * 统计热码的数据放入List<String> 并返回
+     */
+    public static List<String> getReHao(List<String[]> numberList) {
+        List<String> result = new ArrayList<>();
+        String[] standard = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+        int[] index = new int[11];
+        for (int i = 0; i < numberList.size(); i++) {
+            for (int j = 0; j < numberList.get(i).length; j++) {
+                switch (numberList.get(i)[j]) {
+                    case "01":
+                        index[0]++;
+                        break;
+                    case "02":
+                        index[1]++;
+                        break;
+                    case "03":
+                        index[2]++;
+                        break;
+                    case "04":
+                        index[3]++;
+                        break;
+                    case "05":
+                        index[4]++;
+                        break;
+                    case "06":
+                        index[5]++;
+                        break;
+                    case "07":
+                        index[6]++;
+                        break;
+                    case "08":
+                        index[7]++;
+                        break;
+                    case "09":
+                        index[8]++;
+                        break;
+                    case "10":
+                        index[9]++;
+                        break;
+                    default:
+                        index[10]++;
+                }
+            }
+
+        }
+        for (int i = 0; i < index.length; i++) {
+            if ( index[i] >  (numberList.size() + 1) / 2 ) {
+                result.add(standard[i]);
+            }
+        }
+        return result;
+    }
 }

@@ -1002,6 +1002,54 @@ public class GroupService {
         return result;
     }
 
+
+    /**
+     * 看下温号和冷号 热号的选择
+     * @param date
+     * @param period
+     * @return
+     * @throws IOException
+     */
+    public Object[] getColdWarmNumber(String date,String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period,10);
+        String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimes).toArray());
+        String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimes).toArray());
+        String[] reHao = Convert.toStrArray(ShuJu.getReHao(tenTimes).toArray());
+        String[] awardNumber = getTenTimes(date, "" + (Integer.valueOf(period) + 1), 1).get(0);
+        String[] oneGroup = {"01","04","07","10"};
+        String[] twoGroup = {"02","05","08","11"};
+        String[] threeGroup = {"03","06","09"};
+        Object[] intersect1 = ArrayUtils.intersect(wenHao, oneGroup);
+        Object[] intersect2 = ArrayUtils.intersect(wenHao, twoGroup);
+        Object[] intersect3 = ArrayUtils.intersect(wenHao, threeGroup);
+        int[] repeatTimes = new int[3];
+        repeatTimes[0]=intersect1.length;
+        repeatTimes[1]=intersect2.length;
+        repeatTimes[2]=intersect3.length;
+        List<Integer> maxList = ArrayUtils.maxIndex(repeatTimes);
+        List<Integer> minList = ArrayUtils.minIndex(repeatTimes);
+        Object[] result = null;
+        if(maxList.size()==1){
+            switch (maxList.get(0)){
+                case 0: result=intersect1;break;
+                case 1: result=intersect2;break;
+                default: result=intersect3;break;
+            }
+
+        }else if(maxList.size()==2){
+            switch (minList.get(0)){
+                case 0: result=intersect3;break;
+                case 1: result=intersect3;break;
+                default: result=intersect1;break;
+            }
+        }else{
+            result = intersect3;
+        }
+        return result;
+    }
+
+
+    //TODO 这里需要先进行相应的统计
     /**
      * 获取下一组数据的胆码和补码
      *
