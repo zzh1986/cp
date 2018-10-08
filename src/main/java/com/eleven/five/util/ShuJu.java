@@ -5,9 +5,10 @@ import java.util.List;
 
 /**
  * 该工具类用于判断数据的分组,统计分组的百分比
- *  特别说明:
- *      1.有几个特殊的数据需要说明: 质数中"01"按照质数进行统计;
- *                              大小数据中"06"按照大数进行统计;
+ * 特别说明:
+ * 1.有几个特殊的数据需要说明: 质数中"01"按照质数进行统计;
+ * 大小数据中"06"按照大数进行统计;
+ *
  * @author zhaozhihong
  */
 public class ShuJu {
@@ -37,12 +38,13 @@ public class ShuJu {
         int index = 0;
         String[] jiShuStr = {"01", "03", "05", "07", "09", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(jiShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(jiShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
         return index;
     }
+
     /**
      * 判断是否为质数,是的话返回1,否的话返回0
      *
@@ -68,12 +70,13 @@ public class ShuJu {
         int index = 0;
         String[] zhiShuStr = {"01", "02", "03", "05", "07", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(zhiShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(zhiShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
         return index;
     }
+
     /**
      * 判断是否为质数,是的话返回1,否的话返回0
      *
@@ -99,12 +102,13 @@ public class ShuJu {
         int index = 0;
         String[] daShuStr = {"06", "07", "08", "09", "10", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(daShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(daShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
         return index;
     }
+
     /**
      * 统计n(10)期数据内不低于3个大数据的概率
      *
@@ -115,13 +119,14 @@ public class ShuJu {
         int index = 0;
         String[] daShuStr = {"06", "07", "08", "09", "10", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(daShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(daShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
         double daShuPercent = index * 1.0 / numberList.size();
         return daShuPercent;
     }
+
     /**
      * 统计n(10)期数据内不低于3个大数据的概率
      *
@@ -132,13 +137,14 @@ public class ShuJu {
         int index = 0;
         String[] zhiShuStr = {"01", "02", "03", "05", "07", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(zhiShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(zhiShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
         double zhiShuPercent = index * 1.0 / numberList.size();
         return zhiShuPercent;
     }
+
     /**
      * 统计n(10)期数据内不低于3个奇数的概率
      *
@@ -149,7 +155,7 @@ public class ShuJu {
         int index = 0;
         String[] jiShuStr = {"01", "03", "05", "07", "09", "11"};
         for (int i = 0; i < numberList.size(); i++) {
-            if(ArrayUtils.intersect(jiShuStr,numberList.get(i)).length>=3){
+            if (ArrayUtils.intersect(jiShuStr, numberList.get(i)).length >= 3) {
                 index++;
             }
         }
