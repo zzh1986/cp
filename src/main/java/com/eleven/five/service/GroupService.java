@@ -1005,12 +1005,13 @@ public class GroupService {
 
     /**
      * 看下温号和冷号 热号的选择
+     *
      * @param date
      * @param period
      * @return
      * @throws IOException
      */
-    public Object[] getColdWarmNumber(String date,String period) throws IOException {
+ /*   public Object[] getColdWarmNumber(String date,String period) throws IOException {
         List<String[]> tenTimes = getTenTimes(date, period,10);
         String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimes).toArray());
         String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimes).toArray());
@@ -1047,9 +1048,68 @@ public class GroupService {
         }
         return result;
     }
+*/
+    //该方法用于将获取两个备选的号码
+    public Object[] getColdWarmNumber(String date, String period) throws IOException {
+        List<String[]> tenTimes = getTenTimes(date, period, 10);
+        String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimes).toArray());
+        String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimes).toArray());
+        String[] reHao = Convert.toStrArray(ShuJu.getReHao(tenTimes).toArray());
+        System.out.println("温号备选号"+Arrays.toString(ArrayUtils.minus(wenHao,tenTimes.get(9))));
+        System.out.println("热号备选号"+Arrays.toString(ArrayUtils.minus(reHao,tenTimes.get(9))));
+        if (reHao.length == 2) {
+            System.out.println("热号为主");
+            return reHao;
+        }
+        if (ArrayUtils.minus(reHao, tenTimes.get(tenTimes.size() - 1)).length == 2) {
+            System.out.println("热号为主");
+            return ArrayUtils.minus(reHao, tenTimes.get(tenTimes.size() - 1));
 
+        }
 
+        if (ArrayUtils.intersect(reHao, tenTimes.get(tenTimes.size() - 1)).length == 2) {
+            System.out.println("热号为主");
+            return ArrayUtils.intersect(reHao, tenTimes.get(tenTimes.size() - 1));
+        }
+        if (lenHao.length >= 2) {
+            if (ArrayUtils.intersect(lenHao, tenTimes.get(tenTimes.size() - 1)).length == 0) {
+                //只要最近一期出现了冷号,下期优先不考虑冷号
+                for (int i = tenTimes.size() - 1; i >= 0; i--) {
+                    if (ArrayUtils.minus(lenHao, tenTimes.get(i)).length == 2) {
+                        System.out.println("冷号为主");
+                        return ArrayUtils.minus(lenHao, tenTimes.get(i));
+                    }
+                }
+            }
+            if (ArrayUtils.intersect(lenHao, tenTimes.get(tenTimes.size() - 1)).length >= 2) {
+                //只要最近一期出现了冷号,下期优先不考虑冷号
+                return ArrayUtils.intersect(lenHao, tenTimes.get(tenTimes.size() - 1));
+            }
+        }
+        //说明热号也不行,冷号也不行,只能在温号里面找两个一组的数据咯
+        if (wenHao.length >= 4) {
+            String[] oneGroup = {"01", "04", "07", "10"};
+            String[] twoGroup = {"02", "05", "08", "11"};
+            String[] threeGroup = {"03", "06", "09"};
+            Object[] oneObject = ArrayUtils.intersect(wenHao, oneGroup);
+            Object[] twoObject = ArrayUtils.intersect(wenHao, twoGroup);
+            Object[] threeObject = ArrayUtils.intersect(wenHao, threeGroup);
+            System.out.println("温号为主");
+            if (threeObject.length == 2) {
+                return threeObject;
+            }
+            if (oneObject.length == 2) {
+                return oneObject;
+            }
+            if (twoObject.length == 2) {
+                return twoObject;
+            }
+
+        }
+        return null;
+    }
     //TODO 这里需要先进行相应的统计
+
     /**
      * 获取下一组数据的胆码和补码
      *
@@ -1108,7 +1168,7 @@ public class GroupService {
         //TODO 这边还缺少下一组搭档的数据的选择,比如全奇数 还是全质数 还是全偶数 还是全合数 等等
 
         String[] twoGroup = new String[2];
-        twoGroup[0] =twoStr;
+        twoGroup[0] = twoStr;
         //获取最大差异程度的温号
         twoGroup[1] = wenHao.get(ArrayUtils.maxIndex(wenHaoTwoIndex).get(0));
         //TODO 这边也需要下一组搭档的数据选择,比如全偶数,全合数的出现 思路:可以根据第10,11期的走向来抉择,也可以考虑按照目前最大(或最小)的概率的走;
@@ -1120,26 +1180,60 @@ public class GroupService {
         current[2] = threeGroupPercent.get("奇数概率");
         Arrays.sort(current);
         //缺少了最大两个值相同的情况的判断
-        String keyMax = ((List<String>)getKey(threeGroupPercent, current[2])).get(0);
-        String keymid = ((List<String>)getKey(threeGroupPercent, current[1])).get(0);
+        String keyMax = ((List<String>) getKey(threeGroupPercent, current[2])).get(0);
+        String keymid = ((List<String>) getKey(threeGroupPercent, current[1])).get(0);
         String[] dashu = {"06", "07", "08", "09", "10", "11"};
         String[] zhishu = {"01", "02", "03", "05", "07", "11"};
-        String[] jishu =  {"01", "03", "05", "07", "09", "11"};
+        String[] jishu = {"01", "03", "05", "07", "09", "11"};
         List<String[]> groupList = new ArrayList<>();
         //此处不做修改,也不做简化,直接将对应的数据放到集合中即可
-        switch (keyMax){
-            case "大数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu,oneGroup)));break;
-            case "质数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu,oneGroup)));break;
-            default: groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu,oneGroup)));
+        switch (keyMax) {
+            case "大数概率":
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu, oneGroup)));
+                break;
+            case "质数概率":
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu, oneGroup)));
+                break;
+            default:
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu, oneGroup)));
         }
-        switch (keymid){
-            case "大数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu,oneGroup)));break;
-            case "质数概率": groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu,oneGroup)));break;
-            default: groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu,oneGroup)));
+        switch (keymid) {
+            case "大数概率":
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(dashu, oneGroup)));
+                break;
+            case "质数概率":
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(zhishu, oneGroup)));
+                break;
+            default:
+                groupList.add(Convert.toStrArray(ArrayUtils.minus(jishu, oneGroup)));
         }
-        Map<String,List<String[]>> map = new HashMap<>();
-        map.put(Arrays.toString(oneGroup),groupList);
-        map.put(Arrays.toString(twoGroup),groupList);
+        Map<String, List<String[]>> map = new HashMap<>();
+        map.put(Arrays.toString(oneGroup), groupList);
+        map.put(Arrays.toString(twoGroup), groupList);
         return map;
+    }
+
+    /**
+     * 统计正确率
+     *
+     * @param date
+     * @param period
+     * @return
+     */
+    public double getTwoNumberPercent(String date, String period) throws IOException {
+        int fenZi = 0;
+        int fenMu = 0;
+        for (int i = 10; i < Integer.valueOf(period); i++) {
+            Object[] coldWarmNumber = getColdWarmNumber(date, ""+i);
+            String[] awardNumber = getTenTimes(date, "" + (i + 1), 1).get(0);
+            if (coldWarmNumber != null && coldWarmNumber.length == 2) {
+                if(ArrayUtils.intersect(coldWarmNumber,awardNumber).length>=1){
+                    fenZi++;
+                }
+                fenMu++;
+            }
+        }
+        double result = 1.0 * fenZi / fenMu;
+        return result;
     }
 }

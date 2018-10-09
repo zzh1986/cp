@@ -146,11 +146,27 @@ public class GroupController {
     public Map<String,List<String[]>> getNextProgram(String date,String period) throws IOException {
         return groupService.getNextProgram(date,period);
     }
+
     /**
-     *
+     * 获取两个可能的数据
+     * @param date
+     * @param period
+     * @return
+     * @throws IOException
      */
     @GetMapping("/getColdWarmNumber")
     public Object[] getColdWarmNumber(String date,String period) throws IOException {
         return groupService.getColdWarmNumber(date,period);
+    }
+
+    /**
+     * 获取一天之内两个数其中一个正确的概率
+     * @param date
+     * @param period
+     * @return
+     */
+    @GetMapping("/getTwoNumberPercent")
+    public double getTwoNumberPercent(String date,String period) throws IOException {
+        return groupService.getTwoNumberPercent(date,period);
     }
 }
