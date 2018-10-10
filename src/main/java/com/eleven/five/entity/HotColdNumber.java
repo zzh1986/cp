@@ -49,6 +49,12 @@ public class HotColdNumber {
     @Column(name = "next_award")
     private String nextAward;
 
+    @Column(name = "two_number")
+    private String twoNumber;
+
+    @Column(name = "another_two")
+    private String anotherTwo;
+
     @Column(name = "period")
     private String period;
 
@@ -164,4 +170,19 @@ public class HotColdNumber {
         this.nextAward = nextAward;
     }
 
+    public String getTwoNumber() {
+        return twoNumber;
+    }
+
+    public void setTwoNumber(String twoNumber) {
+        this.twoNumber = twoNumber;
+    }
+
+    public String getAnotherTwo() {
+        return anotherTwo;
+    }
+
+    public void setAnotherTwo(String anotherTwo) {
+        this.anotherTwo = anotherTwo;
+    }
 }

@@ -31,7 +31,7 @@ public class HotColdNumberService {
         List<String[]> tenTimes = groupService.getTenTimes(date, period, Integer.valueOf(period));
         //获取到数据后需要进行相应的统计
         List<HotColdNumber> hostColdNumberList = new ArrayList<>();
-        for (int i = 10; i < tenTimes.size(); i++) {
+        for (int i = 10; i <= tenTimes.size(); i++) {
             List<String[]> tenGroup = new ArrayList<>();
 
             for (int j = i - 10; j < i; j++) {
@@ -48,15 +48,21 @@ public class HotColdNumberService {
             hotColdNumber.setHotNumber(Arrays.toString(reHao));
             hotColdNumber.setColdNumber(Arrays.toString(lenHao));
             hotColdNumber.setWarmNumber(Arrays.toString(wenHao));
-            hotColdNumber.setHotRight(ArrayUtils.intersect(reHao, tenTimes.get(i)).length);
-            hotColdNumber.setColdRight(ArrayUtils.intersect(lenHao, tenTimes.get(i)).length);
-            hotColdNumber.setWarmRight(ArrayUtils.intersect(wenHao, tenTimes.get(i)).length);
-            hotColdNumber.setHotCode(Arrays.toString(ArrayUtils.intersect(reHao, tenTimes.get(i))));
-            hotColdNumber.setColdCode(Arrays.toString(ArrayUtils.intersect(lenHao, tenTimes.get(i))));
-            hotColdNumber.setWarmCode(Arrays.toString(ArrayUtils.intersect(wenHao, tenTimes.get(i))));
-            hotColdNumber.setHotReserve(Arrays.toString(ArrayUtils.minus(reHao,tenTimes.get(i-1))));
-            hotColdNumber.setWarmReserve(Arrays.toString(ArrayUtils.minus(wenHao,tenTimes.get(i-1))));
-            hotColdNumber.setNextAward(Arrays.toString(tenTimes.get(i)));
+            String[] currentNumber = tenTimes.get(i - 1);
+            int baseNumber = Integer.valueOf(currentNumber[0]) * 10 + Integer.valueOf(currentNumber[1]);
+            hotColdNumber.setTwoNumber(baseNumber / 9 + "," + baseNumber % 9);
+            hotColdNumber.setAnotherTwo((baseNumber / 9 + baseNumber % 9) + "," + Math.abs(baseNumber / 9 - baseNumber % 9));
+            if (i < tenTimes.size()) {
+                hotColdNumber.setHotRight(ArrayUtils.intersect(reHao, tenTimes.get(i)).length);
+                hotColdNumber.setColdRight(ArrayUtils.intersect(lenHao, tenTimes.get(i)).length);
+                hotColdNumber.setWarmRight(ArrayUtils.intersect(wenHao, tenTimes.get(i)).length);
+                hotColdNumber.setNextAward(Arrays.toString(tenTimes.get(i)));
+                hotColdNumber.setHotCode(Arrays.toString(ArrayUtils.intersect(reHao, tenTimes.get(i))));
+                hotColdNumber.setColdCode(Arrays.toString(ArrayUtils.intersect(lenHao, tenTimes.get(i))));
+                hotColdNumber.setWarmCode(Arrays.toString(ArrayUtils.intersect(wenHao, tenTimes.get(i))));
+            }
+            hotColdNumber.setHotReserve(Arrays.toString(ArrayUtils.minus(reHao, tenTimes.get(i - 1))));
+            hotColdNumber.setWarmReserve(Arrays.toString(ArrayUtils.minus(wenHao, tenTimes.get(i - 1))));
             hotColdNumber.setPeriod(date + i);
 
             hostColdNumberList.add(hotColdNumber);
