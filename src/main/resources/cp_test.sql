@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
+Source Server         : mysql
 Source Server Version : 100212
 Source Host           : localhost:3306
 Source Database       : cp_test
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100212
 File Encoding         : 65001
 
-Date: 2018-09-16 21:46:30
+Date: 2018-10-10 17:28:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,7 +25,7 @@ CREATE TABLE `adjacent` (
   `award_num` varchar(200) DEFAULT NULL COMMENT '基础中奖号',
   `period` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3649 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11234 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for elevens
@@ -49,6 +49,30 @@ CREATE TABLE `elevens` (
 ) ENGINE=InnoDB AUTO_INCREMENT=18481 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for hot_cold_number
+-- ----------------------------
+DROP TABLE IF EXISTS `hot_cold_number`;
+CREATE TABLE `hot_cold_number` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hot_number` varchar(255) DEFAULT NULL,
+  `cold_number` varchar(255) DEFAULT NULL,
+  `warm_number` varchar(255) DEFAULT NULL,
+  `hot_right` int(11) DEFAULT NULL,
+  `cold_right` int(11) DEFAULT NULL,
+  `warm_right` int(11) DEFAULT NULL,
+  `hot_code` varchar(255) DEFAULT NULL,
+  `cold_code` varchar(255) DEFAULT NULL,
+  `warm_code` varchar(255) DEFAULT NULL,
+  `hot_reserve` varchar(255) DEFAULT NULL,
+  `warm_reserve` varchar(255) DEFAULT NULL,
+  `next_award` varchar(255) DEFAULT NULL,
+  `two_number` varchar(255) DEFAULT NULL,
+  `another_two` varchar(255) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1219 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for number
 -- ----------------------------
 DROP TABLE IF EXISTS `number`;
@@ -70,6 +94,26 @@ CREATE TABLE `repeat` (
   `intersect` varchar(20) DEFAULT '' COMMENT '重复出现的结果',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for repeat_times
+-- ----------------------------
+DROP TABLE IF EXISTS `repeat_times`;
+CREATE TABLE `repeat_times` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `one_times` int(11) DEFAULT NULL,
+  `two_times` int(11) DEFAULT NULL,
+  `three_times` int(11) DEFAULT NULL,
+  `four_times` int(11) DEFAULT NULL,
+  `five_times` int(11) DEFAULT NULL,
+  `six_times` int(11) DEFAULT NULL,
+  `seven_times` int(11) DEFAULT NULL,
+  `eight_times` int(11) DEFAULT NULL,
+  `nine_times` int(11) DEFAULT NULL,
+  `ten_times` int(11) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26641 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for ten_number
@@ -103,7 +147,7 @@ CREATE TABLE `ten_repeat` (
   `award_num` varchar(200) DEFAULT NULL COMMENT '基础中奖号',
   `period` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3128 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8924 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for ten_three_period
@@ -211,27 +255,3 @@ CREATE TABLE `tong_ji` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1460 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS=1;
-
--- ----------------------------
--- 20181009新建的热冷号的统计表
--- ----------------------------
-CREATE TABLE `hot_cold_number` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `hot_number` varchar(255) DEFAULT NULL,
-  `cold_number` varchar(255) DEFAULT NULL,
-  `warm_number` varchar(255) DEFAULT NULL,
-  `hot_right` int(11) DEFAULT NULL,
-  `cold_right` int(11) DEFAULT NULL,
-  `warm_right` int(11) DEFAULT NULL,
-  `hot_code` varchar(255) DEFAULT NULL,
-  `cold_code` varchar(255) DEFAULT NULL,
-  `warm_code` varchar(255) DEFAULT NULL,
-  `hot_reserve` varchar(255) DEFAULT NULL,
-  `warm_reserve` varchar(255) DEFAULT NULL,
-  `next_award` varchar(255) DEFAULT NULL,
-  `two_number` varchar(255) DEFAULT NULL,
-  `another_two` varchar(255) DEFAULT NULL,
-  `period` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=479 DEFAULT CHARSET=utf8;
-
