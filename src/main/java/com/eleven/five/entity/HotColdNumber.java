@@ -46,6 +46,9 @@ public class HotColdNumber {
     @Column(name = "warm_reserve")
     private String warmReserve;
 
+    @Column(name = "next_award")
+    private String nextAward;
+
     @Column(name = "period")
     private String period;
 
@@ -152,4 +155,13 @@ public class HotColdNumber {
     public void setPeriod(String period) {
         this.period = period;
     }
+
+    public String getNextAward() {
+        return nextAward;
+    }
+
+    public void setNextAward(String nextAward) {
+        this.nextAward = nextAward;
+    }
+
 }

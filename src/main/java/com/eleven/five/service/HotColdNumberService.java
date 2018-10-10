@@ -56,6 +56,7 @@ public class HotColdNumberService {
             hotColdNumber.setWarmCode(Arrays.toString(ArrayUtils.intersect(wenHao, tenTimes.get(i))));
             hotColdNumber.setHotReserve(Arrays.toString(ArrayUtils.minus(reHao,tenTimes.get(i-1))));
             hotColdNumber.setWarmReserve(Arrays.toString(ArrayUtils.minus(wenHao,tenTimes.get(i-1))));
+            hotColdNumber.setNextAward(Arrays.toString(tenTimes.get(i)));
             hotColdNumber.setPeriod(date + i);
 
             hostColdNumberList.add(hotColdNumber);

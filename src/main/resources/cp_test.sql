@@ -228,6 +228,8 @@ CREATE TABLE `hot_cold_number` (
   `warm_code` varchar(255) DEFAULT NULL,
   `hot_reserve` varchar(255) DEFAULT NULL,
   `warm_reserve` varchar(255) DEFAULT NULL,
+  `next_award` varchar(255) DEFAULT NULL,
   `period` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
+
