@@ -139,7 +139,7 @@ public class GroupService {
      * @return
      * @throws IOException
      */
-    private List<String[]> getTenTimes(String date, String period, int num) throws IOException {
+    public List<String[]> getTenTimes(String date, String period, int num) throws IOException {
         String url = "http://caipiao.163.com/award/gd11xuan5/" + date + ".html";
         Elements elements = Jsoup.connect(url).get().select("[data-period]");
         List<String> fiveList = new ArrayList<>();

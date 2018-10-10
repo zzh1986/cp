@@ -211,3 +211,23 @@ CREATE TABLE `tong_ji` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1460 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS=1;
+
+-- ----------------------------
+-- 20181009新建的热冷号的统计表
+-- ----------------------------
+CREATE TABLE `hot_cold_number` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hot_number` varchar(255) DEFAULT NULL,
+  `cold_number` varchar(255) DEFAULT NULL,
+  `warm_number` varchar(255) DEFAULT NULL,
+  `hot_right` int(11) DEFAULT NULL,
+  `cold_right` int(11) DEFAULT NULL,
+  `warm_right` int(11) DEFAULT NULL,
+  `hot_code` varchar(255) DEFAULT NULL,
+  `cold_code` varchar(255) DEFAULT NULL,
+  `warm_code` varchar(255) DEFAULT NULL,
+  `hot_reserve` varchar(255) DEFAULT NULL,
+  `warm_reserve` varchar(255) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
