@@ -18,5 +18,11 @@ spring:
     restart:
       additional-paths: /caipiao
       enabled: false
+  mvc:
+    static-path-pattern: /static/**
+    view:
+      prefix: /templates/
+      suffix: .html
+#静态资源的配置
 #logging.level.com.eleven.five.mapper: debug
 
