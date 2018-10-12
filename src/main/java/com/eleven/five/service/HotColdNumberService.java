@@ -25,8 +25,8 @@ public class HotColdNumberService {
     @Autowired
     private GroupService groupService;
 
-    public void getHotColdNumbers(String date, String period) throws IOException {
-        //先清空表格
+    public List<HotColdNumber>  getHotColdNumbers(String date, String period) throws IOException {
+        //先清空数据实时报表
         hotColdNumberMapper.deleteAll();
         List<String[]> tenTimes = groupService.getTenTimes(date, period, Integer.valueOf(period));
         //获取到数据后需要进行相应的统计
@@ -68,5 +68,6 @@ public class HotColdNumberService {
             hostColdNumberList.add(hotColdNumber);
         }
         hotColdNumberMapper.saveAll(hostColdNumberList);
+        return hostColdNumberList;
     }
 }

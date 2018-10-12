@@ -1,11 +1,13 @@
 package com.eleven.five.controller;
 
+import com.eleven.five.entity.HotColdNumber;
 import com.eleven.five.service.HotColdNumberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author zhaozhihong
@@ -22,7 +24,7 @@ public class HotColdNumberController {
      * @param period
      */
     @GetMapping("/getHotColdNumbers")
-    public void getHotColdNumbers(String date,String period) throws IOException {
-        hotColdNumberService.getHotColdNumbers(date,period);
+    public List<HotColdNumber> getHotColdNumbers(String date, String period) throws IOException {
+        return hotColdNumberService.getHotColdNumbers(date,period);
     }
 }

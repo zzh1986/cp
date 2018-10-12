@@ -16,13 +16,14 @@ spring:
     show-sql: false
   devtools:
     restart:
-      additional-paths: /caipiao
+      additional-paths: /templates
       enabled: false
+      exclude: static/**
   mvc:
     static-path-pattern: /static/**
-    view:
-      prefix: /templates/
-      suffix: .html
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 #静态资源的配置
 #logging.level.com.eleven.five.mapper: debug
 

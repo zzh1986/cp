@@ -450,7 +450,7 @@
                 "pre": 1
             }
         },
-        stylesheets: ["./vendors/bootstrap-wysihtml5/lib/css/wysiwyg-color.css"], // (path_to_project/lib/css/wysiwyg-color.css)
+        stylesheets: [".//static/vendors/bootstrap-wysihtml5/lib/css/wysiwyg-color.css"], // (path_to_project/lib/css/wysiwyg-color.css)
         locale: "en"
     };
 
