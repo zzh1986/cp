@@ -1055,8 +1055,8 @@ public class GroupService {
         String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimes).toArray());
         String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimes).toArray());
         String[] reHao = Convert.toStrArray(ShuJu.getReHao(tenTimes).toArray());
-        System.out.println("温号备选号"+Arrays.toString(ArrayUtils.minus(wenHao,tenTimes.get(9))));
-        System.out.println("热号备选号"+Arrays.toString(ArrayUtils.minus(reHao,tenTimes.get(9))));
+        System.out.println("温号备选号" + Arrays.toString(ArrayUtils.minus(wenHao, tenTimes.get(9))));
+        System.out.println("热号备选号" + Arrays.toString(ArrayUtils.minus(reHao, tenTimes.get(9))));
         if (reHao.length == 2) {
             System.out.println("热号为主");
             return reHao;
@@ -1224,10 +1224,10 @@ public class GroupService {
         int fenZi = 0;
         int fenMu = 0;
         for (int i = 10; i < Integer.valueOf(period); i++) {
-            Object[] coldWarmNumber = getColdWarmNumber(date, ""+i);
+            Object[] coldWarmNumber = getColdWarmNumber(date, "" + i);
             String[] awardNumber = getTenTimes(date, "" + (i + 1), 1).get(0);
             if (coldWarmNumber != null && coldWarmNumber.length == 2) {
-                if(ArrayUtils.intersect(coldWarmNumber,awardNumber).length>=1){
+                if (ArrayUtils.intersect(coldWarmNumber, awardNumber).length >= 1) {
                     fenZi++;
                 }
                 fenMu++;
@@ -1235,5 +1235,75 @@ public class GroupService {
         }
         double result = 1.0 * fenZi / fenMu;
         return result;
+    }
+
+    public List<Integer> getJiOuPercent(String date, String period) throws IOException {
+
+        List<String[]> tenTimes = getTenTimes(date, period, 84);
+        String[] jishu = {"01", "03", "05", "07", "09", "11"};
+        String[] oushu = {"02", "04", "06", "08", "10"};
+        List<Integer> result = new ArrayList<>();
+        int right = 0;
+        int error = 0;
+        int jiNumRight = 0;
+        int jiNumError = 0;
+        int ouNumRight = 0;
+        int ouNumError = 0;
+
+        //i=10 代表从10期以后开始统计,i=0,代表从第一期开始统计
+        for (int i = 0; i < tenTimes.size() - 1; i++) {
+
+          /*  List<String[]> tenTimeList = getTenTimes(date, String.valueOf(i), 10);
+            String[] reHao = Convert.toStrArray(ShuJu.getReHao(tenTimeList).toArray());
+            String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimeList).toArray());
+            String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimeList).toArray());
+*/
+            String[] xiangtongJiShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), jishu));
+            String[] xiangtongouShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), oushu));
+            if (xiangtongJiShu.length == 2) {
+                if (ArrayUtils.intersect(xiangtongJiShu,tenTimes.get(i+1)).length >= 1) {
+                    jiNumRight++;
+                    right++;
+                    result.add(i);
+                } else {
+                    jiNumError++;
+                    error++;
+                    result.add(0);
+                }
+            }
+
+            if (xiangtongouShu.length == 2) {
+                if (ArrayUtils.intersect(xiangtongouShu, tenTimes.get(i + 1)).length >= 1) {
+
+                    ouNumRight++;
+                    right++;
+                    result.add(i);
+                } else {
+                    ouNumError++;
+                    error++;
+                    result.add(0);
+                }
+            }
+        }
+        System.out.println("总正确率:" + (1.0 * right / (right + error)));
+        System.out.println("总次数:" + (right + error));
+        System.out.println("奇数总正确率:" + (1.0 * jiNumRight / (jiNumRight + jiNumError)));
+        System.out.println("偶数总正确率:" + (1.0 * ouNumRight / (ouNumRight + ouNumError)));
+        System.out.println("奇数次数:" + jiNumRight);
+        System.out.println("偶数次数:" + ouNumRight);
+        System.out.println("奇数总数:" + (jiNumRight + jiNumError));
+        System.out.println("偶数总数:" + (ouNumRight + ouNumError));
+
+        int index = 0;
+        for (int i = 0; i < result.size(); i++) {
+            if (result.get(i) == 0) {
+                index++;
+            }
+        }
+        System.out.println("满足条件的总次数:" + result.size());
+        System.out.println("其中套路不正确的个数为:" + index);
+        System.out.println("其中符合要求的次数为:" + (result.size() - index));
+        return result;
+
     }
 }

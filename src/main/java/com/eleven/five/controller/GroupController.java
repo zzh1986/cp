@@ -169,4 +169,12 @@ public class GroupController {
     public double getTwoNumberPercent(String date,String period) throws IOException {
         return groupService.getTwoNumberPercent(date,period);
     }
+
+    /**
+     * 统计前一期出现的号码分开奇数偶数 后下期出现的 一个数字的概率
+     */
+    @GetMapping("/getJiOuPercent")
+    public List<Integer> getJiOuPercent(String date,String period) throws IOException {
+        return groupService.getJiOuPercent(date,period);
+    }
 }
