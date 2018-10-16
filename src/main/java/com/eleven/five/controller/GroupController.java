@@ -177,4 +177,14 @@ public class GroupController {
     public List<Integer> getJiOuPercent(String date,String period) throws IOException {
         return groupService.getJiOuPercent(date,period);
     }
+
+    /**
+     * 对当前期数的数据进行分组,并统计后保存到数据库
+     */
+    @GetMapping("/saveGroupNumber")
+    public String saveGroupNumber(String date,String period) throws IOException{
+        return groupService.saveGroupNumber(date,period);
+    }
+
+
 }

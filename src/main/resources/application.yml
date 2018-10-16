@@ -13,7 +13,7 @@ spring:
     username: root
     password: root
   jpa:
-    show-sql: false
+    show-sql: true
   devtools:
     restart:
       additional-paths: /templates

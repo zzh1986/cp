@@ -3,11 +3,9 @@ package com.eleven.five.service;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.eleven.five.entity.Adjacent;
-import com.eleven.five.entity.GroupEntity;
-import com.eleven.five.entity.RepeatTimes;
-import com.eleven.five.entity.TenRepeat;
+import com.eleven.five.entity.*;
 import com.eleven.five.mapper.AdjacentMapper;
+import com.eleven.five.mapper.NumberGroupMapper;
 import com.eleven.five.mapper.RepeatTimesMapper;
 import com.eleven.five.mapper.TenRepeatMapper;
 import com.eleven.five.util.ArrayUtils;
@@ -40,6 +38,9 @@ public class GroupService {
 
     @Autowired
     private RepeatTimesMapper repeatTimesMapper;
+
+    @Autowired
+    private NumberGroupMapper numberGroupMapper;
 
     public List<Object[]> getGroupResult(String date, String period) throws IOException {
         List<Object[]> oneOrTwoGroup = getOneOrTwoGroup(date, period, 6, 3);
@@ -1240,15 +1241,15 @@ public class GroupService {
     public List<Integer> getJiOuPercent(String date, String period) throws IOException {
 
         List<String[]> tenTimes = getTenTimes(date, period, 84);
-        String[] jishu = {"01", "03", "05", "07", "09", "11"};
-        String[] oushu = {"02", "04", "06", "08", "10"};
+        String[] zhishu = {"01", "02", "03", "04", "05"};
+        String[] heshu = {"06", "07", "08", "09", "10", "11"};
         List<Integer> result = new ArrayList<>();
         int right = 0;
         int error = 0;
-        int jiNumRight = 0;
-        int jiNumError = 0;
-        int ouNumRight = 0;
-        int ouNumError = 0;
+        int zhiNumRight = 0;
+        int zhiNumError = 0;
+        int heNumRight = 0;
+        int heNumError = 0;
 
         //i=10 代表从10期以后开始统计,i=0,代表从第一期开始统计
         for (int i = 0; i < tenTimes.size() - 1; i++) {
@@ -1258,28 +1259,28 @@ public class GroupService {
             String[] wenHao = Convert.toStrArray(ShuJu.getWenHao(tenTimeList).toArray());
             String[] lenHao = Convert.toStrArray(ShuJu.getLenHao(tenTimeList).toArray());
 */
-            String[] xiangtongJiShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), jishu));
-            String[] xiangtongouShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), oushu));
-            if (xiangtongJiShu.length == 2) {
-                if (ArrayUtils.intersect(xiangtongJiShu,tenTimes.get(i+1)).length >= 1) {
-                    jiNumRight++;
+            String[] xiangtongZhiShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), zhishu));
+            String[] xiangtongheShu = Convert.toStrArray(ArrayUtils.intersect(tenTimes.get(i), heshu));
+            if (xiangtongZhiShu.length == 2) {
+                if (ArrayUtils.intersect(xiangtongZhiShu, tenTimes.get(i + 1)).length >= 1) {
+                    zhiNumRight++;
                     right++;
                     result.add(i);
                 } else {
-                    jiNumError++;
+                    zhiNumError++;
                     error++;
                     result.add(0);
                 }
             }
 
-            if (xiangtongouShu.length == 2) {
-                if (ArrayUtils.intersect(xiangtongouShu, tenTimes.get(i + 1)).length >= 1) {
+            if (xiangtongheShu.length == 2) {
+                if (ArrayUtils.intersect(xiangtongheShu, tenTimes.get(i + 1)).length >= 1) {
 
-                    ouNumRight++;
+                    heNumRight++;
                     right++;
                     result.add(i);
                 } else {
-                    ouNumError++;
+                    heNumError++;
                     error++;
                     result.add(0);
                 }
@@ -1287,12 +1288,12 @@ public class GroupService {
         }
         System.out.println("总正确率:" + (1.0 * right / (right + error)));
         System.out.println("总次数:" + (right + error));
-        System.out.println("奇数总正确率:" + (1.0 * jiNumRight / (jiNumRight + jiNumError)));
-        System.out.println("偶数总正确率:" + (1.0 * ouNumRight / (ouNumRight + ouNumError)));
-        System.out.println("奇数次数:" + jiNumRight);
-        System.out.println("偶数次数:" + ouNumRight);
-        System.out.println("奇数总数:" + (jiNumRight + jiNumError));
-        System.out.println("偶数总数:" + (ouNumRight + ouNumError));
+        System.out.println("质数总正确率:" + (1.0 * zhiNumRight / (zhiNumRight + zhiNumError)));
+        System.out.println("合数总正确率:" + (1.0 * heNumRight / (heNumRight + heNumError)));
+        System.out.println("质数次数:" + zhiNumRight);
+        System.out.println("合数次数:" + heNumRight);
+        System.out.println("质数总数:" + (zhiNumRight + zhiNumError));
+        System.out.println("合数总数:" + (heNumRight + heNumError));
 
         int index = 0;
         for (int i = 0; i < result.size(); i++) {
@@ -1304,6 +1305,37 @@ public class GroupService {
         System.out.println("其中套路不正确的个数为:" + index);
         System.out.println("其中符合要求的次数为:" + (result.size() - index));
         return result;
+
+    }
+
+    /** 保存对应的分组统计结果结果到数据库 */
+    public String saveGroupNumber(String date, String period) throws IOException {
+        numberGroupMapper.deleteAll();
+        List<String[]> tenTimes = getTenTimes(date, period, 1);
+        String[] dashu = {"06", "07", "08", "09", "10", "11"};
+        String[] xiaoshu = {"01", "02", "03", "04", "05"};
+        String[] zhishu = {"01", "02", "03", "05", "07", "11"};
+        String[] heshu = { "04", "06", "08", "09", "10"};
+        String[] oushu = {"02", "04", "06", "08", "10", };
+        String[] jishu = {"01", "03", "05", "07", "09", "11"};
+        NumberGroup group = new NumberGroup();
+        group.setId(null);
+        group.setJiGroup(Arrays.toString(ArrayUtils.intersect(jishu,tenTimes.get(0))));
+        group.setOuGroup(Arrays.toString(ArrayUtils.intersect(oushu,tenTimes.get(0))));
+        group.setZhiGroup(Arrays.toString(ArrayUtils.intersect(zhishu,tenTimes.get(0))));
+        group.setHeGroup(Arrays.toString(ArrayUtils.intersect(heshu,tenTimes.get(0))));
+        group.setDaGroup(Arrays.toString(ArrayUtils.intersect(dashu,tenTimes.get(0))));
+        group.setXiaoGroup(Arrays.toString(ArrayUtils.intersect(xiaoshu,tenTimes.get(0))));
+        group.setOuAmount(ArrayUtils.intersect(oushu,tenTimes.get(0)).length);
+        group.setJiAmount(ArrayUtils.intersect(jishu,tenTimes.get(0)).length);
+        group.setZhiAmount(ArrayUtils.intersect(zhishu,tenTimes.get(0)).length);
+        group.setHeAmount(ArrayUtils.intersect(heshu,tenTimes.get(0)).length);
+        group.setDaAmount(ArrayUtils.intersect(dashu,tenTimes.get(0)).length);
+        group.setXiaoAmount(ArrayUtils.intersect(xiaoshu,tenTimes.get(0)).length);
+        group.setPeriod(date+period);
+        numberGroupMapper.save(group);
+
+        return "保存成功";
 
     }
 }
