@@ -13,12 +13,14 @@ spring:
     username: root
     password: root
   jpa:
-    show-sql: true
+    show-sql: false
   devtools:
     restart:
       additional-paths: /templates
       enabled: false
       exclude: static/**
+    livereload:
+      enabled: false
   mvc:
     static-path-pattern: /static/**
   thymeleaf:

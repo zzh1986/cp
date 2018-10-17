@@ -1,5 +1,7 @@
 package com.eleven.five.controller;
 
+import cn.hutool.core.date.DateUtil;
+import com.eleven.five.entity.NumberGroup;
 import com.eleven.five.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -179,12 +182,26 @@ public class GroupController {
     }
 
     /**
-     * 对当前期数的数据进行分组,并统计后保存到数据库
+     * 对当前期数的数据进行分组,并统计后保存到数据库 字符串类型
+     */
+    /*@GetMapping("/saveGroupNumber")
+    public NumberGroup saveGroupNumber(String date, String period) throws IOException{
+        return groupService.saveGroupNumber(date,period);
+    }*/
+    /**
+     * 对当前期数的数据进行分组,并统计后保存到数据库 日期类型
      */
     @GetMapping("/saveGroupNumber")
-    public String saveGroupNumber(String date,String period) throws IOException{
-        return groupService.saveGroupNumber(date,period);
+    public NumberGroup saveGroupNumber(Date date, String period) throws IOException{
+        String dateStr = DateUtil.format(date, "yyyyMMdd");
+        return groupService.saveGroupNumber(dateStr,period);
     }
-
-
+    /**
+     * 对当前期数的数据进行分组,并统计后保存到数据库 字符串类型
+     */
+    @GetMapping("/saveOneDayGroupNumbers")
+    public List<NumberGroup> saveOneDayGroupNumbers(Date date) throws IOException{
+        String dateStr = DateUtil.format(date, "yyyyMMdd");
+        return groupService.saveOneDayGroupNumbers(dateStr);
+    }
 }

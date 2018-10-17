@@ -12,6 +12,7 @@ import com.eleven.five.util.ArrayUtils;
 import com.eleven.five.util.FiveUtil;
 import com.eleven.five.util.GroupUtils;
 import com.eleven.five.util.ShuJu;
+import lombok.extern.java.Log;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.*;
  * @author zhaozhihong
  */
 @Service
+@Log
 public class GroupService {
     @Autowired
     private AdjacentMapper adjacentMapper;
@@ -1309,8 +1311,8 @@ public class GroupService {
     }
 
     /** 保存对应的分组统计结果结果到数据库 */
-    public String saveGroupNumber(String date, String period) throws IOException {
-        numberGroupMapper.deleteAll();
+    public NumberGroup saveGroupNumber(String date, String period) throws IOException {
+//        numberGroupMapper.deleteAll();
         List<String[]> tenTimes = getTenTimes(date, period, 1);
         String[] dashu = {"06", "07", "08", "09", "10", "11"};
         String[] xiaoshu = {"01", "02", "03", "04", "05"};
@@ -1333,9 +1335,29 @@ public class GroupService {
         group.setDaAmount(ArrayUtils.intersect(dashu,tenTimes.get(0)).length);
         group.setXiaoAmount(ArrayUtils.intersect(xiaoshu,tenTimes.get(0)).length);
         group.setPeriod(date+period);
-        numberGroupMapper.save(group);
+//        numberGroupMapper.save(group);
 
-        return "保存成功";
+        return group;
 
+    }
+
+    /**
+     * 保存一天的数据到数据库
+     * @param date
+     * @return
+     */
+    public List<NumberGroup> saveOneDayGroupNumbers(String date) throws IOException {
+        numberGroupMapper.deleteAll();
+        List<NumberGroup> numberGroupList = new ArrayList<>();
+        for (int i = 1; i < 85; i++) {
+            try {
+                numberGroupList.add(saveGroupNumber(date, String.valueOf(i).length() == 1 ? ("0" + i) : ("" + i)));
+            }catch (Exception e){
+                log.info("数据已经越界");
+                break;
+            }
+        }
+        numberGroupMapper.saveAll(numberGroupList);
+        return numberGroupList;
     }
 }
