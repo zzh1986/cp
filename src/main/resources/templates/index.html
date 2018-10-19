@@ -9,42 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <script src="/static/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
     <script src="/static/bootstrap/js/miaov.js"></script>
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: "微软雅黑";
-        }
 
-        #panel {
-            list-style: none;
-            position: relative;
-            top: 30px;
-            left: 30px;
-        }
-
-        #panel li {
-            position: absolute;
-            top: 0;
-            overflow: hidden;
-            width: 56px;
-            height: 92px;
-        }
-
-        #panel li img {
-            display: block;
-            position: absolute;
-        }
-
-        #panel li .pic01 {
-            top: 0;
-        }
-
-        #panel li .pic02 {
-            top: 92px;
-        }
-
-    </style>
 </head>
 
 <body>
@@ -177,37 +142,6 @@
             </ul>
         </div>
 
-        <div class="span10">
-            <ul id="panel">
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-                <li>
-                    <img src="">
-
-                </li>
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-                <li>
-                    <img src="">
-
-                </li>
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-                <li>
-                    <img src="" class="pic01"> <img src="" class="pic02">
-                </li>
-            </ul>
-        </div>
-        <br class="row-fluid"/>
         <div class="span10" id="content">
             <div>
                 <span id="year"></span><span>年</span>
@@ -260,7 +194,7 @@
                 <!-- block -->
                 <div class="block">
                     <div class="navbar navbar-inner block-header">
-                        <div class="muted pull-left">当前冷热温余商和差统计</div>
+                        <div class="muted pull-left">当前冷热温余商和差统计(从第10期以后进行统计)</div>
                         <div class="pull-right"><span class="badge badge-info">冷热温余商和差</span>
 
                         </div>
@@ -410,96 +344,7 @@
     setInterval(myDate, 1000);
     setInterval(getMinutes, 55000);
 
-    /*时间控件的相关js代码*/
-    window.onload = function () {
-        var arr = ['static/images/0.png', 'static/images/1.png', 'static/images/2.png', 'static/images/3.png', 'static/images/4.png', 'static/images/5.png', 'static/images/6.png', 'static/images/7.png', 'static/images/8.png', 'static/images/9.png', 'static/images/mao.png',]
-        var panel = document.getElementById("panel");
-        var aLi = panel.getElementsByTagName("li");
-        var nTime = null;
-        var str = null;
-        var nstr;
-        for (var i = 0; i < aLi.length; i++) {
-            aLi[i].style.left = 56 * i + 'px';
-        }
 
-        function showTime1() {
-            var iNow = new Date();
-            var nHours = iNow.getHours();
-            var nMinutes = iNow.getMinutes();
-            var nSecondes = iNow.getSeconds();
-            str = toTwo(nHours) + ':' + toTwo(nMinutes) + ':' + toTwo(nSecondes);
-        }
-
-        function showTime2() {
-            var iNow = new Date();
-            nTime = iNow.getTime() + 1000;
-            iNew = new Date(nTime);
-            var tHours = iNew.getHours();
-            var tMinutes = iNew.getMinutes();
-            var tSecondes = iNew.getSeconds();
-            nstr = toTwo(tHours) + ':' + toTwo(tMinutes) + ':' + toTwo(tSecondes);
-        }
-
-        showTime1();
-        showTime2();
-        setInterval(function () {
-            showTime1();
-            showTime2();
-        }, 1000);
-
-        function initial(aLi) {
-            for (var i = 0; i < aLi.length; i++) {
-                if (i != 2 && i != 5) {
-                    aLi[i].getElementsByTagName("img")[0].src = arr[str.charAt(i)];
-                    aLi[i].getElementsByTagName("img")[1].src = arr[nstr.charAt(i)];
-                } else {
-                    aLi[i].getElementsByTagName("img")[0].src = arr[10];
-                }
-            }
-        }
-
-        initial(aLi);
-
-        timeRoll(aLi, 0);
-        timeRoll(aLi, 1);
-        timeRoll(aLi, 3);
-        timeRoll(aLi, 4);
-        timeRoll(aLi, 6);
-        timeRoll(aLi, 7);
-
-        function timeRoll(obj, i) {
-            setInterval(function () {
-                var pNumber = str.charAt(i);
-                var tNumber = nstr.charAt(i);
-                var pImg = obj[i].getElementsByTagName("img")[0];
-                var nImg = obj[i].getElementsByTagName("img")[1];
-                if (pNumber !== tNumber && parseInt(getStyle(nImg, 'top')) == 92) {
-
-                    nImg.src = arr[nstr.charAt(i)];
-                    doMove(nImg, 'top', 5, 0, function () {
-
-                    });
-                    doMove(pImg, 'top', 5, -92, function () {
-                        pImg.style.top = '92px';
-                        pImg.src = arr[str.charAt(i)];
-
-                    });
-
-                } else if (pNumber !== tNumber && parseInt(getStyle(pImg, 'top')) == 92) {
-
-                    pImg.src = arr[nstr.charAt(i)];
-                    doMove(pImg, 'top', 5, 0, function () {
-
-                    });
-                    doMove(nImg, 'top', 5, -92, function () {
-                        nImg.style.top = '92px';
-                        nImg.src = arr[str.charAt(i)];
-
-                    });
-                }
-            }, 1000)
-        };
-    }
 
 </script>
 </body>
