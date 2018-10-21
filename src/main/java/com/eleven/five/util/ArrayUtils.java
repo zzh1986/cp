@@ -255,12 +255,15 @@ public class ArrayUtils {
         ArrayList<Object[]> cmn = GroupUtils.cmn(integers, 3);
         System.out.println(cmn.size());*/
 
-        int[] test = {1,10,4,7,11,8,15,2,3,7,10,15,1};
+        /*int[] test = {1,10,4,7,11,8,15,2,3,7,10,15,1};
         List<Integer> list = maxIndex(test);
         List<Integer> list1 = minIndex(test);
         System.out.println("最大值下标"+list);
-        System.out.println("最小值下标"+list1);
+        System.out.println("最小值下标"+list1);*/
 
+        String[] s1 = {"01","02"};
+        String[] s2 = {"03"};
+        System.out.println(intersect(s1,s2).length);
 
     }
 }

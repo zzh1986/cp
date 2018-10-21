@@ -1310,54 +1310,161 @@ public class GroupService {
 
     }
 
-    /** 保存对应的分组统计结果结果到数据库 */
-    public NumberGroup saveGroupNumber(String date, String period) throws IOException {
+    /**
+     * 保存对应的分组统计结果结果到数据库
+     */
+    public List<NumberGroup> saveGroupNumber(String date, String period) throws IOException {
 //        numberGroupMapper.deleteAll();
-        List<String[]> tenTimes = getTenTimes(date, period, 1);
+        List<String[]> tenTimes = getTenTimes(date, period, Integer.valueOf(period));
         String[] dashu = {"06", "07", "08", "09", "10", "11"};
         String[] xiaoshu = {"01", "02", "03", "04", "05"};
         String[] zhishu = {"01", "02", "03", "05", "07", "11"};
-        String[] heshu = { "04", "06", "08", "09", "10"};
-        String[] oushu = {"02", "04", "06", "08", "10", };
+        String[] heshu = {"04", "06", "08", "09", "10"};
+        String[] oushu = {"02", "04", "06", "08", "10",};
         String[] jishu = {"01", "03", "05", "07", "09", "11"};
-        NumberGroup group = new NumberGroup();
-        group.setId(null);
-        group.setJiGroup(Arrays.toString(ArrayUtils.intersect(jishu,tenTimes.get(0))));
-        group.setOuGroup(Arrays.toString(ArrayUtils.intersect(oushu,tenTimes.get(0))));
-        group.setZhiGroup(Arrays.toString(ArrayUtils.intersect(zhishu,tenTimes.get(0))));
-        group.setHeGroup(Arrays.toString(ArrayUtils.intersect(heshu,tenTimes.get(0))));
-        group.setDaGroup(Arrays.toString(ArrayUtils.intersect(dashu,tenTimes.get(0))));
-        group.setXiaoGroup(Arrays.toString(ArrayUtils.intersect(xiaoshu,tenTimes.get(0))));
-        group.setOuAmount(ArrayUtils.intersect(oushu,tenTimes.get(0)).length);
-        group.setJiAmount(ArrayUtils.intersect(jishu,tenTimes.get(0)).length);
-        group.setZhiAmount(ArrayUtils.intersect(zhishu,tenTimes.get(0)).length);
-        group.setHeAmount(ArrayUtils.intersect(heshu,tenTimes.get(0)).length);
-        group.setDaAmount(ArrayUtils.intersect(dashu,tenTimes.get(0)).length);
-        group.setXiaoAmount(ArrayUtils.intersect(xiaoshu,tenTimes.get(0)).length);
-        group.setPeriod(date+period);
-//        numberGroupMapper.save(group);
-
-        return group;
+        List<NumberGroup> numberGroupList = new ArrayList<>();
+        for (int i = 0; i < tenTimes.size(); i++) {
+            NumberGroup group = new NumberGroup();
+            group.setId(null);
+            group.setJiGroup(Arrays.toString(ArrayUtils.intersect(jishu, tenTimes.get(i))));
+            group.setOuGroup(Arrays.toString(ArrayUtils.intersect(oushu, tenTimes.get(i))));
+            group.setZhiGroup(Arrays.toString(ArrayUtils.intersect(zhishu, tenTimes.get(i))));
+            group.setHeGroup(Arrays.toString(ArrayUtils.intersect(heshu, tenTimes.get(i))));
+            group.setDaGroup(Arrays.toString(ArrayUtils.intersect(dashu, tenTimes.get(i))));
+            group.setXiaoGroup(Arrays.toString(ArrayUtils.intersect(xiaoshu, tenTimes.get(i))));
+            group.setOuAmount(ArrayUtils.intersect(oushu, tenTimes.get(i)).length);
+            group.setJiAmount(ArrayUtils.intersect(jishu, tenTimes.get(i)).length);
+            group.setZhiAmount(ArrayUtils.intersect(zhishu, tenTimes.get(i)).length);
+            group.setHeAmount(ArrayUtils.intersect(heshu, tenTimes.get(i)).length);
+            group.setDaAmount(ArrayUtils.intersect(dashu, tenTimes.get(i)).length);
+            group.setXiaoAmount(ArrayUtils.intersect(xiaoshu, tenTimes.get(i)).length);
+            group.setPeriod(date + (String.valueOf(i + 1).length() == 1 ? ("0" + (i + 1)) : ("" + (i + 1))));
+            numberGroupList.add(group);
+        }
+//        numberGroupMapper.saveAll(numberGroupList);
+        return numberGroupList;
 
     }
 
     /**
      * 保存一天的数据到数据库
+     *
      * @param date
      * @return
      */
     public List<NumberGroup> saveOneDayGroupNumbers(String date) throws IOException {
-        numberGroupMapper.deleteAll();
+//        numberGroupMapper.deleteAll();
         List<NumberGroup> numberGroupList = new ArrayList<>();
-        for (int i = 1; i < 85; i++) {
-            try {
-                numberGroupList.add(saveGroupNumber(date, String.valueOf(i).length() == 1 ? ("0" + i) : ("" + i)));
-            }catch (Exception e){
-                log.info("数据已经越界");
-                break;
+        try {
+            numberGroupList = saveGroupNumber(date, "84");
+        } catch (Exception e) {
+            log.info("数据已经越界");
+        }
+//        numberGroupMapper.saveAll(numberGroupList);
+        return numberGroupList;
+    }
+
+    /**
+     * @param dateStr
+     * @return
+     */
+    public Map<String, List<String>> getOneGroupJiOuNumber(String dateStr) throws IOException {
+        List<NumberGroup> numberGroupList = saveGroupNumber(dateStr, "84");
+        NumberGroup numberGroup = numberGroupList.get(numberGroupList.size() - 1);
+        String[] numberGroupStr = new String[6];
+        numberGroupStr[0] = numberGroup.getDaGroup();
+        numberGroupStr[1] = numberGroup.getXiaoGroup();
+        numberGroupStr[2] = numberGroup.getHeGroup();
+        numberGroupStr[3] = numberGroup.getZhiGroup();
+        numberGroupStr[4] = numberGroup.getJiGroup();
+        numberGroupStr[5] = numberGroup.getOuGroup();
+        List<String[]> oneGroup = new ArrayList<>();
+        List<String[]> twoGroup = new ArrayList<>();
+        //处理1和2的相关的数组
+        for (int i = 0; i < numberGroupStr.length; i++) {
+            if (numberGroupStr[i].length() == 4) {
+                String[] tem = new String[1];
+                tem[0] = numberGroupStr[i].substring(1, 3);
+                oneGroup.add(tem);
+            }
+            if (numberGroupStr[i].length() == 8) {
+                String oneNumber = numberGroupStr[i].substring(1, 3);
+                String twoNumber = numberGroupStr[i].substring(5, 7);
+                String[] tmp = new String[2];
+                tmp[0] = oneNumber;
+                tmp[1] = twoNumber;
+                twoGroup.add(tmp);
             }
         }
-        numberGroupMapper.saveAll(numberGroupList);
-        return numberGroupList;
+        //两个数组均已经ok
+        List<String> oneList = new ArrayList<>();
+        List<String> twoList = new ArrayList<>();
+        if (oneGroup.size() == 1 && twoGroup.size() != 2) {
+            for (int i = 0; i < twoGroup.size(); i++) {
+                Object[] minus = ArrayUtils.minus(twoGroup.get(i), oneGroup.get(0));
+                if (minus.length == 1 || minus.length == 2) {
+                    oneList.add((String) minus[0]);
+                }
+            }
+            //循环结束已经出现了其中一组,然后在准备第二组
+            for (int i = 0; i < twoGroup.size(); i++) {
+                Object[] minus = ArrayUtils.minus(twoGroup.get(i), Convert.toStrArray(oneList.toArray()));
+                if (minus.length == 1) {
+                    twoList.add((String) minus[0]);
+                }
+            }
+        } else if (oneGroup.size() == 2) {
+            oneList.add(oneGroup.get(0)[0]);
+            oneList.add(oneGroup.get(1)[0]);
+            for (int i = 0; i < twoGroup.size(); i++) {
+                if (ArrayUtils.minus(twoGroup.get(i), Convert.toStrArray(oneList.toArray())).length == 1) {
+                    twoList.add((String) (ArrayUtils.minus(twoGroup.get(i), Convert.toStrArray(oneList.toArray())))[0]);
+                }
+            }
+        }
+        if (twoGroup.size() == 3) {
+            //能到了这里 说明肯定没有1
+         if (ArrayUtils.minus(twoGroup.get(0),twoGroup.get(1)).length==1){
+             Object[] minus = ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0), twoGroup.get(1)), ArrayUtils.intersect(twoGroup.get(0), twoGroup.get(1)));
+             oneList = Arrays.asList(Convert.toStrArray(minus));
+             twoList = Arrays.asList(Convert.toStrArray(ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0), twoGroup.get(1), twoGroup.get(2)), minus)));
+         }
+            if (ArrayUtils.minus(twoGroup.get(1),twoGroup.get(2)).length==1){
+                Object[] minus = ArrayUtils.minus(ArrayUtils.union(twoGroup.get(1), twoGroup.get(2)), ArrayUtils.intersect(twoGroup.get(1), twoGroup.get(2)));
+                oneList = Arrays.asList(Convert.toStrArray(minus));
+                twoList = Arrays.asList(Convert.toStrArray(ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0), twoGroup.get(1), twoGroup.get(2)), minus)));
+            }
+            if (ArrayUtils.minus(twoGroup.get(0),twoGroup.get(2)).length==1){
+                Object[] minus = ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0), twoGroup.get(2)), ArrayUtils.intersect(twoGroup.get(0), twoGroup.get(2)));
+                oneList = Arrays.asList(Convert.toStrArray(minus));
+                twoList = Arrays.asList(Convert.toStrArray(ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0), twoGroup.get(1), twoGroup.get(2)), minus)));
+            }
+        } else if (twoGroup.size() == 2) {
+            oneList = Arrays.asList(Convert.toStrArray(ArrayUtils.intersect(twoGroup.get(0), twoGroup.get(1))));
+            twoList = Arrays.asList(Convert.toStrArray(ArrayUtils.minus(ArrayUtils.union(twoGroup.get(0),twoGroup.get(1)),ArrayUtils.intersect(twoGroup.get(0), twoGroup.get(1)))));
+        }
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("oneGroup", oneList);
+        map.put("twoGroup", twoList);
+        return map;
+    }
+
+    public Map<String, List<String>> getThreeSixNineFromCurrent(String dateStr) throws IOException {
+        List<String[]> tenTimes = getTenTimes(dateStr, "84", 84);
+        String[] group = {"03", "06", "09"};
+        Map<String, List<String>> map = new HashMap<>();
+        Object[] intersect = ArrayUtils.intersect(tenTimes.get(tenTimes.size() - 1), group);
+        if (intersect.length == 1) {
+            map.put("threeGroup", Arrays.asList(Convert.toStrArray(intersect)));
+            map.put("fourGroup", Arrays.asList(Convert.toStrArray(ArrayUtils.minus(group, tenTimes.get(tenTimes.size() - 1)))));
+        } else if (intersect.length == 2) {
+            List<String> list1 = new ArrayList<>();
+            list1.add((String) intersect[0]);
+            map.put("threeGroup", list1);
+            List<String> list2 = new ArrayList<>();
+            list2.add((String) intersect[1]);
+            map.put("fourGroup", list2);
+        }
+        return map;
     }
 }

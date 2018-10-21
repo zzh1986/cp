@@ -2,9 +2,15 @@ package com.eleven.five.task;
 
 import com.eleven.five.controller.ElevenController;
 import com.eleven.five.controller.MaxSimularController;
+import com.eleven.five.entity.FourGroupCount;
+import com.eleven.five.service.FourGroupCountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.io.IOException;
 
 /**
  * @author zhaozhihong <zhao.zhihong@chinaott.net>
@@ -20,7 +26,8 @@ public class PayTask {
     @Autowired
     private MaxSimularController maxSimularController;
 
-
+    @Autowired
+    private FourGroupCountService fourGroupCountService;
 
 //    @Scheduled(cron = "0 5/10 11-23 * * * ")
 //    public void chooseOne(){
@@ -68,4 +75,11 @@ public class PayTask {
 //    public void getUserBanlance() throws IOException {
 //        maxSimularController.getUserBanlance();
 //    }
+    /**
+     * 写一个定时器去完成新表的统计
+     */
+    @Scheduled(cron = "0 3/10 11-23 * * * ")
+    public void getUserBanlance() throws IOException {
+        fourGroupCountService.saveFourGroupCount();
+    }
 }

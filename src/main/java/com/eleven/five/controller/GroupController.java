@@ -1,7 +1,9 @@
 package com.eleven.five.controller;
 
 import cn.hutool.core.date.DateUtil;
+import com.eleven.five.entity.FourGroupCount;
 import com.eleven.five.entity.NumberGroup;
+import com.eleven.five.mapper.FourGroupCountMapper;
 import com.eleven.five.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,9 @@ public class GroupController {
 
      @Autowired
      private GroupService groupService;
+
+     @Autowired
+     private FourGroupCountMapper fourGroupCountMapper;
 
      @RequestMapping("/getGroupResult")
      public List<Object[]> getGroupResult(String date, String period) throws IOException {
@@ -192,7 +197,7 @@ public class GroupController {
      * 对当前期数的数据进行分组,并统计后保存到数据库 日期类型
      */
     @GetMapping("/saveGroupNumber")
-    public NumberGroup saveGroupNumber(Date date, String period) throws IOException{
+    public List<NumberGroup> saveGroupNumber(Date date, String period) throws IOException{
         String dateStr = DateUtil.format(date, "yyyyMMdd");
         return groupService.saveGroupNumber(dateStr,period);
     }
@@ -204,4 +209,26 @@ public class GroupController {
         String dateStr = DateUtil.format(date, "yyyyMMdd");
         return groupService.saveOneDayGroupNumbers(dateStr);
     }
+    /**
+     * 获取一组数据返回的方法
+     */
+    @GetMapping("/getOneGroupJiOuNumber")
+    public Map<String,List<String>> getOneGroupJiOuNumber(Date date) throws IOException{
+        String dateStr = DateUtil.format(date, "yyyyMMdd");
+        return groupService.getOneGroupJiOuNumber(dateStr);
+    }
+    /**
+     * 获取369 分组进行返回
+     */
+    @GetMapping("/getThreeSixNineFromCurrent")
+    public Map<String,List<String>> getThreeSixNineFromCurrent(Date date) throws IOException{
+        String dateStr = DateUtil.format(date, "yyyyMMdd");
+        return groupService.getThreeSixNineFromCurrent(dateStr);
+    }
+
+    @GetMapping("/getFourGroupCountDetail")
+    public FourGroupCount getFourGroupCountDetail(){
+        return fourGroupCountMapper.findAll().get(0);
+    }
+
 }

@@ -20,13 +20,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#">BootAdmin</a>
+            <a class="brand" href="#">彩票分析网(自用)</a>
             <div class="nav-collapse collapse">
                 <ul class="nav pull-right">
                     <li class="dropdown">
                         <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i
                                 class="icon-user"></i>管理员<i class="caret"></i>
-
                         </a>
                         <ul class="dropdown-menu">
                             <li>
@@ -106,7 +105,6 @@
                     <li class="dropdown">
                         <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">用户 <i
                                 class="caret"></i>
-
                         </a>
                         <ul class="dropdown-menu">
                             <li>
@@ -162,27 +160,71 @@
                     </div>
                     <div class="block-content collapse in">
                         <div class="span3">
-                            <div class="chart" data-percent="73">73%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info">访问量</span>
-
+                            <div class="chart" data-percent="50" id="onePercent">50%</div>
+                            <div class="chart-bottom-heading"><span class="label label-info" id="oneGroup">当前分组第一组(本期无合适的)</span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >连续不中次数:</span>
+                                <span class="label label-info" id="oneTimes"></span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >最大连续不中次数:</span>
+                                <span class="label label-info" id="oneMaxTimes"> </span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span  >上次符合的期数:</span>
+                                <span class="label label-info" id="oneLastPeriod"> </span>
                             </div>
                         </div>
                         <div class="span3">
-                            <div class="chart" data-percent="53">53%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info">浏览量</span>
-
+                            <div class="chart" data-percent="50" id="twoPercent">50%</div>
+                            <div class="chart-bottom-heading"><span class="label label-info" id="twoGroup">当前分组第二组(本期无合适的)</span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >连续不中次数:</span>
+                                <span class="label label-info" id="twoTimes"></span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >最大连续不中次数:</span>
+                                <span class="label label-info" id="twoMaxTimes"> </span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span>上次符合的期数:</span>
+                                <span class="label label-info" id="twoLastPeriod"> </span>
                             </div>
                         </div>
                         <div class="span3">
-                            <div class="chart" data-percent="83">83%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info">用户</span>
-
+                            <div class="chart" data-percent="50" id="threePercent">50%</div>
+                            <div class="chart-bottom-heading"><span class="label label-info" id="threeGroup">369分组第一组(本期无合适的)</span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span>连续不中次数:</span>
+                                <span class="label label-info" id="threeTimes"></span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >最大连续不中次数:</span>
+                                <span class="label label-info" id="threeMaxTimes"> </span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >上次符合的期数:</span>
+                                <span class="label label-info" id="threeLastPeriod"> </span>
                             </div>
                         </div>
                         <div class="span3">
-                            <div class="chart" data-percent="13">13%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info">订单</span>
-
+                            <div class="chart" data-percent="50" id="fourPercent">50%</div>
+                            <div class="chart-bottom-heading"><span class="label label-info" id="fourGroup">369分组第二组(本期无合适的)</span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >连续不中次数:</span>
+                                <span class="label label-info" id="fourTimes"></span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >最大连续不中次数:</span>
+                                <span class="label label-info" id="fourMaxTimes"> </span>
+                            </div>
+                            <div class="chart-bottom-heading">
+                                <span >上次符合的期数:</span>
+                                <span class="label label-info" id="fourLastPeriod"> </span>
                             </div>
                         </div>
                     </div>
@@ -196,7 +238,6 @@
                     <div class="navbar navbar-inner block-header">
                         <div class="muted pull-left">当前冷热温余商和差统计(从第10期以后进行统计)</div>
                         <div class="pull-right"><span class="badge badge-info">冷热温余商和差</span>
-
                         </div>
                     </div>
                     <div class="block-content collapse in">
@@ -279,23 +320,72 @@
         $('.chart').easyPieChart({animate: 1000});
         getLatestJiOuNumber();
         getLatestWarmColdNumber();
+        getFourGroupCountDetail();
     });
+    //获取对应的统计的结果,进行图表的初始化
+    function getFourGroupCountDetail(){
+        var url = "http://localhost:8070/getFourGroupCountDetail";
+        $.get(url,function (data) {
 
+            $("#onePercent").prop("data-percent",data.oneGroupPercent);
+            $("#onePercent").text(data.oneGroupPercent);
+            $("#oneTimes").text(data.oneGroupTimes);
+            $("#oneMaxTimes").text(data.oneGroupMaxTimes);
+            $("#oneLastPeriod").text(data.oneGroupLastPeriod);
+
+            $("#twoPercent").prop("data-percent",data.twoGroupPercent);
+            $("#twoPercent").text(data.twoGroupPercent);
+            $("#twoTimes").text(data.twoGroupTimes);
+            $("#twoMaxTimes").text(data.twoGroupMaxTimes);
+            $("#twoLastPeriod").text(data.twoGroupLastPeriod);
+
+            $("#threePercent").prop("data-percent",data.threeGroupPercent);
+            $("#threePercent").text(data.threeGroupPercent);
+            $("#threeTimes").text(data.threeGroupTimes);
+            $("#threeMaxTimes").text(data.threeGroupMaxTimes);
+            $("#threeLastPeriod").text(data.threeGroupLastPeriod);
+
+            $("#fourPercent").prop("data-percent",data.fourGroupPercent);
+            $("#fourPercent").text(data.fourGroupPercent);
+            $("#fourTimes").text(data.fourGroupTimes);
+            $("#fourMaxTimes").text(data.fourGroupMaxTimes);
+            $("#fourLastPeriod").text(data.fourGroupLastPeriod);
+        });
+    }
+    function getGroupNumberPic() {
+        var url = "http://localhost:8070/getOneGroupJiOuNumber";
+        var params = {date: new Date()};
+        $.get(url,params,function (data) {
+            $("#oneGroup").text(data.oneGroup);
+            $("#twoGroup").text(data.twoGroup);
+            /*补充相应的数据*/
+        })
+    }
     function getLatestWarmColdNumber() {
         var url = "http://localhost:8070/getHotColdNumbers";
         var params = {date: new Date()};
         $.get(url, params, function (data) {
-            console.log(data);
             /*初始化表格*/
-            var tr = "<tr>"
-                + "<td>" + data[data.length - 1].period + "</td>" + "<td>" + data[data.length - 1].hotNumber + "</td>"
-                + "<td>" + data[data.length - 1].warmNumber + "</td>" + "<td>" + data[data.length - 1].coldNumber + "</td>"
-                + "<td>" + data[data.length - 1].twoNumber + "</td>" + "<td>" + data[data.length - 1].anotherTwo + "</td>"
-                + "</tr>"
-            $("#warm").append(tr);
-        })
+            if (null !=data){
+                var tr = "<tr>"
+                    + "<td>" + data[data.length - 1].period + "</td>" + "<td>" + data[data.length - 1].hotNumber + "</td>"
+                    + "<td>" + data[data.length - 1].warmNumber + "</td>" + "<td>" + data[data.length - 1].coldNumber + "</td>"
+                    + "<td>" + data[data.length - 1].twoNumber + "</td>" + "<td>" + data[data.length - 1].anotherTwo + "</td>"
+                    + "</tr>"
+                $("#warm").append(tr);
+            }
+        });
+        getGroupNumberPic();
+        getThreeSixNineFromCurrent();
     }
-
+    function getThreeSixNineFromCurrent(){
+        var url="http://localhost:8070/getThreeSixNineFromCurrent";
+        var params = {date: new Date()};
+        $.get(url, params, function (data) {
+            $("#threeGroup").text(data.threeGroup);
+            $("#fourGroup").text(data.fourGroup)
+        });
+    }
     function getLatestJiOuNumber() {
         var url = "http://localhost:8070/saveOneDayGroupNumbers";
         var params = {date: new Date()};
