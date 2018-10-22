@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100212
 File Encoding         : 65001
 
-Date: 2018-10-10 17:28:20
+Date: 2018-10-22 09:55:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -49,6 +49,32 @@ CREATE TABLE `elevens` (
 ) ENGINE=InnoDB AUTO_INCREMENT=18481 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for four_group_count
+-- ----------------------------
+DROP TABLE IF EXISTS `four_group_count`;
+CREATE TABLE `four_group_count` (
+  `id` int(11) NOT NULL,
+  `one_group_percent` varchar(255) DEFAULT NULL,
+  `one_group_times` int(11) DEFAULT NULL,
+  `one_group_last_period` varchar(255) DEFAULT NULL,
+  `one_group_max_times` int(11) DEFAULT NULL,
+  `two_group_percent` varchar(255) DEFAULT NULL,
+  `two_group_times` int(11) DEFAULT NULL,
+  `two_group_last_period` varchar(255) DEFAULT NULL,
+  `two_group_max_times` int(11) DEFAULT NULL,
+  `three_group_percent` varchar(255) DEFAULT NULL,
+  `three_group_times` int(11) DEFAULT NULL,
+  `three_group_last_period` varchar(255) DEFAULT NULL,
+  `three_group_max_times` int(11) DEFAULT NULL,
+  `four_group_percent` varchar(255) DEFAULT NULL,
+  `four_group_times` int(11) DEFAULT NULL,
+  `four_group_last_period` varchar(255) DEFAULT NULL,
+  `four_group_max_times` int(11) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for hot_cold_number
 -- ----------------------------
 DROP TABLE IF EXISTS `hot_cold_number`;
@@ -70,7 +96,7 @@ CREATE TABLE `hot_cold_number` (
   `another_two` varchar(255) DEFAULT NULL,
   `period` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1219 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11739 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for number
@@ -80,6 +106,28 @@ CREATE TABLE `number` (
   `id` int(11) NOT NULL,
   `num` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for number_group
+-- ----------------------------
+DROP TABLE IF EXISTS `number_group`;
+CREATE TABLE `number_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ji_group` varchar(255) DEFAULT NULL,
+  `ou_group` varchar(255) DEFAULT NULL,
+  `zhi_group` varchar(255) DEFAULT NULL,
+  `he_group` varchar(255) DEFAULT NULL,
+  `da_group` varchar(255) DEFAULT NULL,
+  `xiao_group` varchar(255) DEFAULT NULL,
+  `ji_amount` int(11) DEFAULT NULL,
+  `ou_amount` int(11) DEFAULT NULL,
+  `zhi_amount` int(11) DEFAULT NULL,
+  `he_amount` int(11) DEFAULT NULL,
+  `da_amount` int(11) DEFAULT NULL,
+  `xiao_amount` int(11) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7691 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for repeat
@@ -255,3 +303,22 @@ CREATE TABLE `tong_ji` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1460 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS=1;
+
+-- 20181022----------------------------------------------
+
+-- ----------------------------
+-- Table structure for change_numbers 记录发生变化的数据的统计
+-- ----------------------------
+CREATE TABLE `change_numbers` (
+  `id` int(11) NOT NULL,
+  `five_times_number` varchar(255) DEFAULT NULL,
+  `five_times_happen` varchar(255) DEFAULT NULL,
+  `three_times_number` varchar(255) DEFAULT NULL,
+  `three_times_happen` varchar(255) DEFAULT NULL,
+  `four_times_number` varchar(255) DEFAULT NULL,
+  `four_times_happen` varchar(255) DEFAULT NULL,
+  `six_times_number` varchar(255) DEFAULT NULL,
+  `six_times_happen` varchar(255) DEFAULT NULL,
+  `period` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

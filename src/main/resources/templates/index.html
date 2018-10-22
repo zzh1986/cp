@@ -161,7 +161,9 @@
                     <div class="block-content collapse in">
                         <div class="span3">
                             <div class="chart" data-percent="50" id="onePercent">50%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info" id="oneGroup">当前分组第一组(本期无合适的)</span>
+                            <div class="chart-bottom-heading">
+                                <span>当前分组第一组:</span>
+                                <span class="label label-info" id="oneGroup">--</span>
                             </div>
                             <div class="chart-bottom-heading">
                                 <span >连续不中次数:</span>
@@ -178,7 +180,9 @@
                         </div>
                         <div class="span3">
                             <div class="chart" data-percent="50" id="twoPercent">50%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info" id="twoGroup">当前分组第二组(本期无合适的)</span>
+                            <div class="chart-bottom-heading">
+                                <span>当前分组第二组:</span>
+                                <span class="label label-info" id="twoGroup">--</span>
                             </div>
                             <div class="chart-bottom-heading">
                                 <span >连续不中次数:</span>
@@ -195,7 +199,9 @@
                         </div>
                         <div class="span3">
                             <div class="chart" data-percent="50" id="threePercent">50%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info" id="threeGroup">369分组第一组(本期无合适的)</span>
+                            <div class="chart-bottom-heading">
+                                <span >369分组第一组:</span>
+                                <span class="label label-info" id="threeGroup">待定</span>
                             </div>
                             <div class="chart-bottom-heading">
                                 <span>连续不中次数:</span>
@@ -212,7 +218,9 @@
                         </div>
                         <div class="span3">
                             <div class="chart" data-percent="50" id="fourPercent">50%</div>
-                            <div class="chart-bottom-heading"><span class="label label-info" id="fourGroup">369分组第二组(本期无合适的)</span>
+                            <div class="chart-bottom-heading">
+                                <span >369分组第二组:</span>
+                                <span class="label label-info" id="fourGroup">待定</span>
                             </div>
                             <div class="chart-bottom-heading">
                                 <span >连续不中次数:</span>
@@ -253,6 +261,34 @@
                             </tr>
                             </thead>
                             <tbody id="warm">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /block -->
+            </div>
+            <br class="row-fluid">
+            <div>
+                <!-- block -->
+                <div class="block">
+                    <div class="navbar navbar-inner block-header">
+                        <div class="muted pull-left">临界号码的相关统计</div>
+                        <div class="pull-right"><span class="badge badge-info">5,3,4,6次数的临界统计</span>
+                        </div>
+                    </div>
+                    <div class="block-content collapse in">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>期号</th>
+                                <th>5次出现由(温变热)(可能胆号)统计</th>
+                                <th>3次出现由(冷变温)(可能胆号)统计</th>
+                                <th>4次出现由(温变冷)(可能杀号)统计</th>
+                                <th>6次出现由(热变冷)(可能杀号)统计</th>
+                            </tr>
+                            </thead>
+                            <tbody id="linJie">
 
                             </tbody>
                         </table>
@@ -321,12 +357,30 @@
         getLatestJiOuNumber();
         getLatestWarmColdNumber();
         getFourGroupCountDetail();
+        getLinJieNumber();
     });
+    //获取临界值进行初始化
+    function getLinJieNumber(){
+        var url = "http://localhost:8070/getChangeNumbers";
+        $.get(url,function (data) {
+            console.log(data);
+            var tr = "<tr>"
+                + "<td>" + data.period + "</td>" + "<td>" + data.fiveTimesHappen + "</td>"
+                + "<td>" + data.threeTimesHappen + "</td>" + "<td>" + data.fourTimesHappen + "</td>"
+                + "<td>" + data.sixTimesHappen + "</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td>" + data.period + "</td>" + "<td>" + data.fiveTimesNumber + "</td>"
+                + "<td>" + data.threeTimesNumber + "</td>" + "<td>" + data.fourTimesNumber + "</td>"
+                + "<td>" + data.sixTimesNumber + "</td>"
+                + "</tr>"
+            $("#linJie").append(tr);
+        })
+    }
     //获取对应的统计的结果,进行图表的初始化
     function getFourGroupCountDetail(){
         var url = "http://localhost:8070/getFourGroupCountDetail";
         $.get(url,function (data) {
-
             $("#onePercent").prop("data-percent",data.oneGroupPercent);
             $("#onePercent").text(data.oneGroupPercent);
             $("#oneTimes").text(data.oneGroupTimes);
