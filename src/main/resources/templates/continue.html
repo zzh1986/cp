@@ -156,20 +156,21 @@
                 <!-- block -->
                 <div class="block">
                     <div class="navbar navbar-inner block-header">
-                        <div class="muted pull-left">彩票当前期号数据分类统计</div>
+                        <div class="muted pull-left">彩票连号数据统计表(只是参考)</div>
                     </div>
+
+                    <input type="text" style="ime-mode:disabled;" onpaste="return false;"  onkeypress="keyPress()" id="days"/>  天
+                    <button type="button" class="btn btn-primary" onclick="getHistoryCount()">点击查询</button>
                     <div class="block-content collapse in">
                         <div class="span12">
                             <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered"
                                    id="example">
                                 <thead>
                                 <tr>
-                                    <th>期号</th>
-                                    <th>热号</th>
-                                    <th>温号</th>
-                                    <th>冷号</th>
-                                    <th>商/余</th>
-                                    <th>和/差</th>
+                                    <th>列表</th>
+                                    <th>总计出现次数</th>
+                                    <th>目前遗漏天数</th>
+                                    <th>目前的概率值</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -187,7 +188,7 @@
     </div>
     <hr>
     <footer>
-        <p>彩票有风险,投资需谨慎
+        <p>Copyright &copy; 2018.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
         </p>
     </footer>
 </div>
@@ -196,31 +197,40 @@
 <script src="/static/vendors/jquery-1.9.1.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/vendors/datatables/js/jquery.dataTables.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 <script src="/static/assets/scripts.js"></script>
 <script src="/static/assets/DT_bootstrap.js"></script>
 <script>
     $(function () {
-        getNumbersNow();
-    });
 
-    function getNumbersNow() {
-        var url = "http://localhost:8070/getHotColdNumbers";
-        var params = {date: new Date()};
-        $.get(url, params, function (data) {
-            console.log(data);
-            /*初始化表格*/
-            for (var i in data) {
-                var tr = "<tr>"
-                    + "<td>" + data[i].period + "</td>" + "<td>" + data[i].hotNumber + "</td>"
-                    + "<td>" + data[i].warmNumber + "</td>" + "<td>" + data[i].coldNumber + "</td>"
-                    + "<td>" + data[i].twoNumber + "</td>" + "<td>" + data[i].anotherTwo + "</td>"
-                    + "</tr>"
-                $("tbody").append(tr);
+    });
+    function getHistoryCount(){
+        $("tbody").html("");
+        var url = "http://localhost:8070/getLongTimeNotexitNumber";
+        var params={"days":$("#days").val()};
+        $.get(url,params,function(data){
+
+            var tr = "";
+            for(var i=0;i<11;i++){
+                tr += "<tr><td>" + data.fiveList[i]+"</td><td>"
+                                 + data.total[i]+"</td><td>"
+                +data.currentMissDays[i]+"</td><td>"+
+                    data.percent[i]+"</td></tr>";
             }
+            $("tbody").append(tr);
+
         })
     }
+    function keyPress() {
+        var keyCode = event.keyCode;
+        if ((keyCode >= 1 && keyCode <= 1000))
+        {
+            event.returnValue = true;
+        } else {
+            event.returnValue = false;
+        }
+    }
+
 </script>
 </body>
 

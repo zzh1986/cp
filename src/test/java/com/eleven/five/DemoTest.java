@@ -1,14 +1,15 @@
 package com.eleven.five;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Arrays;
 
 /**
  * @author zhaozhihong
  */
 public class DemoTest {
-    public static void main(String[] args) throws ParseException, IOException {
+    public static void main(String[] args) throws IOException {
 //        String instead = "___________";
 //        System.out.println(instead.substring(0,0)+"****"+instead.substring(0+4));
 //        String s="22222";
@@ -106,9 +107,74 @@ public class DemoTest {
     /*    boolean b1=true;
         boolean b2 =false;
         System.out.println(b1^b2);*/
-    double[] d = {0.1,0.2,0.5,0.3};
+    /*double[] d = {0.1,0.2,0.5,0.3};
         Arrays.sort(d);
-        System.out.println(Arrays.toString(d));
+        System.out.println(Arrays.toString(d));*/
+
+       /* Document doc = DocumentHelper.createDocument();
+        Element head = DocumentHelper.createElement("Head");
+        Element funcCode = head.addElement("funcCode");
+        funcCode.setText("接口功能代码");
+        Element transID = head.addElement("transID");
+        transID.setText("消息流水号");
+        Element userName = head.addElement("userName");
+        userName.setText("身份信息核查系统分配的用户名");
+        Element timeStamp = head.addElement("timeStamp");
+        timeStamp.setText("时间戳");
+        Element version = head.addElement("version");
+        version.setText("版本号");
+        Element authCode = head.addElement("authCode");
+        authCode.setText("身份信息核查系统分配的认证码");
+        Element expandPara = head.addElement("expandPara");
+        expandPara.setText("保留字段");
+        Element content = head.addElement("content");
+        content.setText("加密后的消息体，即Base64 (DES(消息体))，具体请见4.2节");
+        doc.setRootElement(head);
+        doc.setXMLEncoding("GB2312");
+        XMLWriter xmlWriter = new XMLWriter();
+        xmlWriter.write(doc);*/
+
+       /* Document doc = XmlUtil.createXml("Head");
+
+        Element funcCode = doc.createElement("funcCode");
+        funcCode.setTextContent("接口功能代码");
+        Element transID = doc.createElement("transID");
+        transID.setTextContent("消息流水号");
+        Element userName = doc.createElement("userName");
+        userName.setTextContent("身份信息核查系统分配的用户名");
+        Element timeStamp = doc.createElement("timeStamp");
+        timeStamp.setTextContent("时间戳");
+        Element version = doc.createElement("version");
+        version.setTextContent("版本号");
+        Element authCode = doc.createElement("authCode");
+        authCode.setTextContent("身份信息核查系统分配的认证码");
+        Element expandPara = doc.createElement("expandPara");
+        expandPara.setTextContent("保留字段");
+        Element content = doc.createElement("content");
+        content.setTextContent("加密后的消息体，即Base64 (DES(消息体))，具体请见4.2节");
+
+        doc.setXmlStandalone(true);
+        String s = XmlUtil.toStr(doc, "GB2312", true);
+        System.out.println(s);*/
+
+
+       /* String content = "test中文";
+        DES des = SecureUtil.des();
+        byte[] encrypt = des.encrypt(content);
+
+        final Base64.Decoder decoder = Base64.getDecoder();
+        final Base64.Encoder encoder = Base64.getEncoder();
+        final byte[] textByte = new String(encrypt).getBytes("UTF-8");
+//编码
+        System.out.println(new String(encoder.encode(textByte)));
+//解码*/
+        String now = DateUtil.now();
+        DateTime today = DateUtil.parse(now);
+        DateTime dateTime = DateUtil.offsetDay(today, -50);
+        System.out.println(dateTime.toString("yyyyMMdd"));
+
+
+
     }
 
 }
