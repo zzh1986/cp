@@ -1,5 +1,6 @@
 package com.eleven.five.util;
 
+import cn.hutool.core.convert.Convert;
 import com.eleven.five.entity.GroupEntity;
 
 import java.util.ArrayList;
@@ -17,33 +18,12 @@ public class GroupUtils {
          * @param args
          */
         public static void main(String[] args) {
-            // TODO Auto-generated method stub
-            Object[] one = {3,4,5,7,9};
-            Object[] two = {2,3,5,7,10};
-            ArrayList<Object[]> oneCmn = cmn(one, 2);
-            ArrayList<Object[]> twoCmn = cmn(two, 2);
-            Object[] three = {1,4,7,10};
-            Object[] four = {2,5,8,11};
-            Object[] five = {3,6,9};
-            Object[] six = {1,2,3,4};
-            Object[] seven = {8,9,10,11};
-            Object[] eight = {5,6,7};
-            List<Object[]> result = new ArrayList<>();
-            for (int i=0;i<oneCmn.size();i++){
-                for (int j=0;j<twoCmn.size();j++){
-                    Object[] union = ArrayUtils.union(oneCmn.get(i), twoCmn.get(j));
-                    if(union.length==3&&ArrayUtils.intersect(union,three).length>=1
-                            &&ArrayUtils.intersect(union,four).length>=1&&ArrayUtils.intersect(union,six).length>=1
-                            &&ArrayUtils.intersect(union,seven).length>=1
-                    ){
-                        result.add(union);
-                    }
-                }
+          String[] test = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"};
+            List<Object[]> allArrayfromCount = getAllArrayfromCount(test, 4);
+            for (int i = 0; i <allArrayfromCount.size() ; i++) {
+                System.out.println(Arrays.toString(allArrayfromCount.get(i)));
             }
-            for (Object[] objects : result){
-                System.out.println(Arrays.toString(objects));
-            }
-            System.out.println(result.size());
+            System.out.println(allArrayfromCount.size());
         }
 
     /**
@@ -69,7 +49,55 @@ public class GroupUtils {
         }
         return result;
     }
+    /**
+     * 获取一个数组11个数的全排列组合
+     * @param numbers
+     * @return
+     */
+    public static List<Object[]> getAllArrayfromCount(Object[] numbers,int one_group){
+        ArrayList<Object[]> cmn = cmn(numbers, one_group);
+        List<Object[]> result = new ArrayList<>();
+        List<Integer> indexList = new ArrayList<>();
+        for (int i = 0; i < one_group; i++) {
+            indexList.add(i);
+        }
+        List<Integer[]> arrys = new ArrayList<>();
+        permutation(arrys, Convert.toIntArray(indexList.toArray()),0);
+        //现在arrys 里面保存的就是下标的全排列
+        for (int i = 0; i < cmn.size() ; i++) {
+            for (int j = 0; j < arrys.size(); j++) {
+                Object[] tmp = new Object[one_group];
+                for (int k = 0; k < arrys.get(j).length; k++) {
+                    tmp[k]=cmn.get(i)[arrys.get(j)[k]];
+                }
+                result.add(tmp);
 
+            }
+        }
+        return result;
+    }
+    //该方法用于将ss所有组合保存的result中
+    private static void permutation(List<Integer[]> result, Integer[] ss, int i){
+
+        if(ss==null||i<0 ||i>ss.length){//1
+            return;
+        }
+
+        if(i==ss.length-1){//2
+            Integer[] clone = ss.clone();
+            result.add(clone);
+        }else{
+            for(int j=i;j<ss.length;j++){//3
+                Integer temp=ss[j];//交换前缀,使之产生下一个前缀
+                ss[j]=ss[i];
+                ss[i]=temp;
+                permutation(result,ss,i+1);//4
+                temp=ss[j]; //将前缀换回来,继续做上一个的前缀排列.//5
+                ss[j]=ss[i];
+                ss[i]=temp;
+            }
+        }
+    }
     /**
      * 求一个数组的任意组合
      */
