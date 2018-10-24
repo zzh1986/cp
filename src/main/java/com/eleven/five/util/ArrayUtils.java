@@ -6,7 +6,6 @@
 
 package com.eleven.five.util;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -235,7 +234,25 @@ public class ArrayUtils {
         }
         return index;
     }
+    /**
+     *  获取从小到大排列的下标
+     */
+    public static List<Integer> sortIndex(int[] numGroup){
+        int[] clone = numGroup.clone();
+        int[] cloneTwo = numGroup.clone();
+        Arrays.sort(clone);
+        List<Integer> index = new ArrayList<>();
+        for (int i = 0; i < clone.length ; i++) {
+            for (int j = 0; j < cloneTwo.length; j++) {
+                if (clone[i] == cloneTwo[j]){
+                    index.add(j);
+                    cloneTwo[j]=-10000;
+                }
+            }
 
+        }
+        return index;
+    }
     public static void main(String[] args) {
 //        String[] num = {"[1,2,3]", "[4,5,6]", "[1,2,3]", "[4,5]", "[1,2,3]", "[4,5,6]", "[5,6,7]"};
 //        Map<Object, Integer> repeatNum = getRepeatNum(num);
@@ -261,9 +278,11 @@ public class ArrayUtils {
         System.out.println("最大值下标"+list);
         System.out.println("最小值下标"+list1);*/
 
-        String[] s1 = {"01","02"};
+      /*  String[] s1 = {"01","02"};
         String[] s2 = {"03"};
-        System.out.println(intersect(s1,s2).length);
-
+        System.out.println(intersect(s1,s2).length);*/
+        int[] index = {2,5,4,9,6,1,2};
+        List<Integer> list = sortIndex(index);
+        System.out.println(Arrays.toString(list.toArray()));
     }
 }

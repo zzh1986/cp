@@ -32,4 +32,20 @@ public class FiveNumbersController {
     public List<String[]> findMinCountThreeNumbers(){
         return fiveNumbersService.findMinCountThreeNumbers();
     }
+
+    /**
+     * 查询 最近days天没出现过的前三个的组合
+     */
+    @GetMapping("/getSomeDaysNotAppearNumbers")
+    public List<String[]> getSomeDaysNotAppearNumbers(Integer days) throws IOException {
+        return fiveNumbersService.getSomeDaysNotAppearNumbers(days);
+    }
+    /**
+     * 查询 当前组合的下一期组合中出现频率最高的三位数排列
+     */
+    @GetMapping("/getNextMaxPercentNumbers")
+    public List<String[]> getNextMaxPercentNumbers(String date,String period) throws IOException {
+        return fiveNumbersService.getNextMaxPercentNumbers(date,period);
+    }
+
 }
